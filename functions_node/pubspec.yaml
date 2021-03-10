@@ -95,5 +95,5 @@ dependency_overrides:
   tekartik_firebase_node:
     path: ../firebase_node
   # Temp
-  tekartik_app_node_build:
-    path: ../../app_node_utils.dart/app_build
+  # tekartik_app_node_build:
+  #   path: ../../app_node_utils.dart/app_build
