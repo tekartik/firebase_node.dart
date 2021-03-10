@@ -21,14 +21,17 @@ void main() {
       print(
           'GOOGLE_APPLICATION_CREDENTIALS: ${_env['GOOGLE_APPLICATION_CREDENTIALS']}');
     });
-    test('access token', () async {
-      var app = await firebaseNode.initializeAppAsync(name: 'admin');
-      print(
-          (await firebaseNode.credential.applicationDefault().getAccessToken())
-              .data);
-      print(app.options);
-      print(app.options.projectId);
-      await app.delete();
-    });
+    if (_env['FIREBASE_CONFIG'] != null) {
+      test('access token', () async {
+        var app = await firebaseNode.initializeAppAsync(name: 'admin');
+        print((await firebaseNode.credential
+                .applicationDefault()
+                .getAccessToken())
+            .data);
+        print(app.options);
+        print(app.options.projectId);
+        await app.delete();
+      });
+    }
   });
 }
