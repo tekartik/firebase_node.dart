@@ -1,0 +1,26 @@
+name: repo_support
+description: Repo (tools)
+version: 0.2.0
+publish_to: none
+
+environment:
+  sdk: '>=2.10.0-0 <3.0.0'
+
+dev_dependencies:
+  path:
+  pub_semver:
+  process_run: '>=0.10.3'
+  test:
+  dev_test:
+  pedantic:
+  tekartik_app_node_build:
+    git:
+      url: git://github.com/tekartik/app_node_utils.dart
+      path: app_build
+      ref: dart2
+    version: '>=0.1.0'
+
+dependency_overrides:
+  # Temp
+  # tekartik_app_node_build:
+  #  path: ../../app_node_utils.dart/app_build
