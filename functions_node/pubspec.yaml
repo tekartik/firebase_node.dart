@@ -29,7 +29,7 @@ dependencies:
     version: '>=0.3.6'
   tekartik_firebase_firestore_node:
     git:
-      url: git://github.com/tekartik/firebase_node
+      url: git://github.com/tekartik/firebase_node.dart
       path: firestore_node
       ref: dart2
     version: '>=0.8.0'
