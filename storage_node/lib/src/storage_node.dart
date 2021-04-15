@@ -105,8 +105,8 @@ class BucketNode implements Bucket {
   File file(String path) => _wrapFile(nativeInstance.file(path));
 
   @override
-  Future<bool> exists() =>
-      promiseToFuture(nativeInstance.exists()).then((data) => data[0] as bool);
+  Future<bool> exists() => promiseToFuture(nativeInstance.exists())
+      .then((data) => (data as List)[0] as bool);
 
   @override
   String get name => nativeInstance.name;

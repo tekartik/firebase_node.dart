@@ -6,7 +6,7 @@ dependencies:
     git:
       url: git://github.com/tekartik/firebase_node.dart
       path: functions_node
-      ref: dart2
+      ref: null_safety
     version: '>=0.2.1'
 ```
 
