@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'dart:async';
 
 import 'package:tekartik_firebase_functions_node/firebase_functions_universal.dart';

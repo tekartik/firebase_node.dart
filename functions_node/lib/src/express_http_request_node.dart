@@ -1,17 +1,21 @@
-import 'package:node_io/node_io.dart';
-import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
+import 'package:tekartik_firebase_functions/firebase_functions.dart';
+
 // ignore: implementation_imports
-import 'package:tekartik_http_io/src/http_server_io.dart';
+import 'package:tekartik_http/http_server.dart';
+import 'package:tekartik_http_node/src/http_server_node.dart';
+import 'package:tekartik_http_node/src/node/http_server.dart';
+import 'import_node.dart';
 
 class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
     implements ExpressHttpRequest {
   impl.ExpressHttpRequest get nativeInstance =>
-      (implHttpRequest as HttpRequestIo).ioHttpRequest
+      (implHttpRequest as HttpRequestNode).nodeHttpRequest
           as impl.ExpressHttpRequest;
+
   ExpressHttpRequestNode(impl.ExpressHttpRequest httpRequest, Uri rewrittenUri)
-      : super(HttpRequestIo(httpRequest), rewrittenUri);
+      : super(HttpRequestNode(httpRequest), rewrittenUri);
 
   @override
   dynamic get body => nativeInstance.body;
@@ -19,8 +23,8 @@ class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
   ExpressHttpResponse _response;
 
   @override
-  ExpressHttpResponse get response => _response ??= ExpressHttpResponseNode(
-      HttpResponseIo(nativeInstance.response as NodeHttpResponse));
+  ExpressHttpResponse get response => _response ??=
+      ExpressHttpResponseNode(nativeInstance.response as NodeHttpResponse);
 }
 
 class ExpressHttpResponseNode extends ExpressHttpResponseWrapperBase

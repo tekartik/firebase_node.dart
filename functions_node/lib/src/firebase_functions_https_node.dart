@@ -23,7 +23,7 @@ class HttpsFunctionsNode implements common.HttpsFunctions {
 class HttpsFunctionNode extends FirebaseFunctionNode
     implements common.HttpsFunction {
   // ignore: unused_field
-  final _implCloudFonction;
+  final dynamic _implCloudFonction;
 
   HttpsFunctionNode(this._implCloudFonction);
 
