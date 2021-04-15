@@ -3,9 +3,9 @@ import 'package:tekartik_common_utils/env_utils.dart';
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
 
 var _env = platform.environment;
-TestStorageOptions _storageOptionsFromEnv;
+TestStorageOptions? _storageOptionsFromEnv;
 
-TestStorageOptions getStorageOptionsFromEnv(Map<String, String> env) {
+TestStorageOptions? getStorageOptionsFromEnv(Map<String, String> env) {
   var storageBucket = env['firebaseStorageTestBucket'];
   var rootPath = env['firebaseStorageTestRootPath'];
   if (storageBucket != null && rootPath != null) {
@@ -18,7 +18,7 @@ TestStorageOptions getStorageOptionsFromEnv(Map<String, String> env) {
 }
 
 /// Get storage option from env on node, dummy on io
-TestStorageOptions get storageOptionsFromEnv => _storageOptionsFromEnv ??= () {
+TestStorageOptions? get storageOptionsFromEnv => _storageOptionsFromEnv ??= () {
       if (isRunningAsJavascript) {
         return getStorageOptionsFromEnv(_env);
       } else {

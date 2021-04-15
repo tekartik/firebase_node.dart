@@ -20,7 +20,7 @@ class GetFilesOptions {
   external bool get autoPaginate;
 
   external factory GetFilesOptions(
-      {int maxResults, String prefix, bool autoPaginate, String pageToken});
+      {int? maxResults, String? prefix, bool? autoPaginate, String? pageToken});
 }
 
 // File meta data in GetFiles
@@ -72,7 +72,7 @@ abstract class File {
   /// The metadata (when read through GetFiles)
   ///
   /// Null for object that are 'folder' like (trailing /)
-  external FileMetadata get metadata;
+  external FileMetadata? get metadata;
 }
 
 /*
@@ -97,18 +97,18 @@ abstract class Bucket {
   external Promise exists();
 
   /// Get [File] objects for the files currently in the bucket.
-  external Promise getFiles([GetFilesOptions options]);
+  external Promise getFiles([GetFilesOptions? options]);
 }
 
 class GetFilesResponse {
   final List<File> files;
-  final GetFilesOptions nextQuery;
+  final GetFilesOptions? nextQuery;
 
   GetFilesResponse(this.files, this.nextQuery);
 }
 
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
-    [GetFilesOptions options]) async {
+    [GetFilesOptions? options]) async {
   var response = (await promiseToFuture(bucket.getFiles(options))) as List;
   // devPrint(response);
   // The reponse is an array!
@@ -127,7 +127,7 @@ Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
   }
    */
 
-  GetFilesOptions nextQuery;
+  GetFilesOptions? nextQuery;
   if (response.length > 1) {
     // The second object is the whole query!
 
@@ -141,7 +141,7 @@ Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
 @JS()
 @anonymous
 abstract class Storage {
-  external Bucket bucket([String name]);
+  external Bucket bucket([String? name]);
 }
 
 @JS()
@@ -155,5 +155,5 @@ abstract class StorageApp {
 class Error {
   dynamic errors;
   dynamic code;
-  String message;
+  String? message;
 }

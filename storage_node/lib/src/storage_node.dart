@@ -23,7 +23,7 @@ class StorageServiceNode implements StorageService {
     var storage = _storages[appNode];
     if (storage == null) {
       // ignore: invalid_use_of_protected_member
-      var storageApp = (appNode.nativeInstance).nativeInstance;
+      var storageApp = appNode.nativeInstance!.nativeInstance;
       storage = StorageNode((storageApp as native.StorageApp).storage());
       _storages[appNode] = storage;
     }
@@ -31,7 +31,7 @@ class StorageServiceNode implements StorageService {
   }
 }
 
-StorageServiceNode _storageServiceNode;
+StorageServiceNode? _storageServiceNode;
 
 StorageServiceNode get storageServiceNode =>
     _storageServiceNode ??= StorageServiceNode();
@@ -42,14 +42,14 @@ class StorageNode with StorageMixin implements Storage {
   StorageNode(this.nativeInstance);
 
   @override
-  Bucket bucket([String name]) {
-    native.Bucket nativeBucket;
+  Bucket bucket([String? name]) {
+    native.Bucket? nativeBucket;
     if (name == null) {
-      nativeBucket = callMethod(nativeInstance, 'bucket', []) as native.Bucket;
+      nativeBucket = callMethod(nativeInstance, 'bucket', []) as native.Bucket?;
     } else {
       nativeBucket = nativeInstance.bucket(name);
     }
-    return _wrapBucket(nativeBucket);
+    return _wrapBucket(nativeBucket)!;
   }
 }
 
@@ -91,9 +91,9 @@ class FileNode with FileMixin implements File {
   Bucket get bucket => BucketNode(nativeInstance.bucket);
 
   @override
-  FileMetadata get metadata => nativeInstance.metadata == null
+  FileMetadata? get metadata => nativeInstance.metadata == null
       ? null
-      : FileMetadataNode(nativeInstance.metadata);
+      : FileMetadataNode(nativeInstance.metadata!);
 }
 
 class BucketNode implements Bucket {
@@ -112,7 +112,7 @@ class BucketNode implements Bucket {
   String get name => nativeInstance.name;
 
   @override
-  Future<GetFilesResponse> getFiles([GetFilesOptions options]) async {
+  Future<GetFilesResponse> getFiles([GetFilesOptions? options]) async {
     var nativeResponse = await native.bucketGetFiles(
         nativeInstance, _unwrapGetFilesOptions(options));
     return GetFilesResponseNode(nativeResponse);
@@ -128,7 +128,7 @@ class GetFilesResponseNode implements GetFilesResponse {
   List<File> get files => nativeInstance.files.map((e) => FileNode(e)).toList();
 
   @override
-  GetFilesOptions get nextQuery =>
+  GetFilesOptions? get nextQuery =>
       _wrapGetFilesOptions(nativeInstance.nextQuery);
 
   @override
@@ -138,13 +138,12 @@ class GetFilesResponseNode implements GetFilesResponse {
       }.toString();
 }
 
-BucketNode _wrapBucket(native.Bucket nativeInstance) =>
+BucketNode? _wrapBucket(native.Bucket? nativeInstance) =>
     nativeInstance != null ? BucketNode(nativeInstance) : null;
 
-FileNode _wrapFile(native.File nativeInstance) =>
-    nativeInstance != null ? FileNode(nativeInstance) : null;
+FileNode _wrapFile(native.File nativeInstance) => FileNode(nativeInstance);
 
-native.GetFilesOptions _unwrapGetFilesOptions(GetFilesOptions options) {
+native.GetFilesOptions? _unwrapGetFilesOptions(GetFilesOptions? options) {
   if (options == null) {
     return null;
   }
@@ -156,7 +155,7 @@ native.GetFilesOptions _unwrapGetFilesOptions(GetFilesOptions options) {
   );
 }
 
-GetFilesOptions _wrapGetFilesOptions(native.GetFilesOptions options) {
+GetFilesOptions? _wrapGetFilesOptions(native.GetFilesOptions? options) {
   if (options == null) {
     return null;
   }
@@ -173,21 +172,18 @@ class FileMetadataNode implements FileMetadata {
   FileMetadataNode(this.nativeInstance);
 
   @override
-  String get md5Hash => nativeInstance.md5Hash == null
-      ? null
-      : base64.encode(nativeInstance.md5Hash.codeUnits);
+  String get md5Hash => base64.encode(nativeInstance.md5Hash.codeUnits);
 
   @override
-  DateTime get dateUpdated => anyToDateTime(nativeInstance.updated);
+  DateTime get dateUpdated => anyToDateTime(nativeInstance.updated)!;
 
   @override
-  int get size =>
-      nativeInstance.size == null ? null : int.tryParse(nativeInstance.size);
+  int get size => int.tryParse(nativeInstance.size) ?? 0;
 
   @override
   String toString() => {
         'size': size,
-        'dateUpdated': dateUpdated?.toUtc()?.toIso8601String(),
+        'dateUpdated': dateUpdated.toUtc().toIso8601String(),
         'md5Hash': md5Hash
       }.toString();
 }
