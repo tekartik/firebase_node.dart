@@ -26,7 +26,7 @@ class FirestoreServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return FirestoreNode(appNode.nativeInstance.firestore());
+      return FirestoreNode(appNode.nativeInstance!.firestore());
     });
   }
 
@@ -55,7 +55,7 @@ class FirestoreServiceNode
   String toString() => 'FirestoreServiceNode()';
 }
 
-FirestoreServiceNode _firestoreServiceNode;
+FirestoreServiceNode? _firestoreServiceNode;
 FirestoreServiceNode get firestoreServiceNode =>
     _firestoreServiceNode ??= FirestoreServiceNode();
 FirestoreService get firestoreService => firestoreServiceNode;
@@ -71,7 +71,7 @@ class FirestoreNode implements Firestore {
 
   @override
   DocumentReference doc(String path) =>
-      _wrapDocumentReference(nativeInstance.document(path));
+      _wrapDocumentReference(nativeInstance.document(path))!;
 
   @override
   WriteBatch batch() => WriteBatchNode(nativeInstance.batch());
@@ -98,21 +98,20 @@ class FirestoreNode implements Firestore {
   String toString() => 'FirestoreNode()';
 }
 
-FirestoreNode firestore(node.Firestore _impl) =>
-    _impl != null ? FirestoreNode(_impl) : null;
+FirestoreNode firestore(node.Firestore _impl) => FirestoreNode(_impl);
 
 CollectionReferenceNode _collectionReference(node.CollectionReference _impl) =>
-    _impl != null ? CollectionReferenceNode._(_impl) : null;
+    CollectionReferenceNode._(_impl);
 
-DocumentReferenceNode _wrapDocumentReference(node.DocumentReference _impl) =>
+DocumentReferenceNode? _wrapDocumentReference(node.DocumentReference? _impl) =>
     _impl != null ? DocumentReferenceNode._(_impl) : null;
 
-node.DocumentReference _unwrapDocumentReference(DocumentReference docRef) =>
-    (docRef as DocumentReferenceNode)?.nativeInstance;
+node.DocumentReference? _unwrapDocumentReference(DocumentReference? docRef) =>
+    (docRef as DocumentReferenceNode?)?.nativeInstance;
 
 List<node.DocumentReference> _unwrapDocumentReferences(
         Iterable<DocumentReference> docRef) =>
-    docRef.map(_unwrapDocumentReference).toList(growable: false);
+    docRef.map((ref) => _unwrapDocumentReference(ref)!).toList(growable: false);
 
 class WriteBatchNode implements WriteBatch {
   final node.WriteBatch nativeInstance;
@@ -123,21 +122,21 @@ class WriteBatchNode implements WriteBatch {
   Future commit() => nativeInstance.commit();
 
   @override
-  void delete(DocumentReference ref) =>
-      nativeInstance.delete(_unwrapDocumentReference(ref));
+  void delete(DocumentReference? ref) =>
+      nativeInstance.delete(_unwrapDocumentReference(ref)!);
 
   @override
   void set(DocumentReference ref, Map<String, dynamic> data,
-          [SetOptions options]) =>
+          [SetOptions? options]) =>
       nativeInstance.setData(
-          _unwrapDocumentReference(ref),
+          _unwrapDocumentReference(ref)!,
           documentDataToNativeDocumentData(DocumentData(data)),
           _unwrapSetOptions(options));
 
   @override
   void update(DocumentReference ref, Map<String, dynamic> data) =>
-      nativeInstance.updateData(_unwrapDocumentReference(ref),
-          documentDataToNativeUpdateData(DocumentData(data)));
+      nativeInstance.updateData(_unwrapDocumentReference(ref)!,
+          documentDataToNativeUpdateData(DocumentData(data))!);
 }
 
 class QueryNode extends Object with QueryMixin {
@@ -163,29 +162,29 @@ abstract class QueryMixin implements Query {
   Query limit(int limit) => _wrapQuery(nativeInstance.limit(limit));
 
   @override
-  Query orderBy(String key, {bool descending}) =>
+  Query orderBy(String key, {bool? descending}) =>
       _wrapQuery(nativeInstance.orderBy(key, descending: descending == true));
 
   @override
-  QueryNode startAt({DocumentSnapshot snapshot, List values}) =>
+  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) =>
       _wrapQuery(nativeInstance.startAt(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  Query startAfter({DocumentSnapshot snapshot, List values}) =>
+  Query startAfter({DocumentSnapshot? snapshot, List? values}) =>
       _wrapQuery(nativeInstance.startAfter(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  QueryNode endAt({DocumentSnapshot snapshot, List values}) =>
+  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) =>
       _wrapQuery(nativeInstance.endAt(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  QueryNode endBefore({DocumentSnapshot snapshot, List values}) =>
+  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) =>
       _wrapQuery(nativeInstance.endBefore(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
@@ -199,9 +198,9 @@ abstract class QueryMixin implements Query {
     dynamic isGreaterThan,
     dynamic isGreaterThanOrEqualTo,
     dynamic arrayContains,
-    List<dynamic> arrayContainsAny,
-    List<dynamic> whereIn,
-    bool isNull,
+    List<dynamic>? arrayContainsAny,
+    List<dynamic>? whereIn,
+    bool? isNull,
   }) {
     if (arrayContainsAny != null) {
       throw UnsupportedError('arrayContainsAny');
@@ -239,24 +238,25 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
       : super(implCollectionReference);
 
   @override
-  DocumentReference doc([String path]) =>
-      _wrapDocumentReference(nativeInstance.document(path));
+  DocumentReference doc([String? path]) =>
+      _wrapDocumentReference(nativeInstance.document(path))!;
 
   @override
   Future<DocumentReference> add(Map<String, dynamic> data) async =>
       _wrapDocumentReference(await nativeInstance
-          .add(documentDataToNativeDocumentData(DocumentData(data))));
+          .add(documentDataToNativeDocumentData(DocumentData(data))))!;
 
   @override
   // ignore: invalid_use_of_protected_member
-  String get id => nativeInstance.nativeInstance.id;
+  String get id => nativeInstance.nativeInstance!.id;
 
   @override
-  DocumentReference get parent => _wrapDocumentReference(nativeInstance.parent);
+  DocumentReference? get parent =>
+      _wrapDocumentReference(nativeInstance.parent);
 
   @override
   // ignore: invalid_use_of_protected_member
-  String get path => nativeInstance.nativeInstance.path;
+  String get path => nativeInstance.nativeInstance!.path;
 
   @override
   String toString() {
@@ -278,8 +278,8 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 }
 
 /// Unwrap list for startAt, endAt...
-List _unwrapValues(List values) =>
-    values?.map(_unwrapValue)?.toList(growable: false);
+List? _unwrapValues(List? values) =>
+    values?.map(_unwrapValue).toList(growable: false);
 
 dynamic _unwrapValue(value) {
   if (value == null || value is num || value is bool || value is String) {
@@ -338,8 +338,7 @@ dynamic documentValueToNativeValue(dynamic value) {
   } else if (value is DocumentReferenceNode) {
     return value.nativeInstance;
   } else if (value is GeoPoint) {
-    return node.GeoPoint(
-        value.latitude?.toDouble(), value.longitude?.toDouble());
+    return node.GeoPoint(value.latitude.toDouble(), value.longitude.toDouble());
   } else if (value is Blob) {
     return node.Blob.fromUint8List(value.data);
   } else {
@@ -379,34 +378,25 @@ dynamic documentValueFromNativeValue(dynamic value) {
 }
 
 node.DocumentData documentDataToNativeDocumentData(DocumentData documentData) {
-  if (documentData != null) {
-    var map = (documentData as DocumentDataMap).map;
-    var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
-    final nativeInstance = node.DocumentData.fromMap(nativeMap);
-    return nativeInstance;
-  }
-  return null;
+  var map = (documentData as DocumentDataMap).map;
+  var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
+  final nativeInstance = node.DocumentData.fromMap(nativeMap);
+  return nativeInstance;
 }
 
 DocumentData documentDataFromNativeDocumentData(
     node.DocumentData nativeInstance) {
-  if (nativeInstance != null) {
-    var nativeMap = nativeInstance.toMap();
-    var map = documentValueFromNativeValue(nativeMap) as Map<String, dynamic>;
-    var documentData = DocumentData(map);
-    return documentData;
-  }
-  return null;
+  var nativeMap = nativeInstance.toMap();
+  var map = documentValueFromNativeValue(nativeMap) as Map<String, dynamic>;
+  var documentData = DocumentData(map);
+  return documentData;
 }
 
-node.UpdateData documentDataToNativeUpdateData(DocumentData documentData) {
-  if (documentData != null) {
-    var map = (documentData as DocumentDataMap).map;
-    var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
-    final nativeInstance = node.UpdateData.fromMap(nativeMap);
-    return nativeInstance;
-  }
-  return null;
+node.UpdateData? documentDataToNativeUpdateData(DocumentData documentData) {
+  var map = (documentData as DocumentDataMap).map;
+  var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
+  final nativeInstance = node.UpdateData.fromMap(nativeMap);
+  return nativeInstance;
 }
 
 class DocumentReferenceNode implements DocumentReference {
@@ -419,7 +409,7 @@ class DocumentReferenceNode implements DocumentReference {
       _collectionReference(nativeInstance.collection(path));
 
   @override
-  Future set(Map<String, dynamic> data, [SetOptions options]) async {
+  Future set(Map<String, dynamic> data, [SetOptions? options]) async {
     await nativeInstance.setData(
         documentDataToNativeDocumentData(DocumentData(data)),
         _unwrapSetOptions(options));
@@ -437,7 +427,7 @@ class DocumentReferenceNode implements DocumentReference {
   @override
   Future update(Map<String, dynamic> data) async {
     await nativeInstance
-        .updateData(documentDataToNativeUpdateData(DocumentData(data)));
+        .updateData(documentDataToNativeUpdateData(DocumentData(data))!);
   }
 
   @override
@@ -488,21 +478,22 @@ class DocumentSnapshotNode implements DocumentSnapshot {
   DocumentSnapshotNode(this.nativeInstance);
 
   @override
-  Map<String, dynamic> get data => exists
-      ? documentDataFromNativeDocumentData(nativeInstance.data)?.asMap()
-      : null;
+  Map<String, dynamic> get data => (exists
+      ? documentDataFromNativeDocumentData(nativeInstance.data).asMap()
+      : null)!;
 
   @override
-  DocumentReference get ref => _wrapDocumentReference(nativeInstance.reference);
+  DocumentReference get ref =>
+      _wrapDocumentReference(nativeInstance.reference)!;
 
   @override
   bool get exists => nativeInstance.exists;
 
   @override
-  Timestamp get updateTime => _wrapTimestamp(nativeInstance.updateTime);
+  Timestamp? get updateTime => _wrapTimestamp(nativeInstance.updateTime);
 
   @override
-  Timestamp get createTime => _wrapTimestamp(nativeInstance.createTime);
+  Timestamp? get createTime => _wrapTimestamp(nativeInstance.createTime);
 
   @override
   String toString() {
@@ -510,7 +501,7 @@ class DocumentSnapshotNode implements DocumentSnapshot {
   }
 }
 
-Timestamp _wrapTimestamp(node.Timestamp nativeInstance) =>
+Timestamp? _wrapTimestamp(node.Timestamp? nativeInstance) =>
     nativeInstance != null
         ? Timestamp(nativeInstance.seconds, nativeInstance.nanoseconds)
         : null;
@@ -524,7 +515,6 @@ DocumentChangeType _wrapDocumentChangeType(node.DocumentChangeType type) {
     case node.DocumentChangeType.modified:
       return DocumentChangeType.modified;
   }
-  return null;
 }
 
 class DocumentChangeNode implements DocumentChange {
@@ -543,7 +533,7 @@ class DocumentChangeNode implements DocumentChange {
   int get oldIndex => nativeInstance.oldIndex;
 
   @override
-  DocumentChangeType get type => _wrapDocumentChangeType(nativeInstance.type);
+  DocumentChangeType get type => _wrapDocumentChangeType(nativeInstance.type!);
 }
 
 class QuerySnapshotNode implements QuerySnapshot {
@@ -555,20 +545,20 @@ class QuerySnapshotNode implements QuerySnapshot {
   List<DocumentSnapshot> get docs {
     var implDocs = nativeInstance.documents;
     if (implDocs == null) {
-      return null;
+      return <DocumentSnapshot>[];
     }
-    var docs = <DocumentSnapshot>[];
+    var docs = <DocumentSnapshot?>[];
     for (var implDocumentSnapshot in implDocs) {
       docs.add(_wrapDocumentSnapshot(implDocumentSnapshot));
     }
-    return docs;
+    return docs.cast<DocumentSnapshot>();
   }
 
   @override
   List<DocumentChange> get documentChanges {
     var changes = <DocumentChange>[];
     if (nativeInstance.documentChanges != null) {
-      for (var nativeChange in nativeInstance.documentChanges) {
+      for (var nativeChange in nativeInstance.documentChanges!) {
         changes.add(DocumentChangeNode(nativeChange));
       }
     }
@@ -582,45 +572,45 @@ class TransactionNode implements Transaction {
   TransactionNode(this.nativeInstance);
   @override
   void delete(DocumentReference documentRef) {
-    nativeInstance.delete(_unwrapDocumentReference(documentRef));
+    nativeInstance.delete(_unwrapDocumentReference(documentRef)!);
   }
 
   @override
   Future<DocumentSnapshot> get(DocumentReference documentRef) async =>
       _wrapDocumentSnapshot(
-          await nativeInstance.get(_unwrapDocumentReference(documentRef)));
+          await nativeInstance.get(_unwrapDocumentReference(documentRef)!));
 
   @override
   void set(DocumentReference documentRef, Map<String, dynamic> data,
-      [SetOptions options]) {
-    nativeInstance.set(_unwrapDocumentReference(documentRef),
+      [SetOptions? options]) {
+    nativeInstance.set(_unwrapDocumentReference(documentRef)!,
         documentDataToNativeDocumentData(DocumentData(data)),
         merge: options?.merge ?? false);
   }
 
   @override
   void update(DocumentReference documentRef, Map<String, dynamic> data) {
-    nativeInstance.update(_unwrapDocumentReference(documentRef),
-        documentDataToNativeUpdateData(DocumentData(data)));
+    nativeInstance.update(_unwrapDocumentReference(documentRef)!,
+        documentDataToNativeUpdateData(DocumentData(data))!);
   }
 }
 
 QueryNode _wrapQuery(node.DocumentQuery nativeInstance) =>
-    nativeInstance != null ? QueryNode(nativeInstance) : null;
+    QueryNode(nativeInstance);
 
 DocumentSnapshotNode _wrapDocumentSnapshot(
         node.DocumentSnapshot nativeInstance) =>
-    nativeInstance != null ? DocumentSnapshotNode(nativeInstance) : null;
+    DocumentSnapshotNode(nativeInstance);
 
 List<DocumentSnapshotNode> _wrapDocumentSnapshots(
         Iterable<node.DocumentSnapshot> nativeInstances) =>
     nativeInstances.map(_wrapDocumentSnapshot).toList(growable: false);
 
-node.DocumentSnapshot _unwrapDocumentSnapshot(DocumentSnapshot snapshot) =>
+node.DocumentSnapshot? _unwrapDocumentSnapshot(DocumentSnapshot? snapshot) =>
     snapshot != null ? (snapshot as DocumentSnapshotNode).nativeInstance : null;
 
 QuerySnapshotNode _wrapQuerySnapshot(node.QuerySnapshot nativeInstance) =>
-    nativeInstance != null ? QuerySnapshotNode._(nativeInstance) : null;
+    QuerySnapshotNode._(nativeInstance);
 
-node.SetOptions _unwrapSetOptions(SetOptions options) =>
+node.SetOptions? _unwrapSetOptions(SetOptions? options) =>
     options != null ? node.SetOptions(merge: options.merge == true) : null;

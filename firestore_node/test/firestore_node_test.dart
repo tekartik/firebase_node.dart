@@ -7,7 +7,7 @@ import 'package:tekartik_firebase_firestore_test/firestore_test.dart';
 import 'package:tekartik_firebase_node/firebase_node.dart';
 import 'package:test/test.dart';
 
-var _env = platformContextNode.node.environment;
+var _env = platformContextNode.node!.environment;
 
 void main() {
   test('app', () {
