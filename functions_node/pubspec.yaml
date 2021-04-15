@@ -75,7 +75,7 @@ dev_dependencies:
     version: '>=0.2.1'
   tekartik_http_node:
     git:
-      url: git://github.com/tekartik/http.dart
+      url: git://github.com/tekartik/common_node.dart
       path: http_node
       ref: dart2
     version: '>=0.4.0+1'

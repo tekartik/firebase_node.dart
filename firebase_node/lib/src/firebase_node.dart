@@ -11,7 +11,7 @@ import 'package:tekartik_firebase/firebase_admin.dart';
 // ignore: implementation_imports
 import 'package:tekartik_firebase/src/firebase_mixin.dart';
 
-FirebaseNode _firebaseNode;
+FirebaseNode? _firebaseNode;
 
 FirebaseNode get firebaseNode =>
     _firebaseNode ??= FirebaseNode._(native.FirebaseAdmin.instance);
@@ -25,7 +25,7 @@ class FirebaseAdminCredentialServiceNode
   @override
   FirebaseAdminCredential applicationDefault() {
     var credential = nativeInstance.applicationDefault();
-    return credential != null ? FirebaseAdminCredentialNode(credential) : null;
+    return FirebaseAdminCredentialNode(credential);
   }
 
   @override
@@ -45,9 +45,7 @@ class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
     var future = promiseToFuture(
         callMethod(nativeInstance, 'getAccessToken', []) as Promise);
     var nativeToken = (await future) as native_js.AccessToken;
-    return nativeToken != null
-        ? FirebaseAdminAccessTokenNode(nativeToken)
-        : null;
+    return FirebaseAdminAccessTokenNode(nativeToken);
   }
 }
 
@@ -60,7 +58,7 @@ class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
   String get data => nativeInstance.access_token;
 
   @override
-  int get expiresIn => nativeInstance.expires_in?.toInt();
+  int get expiresIn => nativeInstance.expires_in.toInt();
 }
 
 //import 'package:firebase_functions_interop/
@@ -70,7 +68,7 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   final native.FirebaseAdmin nativeInstance;
 
   @override
-  App initializeApp({AppOptions options, String name}) {
+  App initializeApp({AppOptions? options, String? name}) {
     // Invalid Firebase app options passed as the first argument to initializeApp() for the app named "test". Options must be a non-null object.
     // if options is null, it means we are using it in a server
     // hence no name...
@@ -83,21 +81,21 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     return app;
   }
 
-  final _apps = <String, AppNode>{};
+  final _apps = <String?, AppNode>{};
 
   @override
-  App app({String name}) {
-    return _apps[name];
+  App app({String? name}) {
+    return _apps[name]!;
   }
 
-  FirebaseAdminCredentialServiceNode _credentialService;
+  FirebaseAdminCredentialServiceNode? _credentialService;
 
   @override
   FirebaseAdminCredentialService get credential => _credentialService ??=
-      FirebaseAdminCredentialServiceNode(native_js.admin.credential);
+      FirebaseAdminCredentialServiceNode(native_js.admin!.credential);
 }
 
-native.AppOptions _unwrapAppOptions(AppOptions appOptions) {
+native.AppOptions? _unwrapAppOptions(AppOptions? appOptions) {
   if (appOptions != null) {
     return native.AppOptions(
         databaseURL: appOptions.databaseURL,
@@ -108,29 +106,26 @@ native.AppOptions _unwrapAppOptions(AppOptions appOptions) {
 }
 
 AppOptions _wrapAppOptions(native.AppOptions nativeInstance) {
-  if (nativeInstance != null) {
-    return AppOptions(
-        databaseURL: nativeInstance.databaseURL,
-        projectId: nativeInstance.projectId,
-        storageBucket: nativeInstance.storageBucket);
-  }
-  return null;
+  return AppOptions(
+      databaseURL: nativeInstance.databaseURL,
+      projectId: nativeInstance.projectId,
+      storageBucket: nativeInstance.storageBucket);
 }
 
 class AppNode with FirebaseAppMixin {
-  final native.App nativeInstance;
+  final native.App? nativeInstance;
 
   AppNode(this.nativeInstance);
 
   @override
-  String get name => nativeInstance.name;
+  String get name => nativeInstance!.name;
 
   @override
   Future delete() async {
-    await nativeInstance.delete();
+    await nativeInstance!.delete();
     await closeServices();
   }
 
   @override
-  AppOptions get options => _wrapAppOptions(nativeInstance.options);
+  AppOptions? get options => _wrapAppOptions(nativeInstance!.options);
 }
