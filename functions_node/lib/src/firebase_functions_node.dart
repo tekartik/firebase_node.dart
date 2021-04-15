@@ -9,7 +9,7 @@ import 'package:tekartik_firebase_functions_node/src/firebase_functions_pubsub_n
 import 'firebase_functions_https_node.dart';
 import 'import_node.dart';
 
-FirebaseFunctionsNode _firebaseFunctionsNode;
+FirebaseFunctionsNode? _firebaseFunctionsNode;
 
 FirebaseFunctionsHttp get firebaseFunctionsNode =>
     _firebaseFunctionsNode ??= FirebaseFunctionsNode(impl.functions);
@@ -19,18 +19,18 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp
     implements common.FirebaseFunctions {
   final impl.FirebaseFunctions implFunctions;
 
-  common.HttpsFunctions _https;
+  common.HttpsFunctions? _https;
 
   @override
   common.HttpsFunctions get https => _https ??= HttpsFunctionsNode(this);
 
-  common.FirestoreFunctions _firestore;
+  common.FirestoreFunctions? _firestore;
 
   @override
   common.FirestoreFunctions get firestore =>
       _firestore ??= FirestoreFunctionsNode(this);
 
-  common.PubsubFunctions _pubsub;
+  common.PubsubFunctions? _pubsub;
 
   @override
   common.PubsubFunctions get pubsub => _pubsub ??= PubsubFunctionsNode(this);
@@ -66,7 +66,7 @@ abstract class FirebaseFunctionNode implements common.FirebaseFunction {
   dynamic get value;
 }
 
-String get firebaseProjectId {
+String? get firebaseProjectId {
   return Platform.environment['GCLOUD_PROJECT'];
 }
 

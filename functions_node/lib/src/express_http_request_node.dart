@@ -4,8 +4,8 @@ import 'package:tekartik_firebase_functions/firebase_functions.dart';
 
 // ignore: implementation_imports
 import 'package:tekartik_http/http_server.dart';
-import 'package:tekartik_http_node/src/http_server_node.dart';
-import 'package:tekartik_http_node/src/node/http_server.dart';
+import 'package:tekartik_http_node/src/http_server_node.dart'; // ignore: implementation_imports
+import 'package:tekartik_http_node/src/node/http_server.dart'; // ignore: implementation_imports
 import 'import_node.dart';
 
 class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
@@ -20,7 +20,7 @@ class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
   @override
   dynamic get body => nativeInstance.body;
 
-  ExpressHttpResponse _response;
+  ExpressHttpResponse? _response;
 
   @override
   ExpressHttpResponse get response => _response ??=

@@ -1,14 +1,14 @@
 import 'package:tekartik_firebase_functions/ff_server.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
-import 'package:tekartik_firebase_functions_http/src/firebase_functions_http.dart'; // ignore: implementation_imports
 import 'package:tekartik_firebase_functions_http/ff_server.dart';
+import 'package:tekartik_firebase_functions_http/src/firebase_functions_http.dart'; // ignore: implementation_imports
 
 /// Allow running a main as a node or io app
 abstract class FirebaseFunctionsUniversal extends FirebaseFunctionsHttp {
   FirebaseFunctionsUniversal() : super();
 
   /// No effect on node
-  Future<FfServer> serve({int port});
+  Future<FfServer?> serve({int? port});
 }
 
 abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase
@@ -18,7 +18,7 @@ abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase
 
   /// No effect on node
   @override
-  Future<FfServer> serve({int port});
+  Future<FfServer> serve({int? port});
 }
 
 class FirebaseFunctionsHttpUniversal extends FirebaseFunctionsHttpBase
@@ -27,12 +27,9 @@ class FirebaseFunctionsHttpUniversal extends FirebaseFunctionsHttpBase
       : super(httpServerFactory);
 
   @override
-  Future<FfServer> serve({int port}) async {
+  Future<FfServer> serve({int? port}) async {
     var httpServer = await serveHttp(port: port);
-    if (httpServer != null) {
-      return FfServerHttp(httpServer);
-    }
-    return null;
+    return FfServerHttp(httpServer);
   }
 }
 

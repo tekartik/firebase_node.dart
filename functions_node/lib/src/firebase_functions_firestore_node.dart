@@ -115,9 +115,8 @@ class EventContextNode implements common.EventContext {
 
   /// Timestamp for the event.
   @override
-  firestore.Timestamp get timestamp => implEventContext.timestamp == null
-      ? null
-      : firestore.Timestamp.fromDateTime(implEventContext.timestamp);
+  firestore.Timestamp get timestamp =>
+      firestore.Timestamp.fromDateTime(implEventContext.timestamp);
 
   @override
   String toString() {

@@ -10,7 +10,7 @@ class FfServerNode implements FfServer {
   Future<void> close() async {}
 
   @override
-  Uri get uri => null;
+  Uri get uri => throw UnsupportedError('TODO?');
 }
 
 /// Node implementation
@@ -21,7 +21,7 @@ class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNode
 
   /// Dummy implementation on node. Must be served using `firebase serve`
   @override
-  Future<FfServer> serve({int port}) async => FfServerNode();
+  Future<FfServer> serve({int? port}) async => FfServerNode();
 }
 
 FirebaseFunctionsUniversal firebaseFunctionsUniversal =
