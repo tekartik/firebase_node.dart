@@ -77,8 +77,9 @@ class FirestoreNode implements Firestore {
   WriteBatch batch() => WriteBatchNode(nativeInstance.batch());
 
   @override
-  Future runTransaction(Function(Transaction transaction) updateFunction) =>
-      nativeInstance.runTransaction((nativeTransaction) async {
+  Future<T> runTransaction<T>(
+          FutureOr<T> Function(Transaction transaction) updateFunction) =>
+      nativeInstance.runTransaction<T>((nativeTransaction) async {
         var transaction = TransactionNode(nativeTransaction);
         return await updateFunction(transaction);
       });
