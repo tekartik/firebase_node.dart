@@ -23,13 +23,13 @@ class FirebaseAdminCredentialServiceNode
   FirebaseAdminCredentialServiceNode(this.nativeInstance);
 
   @override
-  FirebaseAdminCredential applicationDefault() {
+  FirebaseAdminCredential? applicationDefault() {
     var credential = nativeInstance.applicationDefault();
     return FirebaseAdminCredentialNode(credential);
   }
 
   @override
-  void setApplicationDefault(FirebaseAdminCredential credential) {
+  void setApplicationDefault(FirebaseAdminCredential? credential) {
     throw UnsupportedError('setApplicationDefault not supported on node');
   }
 }

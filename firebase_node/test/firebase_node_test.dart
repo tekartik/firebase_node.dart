@@ -25,7 +25,7 @@ void main() {
       test('access token', () async {
         var app = await firebaseNode.initializeAppAsync(name: 'admin');
         print((await firebaseNode.credential
-                .applicationDefault()
+                .applicationDefault()!
                 .getAccessToken())
             .data);
         print(app.options);
