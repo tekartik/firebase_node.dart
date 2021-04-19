@@ -4,7 +4,7 @@ version: 0.9.0
 publish_to: none
 
 environment:
-  sdk: '>=2.9.0-0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   collection: '>=1.14.10'
@@ -22,8 +22,8 @@ dependencies:
       path: firebase_node
       ref: null_safety
     version: '>=0.4.0+0'
-  firebase_functions_interop: ">=1.0.0-dev.11.0"
-  firebase_admin_interop: ">=1.1.0"
+  # firebase_functions_interop: ">=1.0.0-dev.11.0"
+  # firebase_admin_interop: ">=1.1.0"
 
 dev_dependencies:
   test: ">=1.2.0"
@@ -33,8 +33,8 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/build_utils.dart
       ref: null_safety
-  build_runner: ">=0.9.1"
-  build_node_compilers: ">=0.1.8"
+  #build_runner: ">=0.9.1"
+  # build_node_compilers: ">=0.1.8"
   build_test: ">=0.10.3"
   process_run: '>=0.10.0+1'
   tekartik_app_node_build:
@@ -49,6 +49,13 @@ dev_dependencies:
       path: auth_test
       ref: null_safety
     version: '>=0.4.0+0'
+  # needed node dependencies
+  build_runner:
+  tekartik_build_node:
+    git:
+      url: git://github.com/tekartik/build_node.dart
+      path: packages/build_node
+      ref: null_safety
 
 dependency_overrides:
   tekartik_firebase_node:

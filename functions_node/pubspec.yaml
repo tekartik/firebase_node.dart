@@ -33,6 +33,11 @@ dependencies:
       path: node_utils
       ref: null_safety
     version: '>=0.1.0'
+  tekartik_firebase_auth_node:
+    git:
+      url: git://github.com/tekartik/firebase_node.dart
+      path: auth_node
+      ref: null_safety
   sembast: '>=1.9.0-dev.1'
   uuid: '>=1.0.0'
   # firebase_functions_interop: ">=1.0.0 <1.0.2"
@@ -98,9 +103,13 @@ dependency_overrides:
     path: ../firestore_node
   tekartik_firebase_node:
     path: ../firebase_node
+  tekartik_firebase_auth_node:
+    path: ../auth_node
   # temp
   tekartik_http_node:
     path: ../../../tekartik/common_node.dart/http_node
+  tekartik_firebase_functions:
+    path: ../../../tekartik/firebase_functions.dart/firebase_functions
   # tekartik_app_node_build:
   #  path: ../../../tekartik/app_node_utils.dart/app_build
   # Temp
