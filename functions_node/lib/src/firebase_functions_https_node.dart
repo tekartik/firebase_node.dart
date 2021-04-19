@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
@@ -24,9 +26,10 @@ class HttpsFunctionsNode
 
   @override
   common.CallFunction onCall(common.CallHandler handler) {
-    void _handle(dynamic data, impl.CallableContext context) {
+    FutureOr<dynamic> _handle(
+        dynamic data, impl.CallableContext context) async {
       var _request = CallRequestNode(data, context);
-      handler(_request);
+      return handler(_request);
     }
 
     return CallFunctionNode(functions.implFunctions.https.onCall(_handle));

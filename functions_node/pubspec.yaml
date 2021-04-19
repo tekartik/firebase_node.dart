@@ -1,6 +1,6 @@
 name: tekartik_firebase_functions_node
 description: Firebase functions node
-version: 0.3.6+3
+version: 0.4.0
 publish_to: none
 #homepage: https://www.example.com
 #author: alex <email@example.com>
@@ -105,6 +105,10 @@ dependency_overrides:
     path: ../firebase_node
   tekartik_firebase_auth_node:
     path: ../auth_node
+  # Temp
+  # firebase_functions_interop:
+  #  path: /media/big_hd/local/extdevx/git/github.com/tekartikdev/firebase-functions-interop
+
   # temp
   # tekartik_http_node:
   #  path: ../../../tekartik/common_node.dart/http_node

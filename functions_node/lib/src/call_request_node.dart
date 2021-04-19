@@ -11,7 +11,7 @@ class CallRequestNode implements CallRequest {
   @override
   late final CallContext context;
 
-  CallRequestNode(this.data, impl.CallableContext callableContext) {
+  CallRequestNode(this.data, impl.CallableContext? callableContext) {
     context = CallContextNode(callableContext);
   }
 
@@ -20,7 +20,7 @@ class CallRequestNode implements CallRequest {
 }
 
 class CallContextNode with CallContextMixin implements CallContext {
-  final impl.CallableContext nativeInstance;
+  final impl.CallableContext? nativeInstance;
 
   CallContextNode(this.nativeInstance);
 
@@ -29,18 +29,18 @@ class CallContextNode with CallContextMixin implements CallContext {
 }
 
 class CallContextAuthNode with CallContextAuthMixin implements CallContextAuth {
-  final impl.CallableContext nativeInstance;
+  final impl.CallableContext? nativeInstance;
 
   CallContextAuthNode(this.nativeInstance);
 
   @override
-  String? get uid => nativeInstance.authUid;
+  String? get uid => nativeInstance?.authUid;
 
   @override
   DecodedIdToken? get token {
-    if (nativeInstance.authToken == null) {
+    if (nativeInstance?.authToken == null) {
       return null;
     }
-    return impl.DecodedIdTokenNode(nativeInstance.authToken!);
+    return impl.DecodedIdTokenNode(nativeInstance!.authToken!);
   }
 }
