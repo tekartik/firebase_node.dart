@@ -3,10 +3,10 @@ library tekartik_firebase_storage_node.storage_node_test;
 
 import 'package:node_interop/node_interop.dart' as interop;
 import 'package:node_interop/util.dart' as interop;
-import 'package:tekartik_firebase_node/firebase_node.dart' show firebaseNode;
 import 'package:tekartik_common_utils/common_utils_import.dart';
-import 'package:tekartik_firebase_storage_node/storage_node.dart';
+import 'package:tekartik_firebase_node/firebase_node.dart' show firebaseNode;
 import 'package:tekartik_firebase_storage/storage.dart';
+import 'package:tekartik_firebase_storage_node/storage_node.dart';
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
 import 'package:test/test.dart';
 

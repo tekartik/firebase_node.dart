@@ -1,12 +1,13 @@
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
-import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth_node/src/auth_node.dart' // ignore: implementation_imports
     as impl;
+import 'package:tekartik_firebase_functions/firebase_functions.dart';
 
-class CallRequestNode implements CallRequest {
-  final dynamic data;
+class CallRequestNode with CallRequestMixin implements CallRequest {
+  @override
+  final Object? data;
 
   @override
   late final CallContext context;
