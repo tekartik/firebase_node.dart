@@ -3,16 +3,16 @@ library tekartik_firebase_storage_node.storage_node_test;
 
 import 'package:node_interop/node_interop.dart' as interop;
 import 'package:node_interop/util.dart' as interop;
-import 'package:tekartik_firebase_node/firebase_node.dart' show firebaseNode;
 import 'package:tekartik_common_utils/common_utils_import.dart';
-import 'package:tekartik_firebase_storage_node/storage_node.dart';
+import 'package:tekartik_firebase_node/firebase_node.dart' show firebaseNode;
 import 'package:tekartik_firebase_storage/storage.dart';
+import 'package:tekartik_firebase_storage_node/storage_node.dart';
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
 import 'package:test/test.dart';
 
 import 'test_environment_client.dart';
 
-Map errorToMap(e) {
+Map errorToMap(Object e) {
   var map = <String, dynamic>{};
   for (var key in interop.objectKeys(e)) {
     //print('$key ${e[key]}');
@@ -37,7 +37,7 @@ Future<void> main() async {
       setUpAll(() async {});
       runApp(app,
           storageService: storageServiceNode,
-          storageOptions: storageOptionsFromEnv);
+          storageOptions: storageOptionsFromEnv!);
       tearDownAll(() {
         return app.delete();
       });
@@ -61,16 +61,16 @@ Future<void> main() async {
     */
 
       test('app', () {
-        print(app.options.apiKey);
-        print(app.options.storageBucket);
-        print(app.options.projectId);
+        print(app.options!.apiKey);
+        print(app.options!.storageBucket);
+        print(app.options!.projectId);
       });
 
       test('custom', () async {
         var storageNode = storageServiceNode.storage(app) as StorageNode;
         var bucketNode =
-            storageNode.bucket(storageOptionsFromEnv.bucket) as BucketNode;
-        var query = GetFilesOptions(
+            storageNode.bucket(storageOptionsFromEnv!.bucket) as BucketNode;
+        GetFilesOptions? query = GetFilesOptions(
             maxResults: 10, prefix: 'tests', autoPaginate: false);
         while (true) {
           var response = await bucketNode.getFiles(query);

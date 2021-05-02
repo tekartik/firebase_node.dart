@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
-import 'package:tekartik_app_node_build/gcf_build.dart';
 import 'package:process_run/shell_run.dart';
+import 'package:tekartik_app_node_build/gcf_build.dart';
 
 String buildFolder =
     join('.dart_tool', 'tekartik_firebase_function_node', 'build');

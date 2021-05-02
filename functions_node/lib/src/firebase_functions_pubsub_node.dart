@@ -20,7 +20,7 @@ class PubsubFunctionsNode implements common.PubsubFunctions {
 class PubsubFunctionNode extends FirebaseFunctionNode
     implements common.PubsubFunction {
   // ignore: unused_field
-  final _implCloudFonction;
+  final dynamic _implCloudFonction;
 
   PubsubFunctionNode(this._implCloudFonction);
 

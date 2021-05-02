@@ -2,17 +2,20 @@ targets:
   $default:
     sources:
       - $package$
-      - lib/**
-      - test/**
-      - node/**
-      - bin/**
+      - "bin/**"
+      - "example/**"
+      - "lib/**"
+      - "test/**"
+      - "node_functions/**"
     builders:
       build_web_compilers|entrypoint:
         generate_for:
           - bin/**
+          - node_functions/**
+          - test/**
         options:
           compiler: dart2js
-
           # List any dart2js specific args here, or omit it.
           # dart2js_args:
           # - --checked
+          # - --no-sound-null-safety

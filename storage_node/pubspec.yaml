@@ -6,7 +6,7 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.10.0-0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   collection: '>=1.14.10'
@@ -15,29 +15,27 @@ dependencies:
   uuid: '>=1.0.0'
   tekartik_firebase_node:
     git:
-      url: git://github.com/tekartik/firebase.dart
+      url: git://github.com/tekartik/firebase_node.dart
       path: firebase_node
-      ref: dart2
+      ref: null_safety
     version: '>=0.4.0'
   tekartik_firebase_storage:
     git:
       url: git://github.com/tekartik/firebase_storage.dart
       path: storage
-      ref: dart2
+      ref: null_safety
     version: '>=0.4.0'
   tekartik_firebase_storage_fs:
     git:
       url: git://github.com/tekartik/firebase_storage.dart
       path: storage_fs
-      ref: dart2
+      ref: null_safety
     version: '>=0.4.2'
-  firebase_functions_interop: ">=1.0.0-dev.11.0"
-  firebase_admin_interop: ">=1.0.0-dev.20.0"
   tekartik_app_node_utils:
     git:
       url: git://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
 
 dev_dependencies:
@@ -47,15 +45,12 @@ dev_dependencies:
   tekartik_build_utils:
     git:
       url: git://github.com/tekartik/build_utils.dart
-      ref: dart2
-  build_runner: ">=0.9.1"
-  build_node_compilers: ">=0.1.8"
-  build_test: ">=0.10.3"
+      ref: null_safety
   tekartik_firebase_storage_test:
     git:
       url: git://github.com/tekartik/firebase_storage.dart
       path: storage_test
-      ref: dart2
+      ref: null_safety
     version: '>=0.4.0'
   process_run: '>=0.10.2'
 
@@ -64,9 +59,15 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
-
+  # needed node dependencies
+  build_runner:
+  tekartik_build_node:
+    git:
+      url: git://github.com/tekartik/build_node.dart
+      path: packages/build_node
+      ref: null_safety
 dependency_overrides:
   tekartik_firebase_node:
     path: ../firebase_node

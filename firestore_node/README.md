@@ -5,7 +5,7 @@
     git:
       url: git://github.com/tekartik/firebase_node.dart
       path: firestore_node
-      ref: dart2
+      ref: null_safety
     version: '>=0.8.1'
 ```
 ## Test setup

@@ -17,7 +17,7 @@ class AuthServiceNode with AuthServiceMixin implements AuthService {
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return AuthNode(appNode.nativeInstance.auth());
+      return AuthNode(appNode.nativeInstance!.auth());
     });
   }
 
@@ -25,7 +25,7 @@ class AuthServiceNode with AuthServiceMixin implements AuthService {
   bool get supportsCurrentUser => false;
 }
 
-AuthServiceNode _authServiceNode;
+AuthServiceNode? _authServiceNode;
 
 AuthServiceNode get authServiceNode => _authServiceNode ??= AuthServiceNode();
 
@@ -40,10 +40,10 @@ class ListUsersResultNode implements ListUsersResult {
   String get pageToken => nativeInstance.pageToken;
 
   @override
-  List<UserRecord> get users => nativeInstance.users
-      ?.cast<node.UserRecord>()
-      ?.map(wrapUserRecord)
-      ?.toList(growable: false);
+  List<UserRecord?> get users => nativeInstance.users
+      .cast<node.UserRecord?>()
+      .map(wrapUserRecord)
+      .toList(growable: false);
 }
 
 class UserMetadataNode implements UserMetadata {
@@ -103,7 +103,7 @@ class UserRecordNode implements UserRecord {
   bool get emailVerified => nativeInstance.emailVerified;
 
   @override
-  UserMetadata get metadata => wrapUserMetadata(nativeInstance.metadata);
+  UserMetadata get metadata => wrapUserMetadata(nativeInstance.metadata)!;
 
   @override
   String get passwordHash => nativeInstance.passwordHash;
@@ -119,9 +119,9 @@ class UserRecordNode implements UserRecord {
 
   @override
   List<UserInfo> get providerData => nativeInstance.providerData
-      ?.cast<node.UserInfo>()
-      ?.map((nativeUserInfo) => wrapUserInfo(nativeUserInfo))
-      ?.toList(growable: false);
+      .cast<node.UserInfo>()
+      .map((nativeUserInfo) => wrapUserInfo(nativeUserInfo)!)
+      .toList(growable: false);
 
   @override
   String get tokensValidAfterTime => nativeInstance.tokensValidAfterTime;
@@ -140,19 +140,19 @@ class DecodedIdTokenNode implements DecodedIdToken {
   String get uid => nativeInstance.uid;
 }
 
-ListUsersResult wrapListUsersResult(
-        node.ListUsersResult nativeListUsersResult) =>
+ListUsersResult? wrapListUsersResult(
+        node.ListUsersResult? nativeListUsersResult) =>
     nativeListUsersResult != null
         ? ListUsersResultNode(nativeListUsersResult)
         : null;
 
-UserInfo wrapUserInfo(node.UserInfo nativeUserInfo) =>
+UserInfo? wrapUserInfo(node.UserInfo? nativeUserInfo) =>
     nativeUserInfo != null ? UserInfoNode(nativeUserInfo) : null;
 
-UserRecord wrapUserRecord(node.UserRecord nativeUserRecord) =>
+UserRecord? wrapUserRecord(node.UserRecord? nativeUserRecord) =>
     nativeUserRecord != null ? UserRecordNode(nativeUserRecord) : null;
 
-UserMetadata wrapUserMetadata(node.UserMetadata nativeUserMetadata) =>
+UserMetadata? wrapUserMetadata(node.UserMetadata? nativeUserMetadata) =>
     nativeUserMetadata != null ? UserMetadataNode(nativeUserMetadata) : null;
 
 class AuthNode with AuthMixin {
@@ -165,18 +165,19 @@ class AuthNode with AuthMixin {
   ///
   /// This is used to retrieve all the users of a specified project in batches.
   @override
-  Future<ListUsersResult> listUsers({int maxResults, String pageToken}) async {
+  Future<ListUsersResult> listUsers(
+      {int? maxResults, String? pageToken}) async {
     return wrapListUsersResult(
-        await nativeInstance.listUsers(maxResults, pageToken));
+        await nativeInstance.listUsers(maxResults, pageToken))!;
   }
 
   @override
   Future<UserRecord> getUserByEmail(String email) async =>
-      wrapUserRecord(await nativeInstance.getUserByEmail(email));
+      wrapUserRecord(await nativeInstance.getUserByEmail(email))!;
 
   @override
   Future<UserRecord> getUser(String uid) async =>
-      wrapUserRecord(await nativeInstance.getUser(uid));
+      wrapUserRecord(await nativeInstance.getUser(uid))!;
 
   @override
   User get currentUser =>
@@ -188,14 +189,10 @@ class AuthNode with AuthMixin {
 
   @override
   Future<DecodedIdToken> verifyIdToken(String idToken,
-      {bool checkRevoked}) async {
+      {bool? checkRevoked}) async {
     var nativeDecodedIdToken =
         await nativeInstance.verifyIdToken(idToken, checkRevoked);
-    if (nativeDecodedIdToken == null) {
-      return null;
-    } else {
-      return DecodedIdTokenNode(nativeDecodedIdToken);
-    }
+    return DecodedIdTokenNode(nativeDecodedIdToken);
   }
 
   @override
@@ -203,4 +200,4 @@ class AuthNode with AuthMixin {
       throw UnsupportedError('reloadCurrentUser not supported for node');
 }
 
-AuthNode auth(node.Auth _impl) => _impl != null ? AuthNode(_impl) : null;
+AuthNode auth(node.Auth _impl) => AuthNode(_impl);

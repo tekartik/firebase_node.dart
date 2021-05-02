@@ -20,7 +20,7 @@ import 'package:test/test.dart';
 String buildFolder = join('build', 'tekartik_firebase_function_node');
 
 @deprecated
-Future<Process> firebaseBuildCopyAndServe({TestContext context}) async {
+Future<Process> firebaseBuildCopyAndServe({TestContext? context}) async {
   await runCmd(
       PubCmd(['run', 'build_runner', 'build', '--output', 'bin:$buildFolder']));
   await copyFile(File(join(buildFolder, 'main.dart.js')),
@@ -33,7 +33,8 @@ Future<Process> firebaseBuildCopyAndServe({TestContext context}) async {
   print('firebase serve');
   //await Shell().cd('deploy').run('firebase serve');
 
-  var process = await Process.start(await which('firebase'), ['serve'],
+  var process = await Process.start(
+      await (which('firebase') as FutureOr<String>), ['serve'],
       workingDirectory: 'deploy');
   process.stdout
       .transform(const Utf8Decoder())
@@ -44,7 +45,7 @@ Future<Process> firebaseBuildCopyAndServe({TestContext context}) async {
     // +  functions: echoFragment: http://localhost:5000/tekartik-free-dev/us-central1/echoFragment
     // +  functions: echoQuery: http://localhost:5000/tekartik-free-dev/us-central1/echoQuery
     print('serve $line');
-    if (line.contains(url.join(context.baseUrl, 'echo'))) {
+    if (line.contains(url.join(context!.baseUrl!, 'echo'))) {
       if (!completer.isCompleted) {
         completer.complete(process);
       }
@@ -102,7 +103,7 @@ Future main() async {
       await testServe();
     }, skip: true); // manual experiment on serve only
     group('echo', () {
-      Process process;
+      Process? process;
       setUpAll(() async {
         //process = await firebaseBuildCopyAndServe(context: context);
         await gcfNodeBuild();
@@ -147,17 +148,16 @@ class ShellLinesController {
 /// Basic line streaming. Assuming system encoding
 Stream<String> streamLines(Stream<List<int>> stream,
     {Encoding encoding = systemEncoding}) {
-  StreamSubscription subscription;
-  List<int> currentLine;
+  StreamSubscription? subscription;
+  List<int>? currentLine;
   const endOfLine = 10;
   const lineFeed = 13;
-  StreamController<String> ctlr;
-  encoding ??= systemEncoding;
+  late StreamController<String> ctlr;
   ctlr = StreamController<String>(onListen: () {
     void addCurrentLine() {
       if (currentLine?.isNotEmpty ?? false) {
         try {
-          ctlr.add(systemEncoding.decode(currentLine));
+          ctlr.add(systemEncoding.decode(currentLine!));
         } catch (_) {
           // Ignore nad encoded line
           print('ignoring: $currentLine');
@@ -170,9 +170,9 @@ Stream<String> streamLines(Stream<List<int>> stream,
       if (currentLine == null) {
         currentLine = data;
       } else {
-        var newCurrentLine = Uint8List(currentLine.length + data.length);
-        newCurrentLine.setAll(0, currentLine);
-        newCurrentLine.setAll(currentLine.length, data);
+        var newCurrentLine = Uint8List(currentLine!.length + data.length);
+        newCurrentLine.setAll(0, currentLine!);
+        newCurrentLine.setAll(currentLine!.length, data);
         currentLine = newCurrentLine;
       }
     }

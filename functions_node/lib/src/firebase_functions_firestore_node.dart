@@ -1,16 +1,18 @@
+import 'package:firebase_admin_interop/firebase_admin_interop.dart' as node;
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
+import 'package:tekartik_firebase_firestore/firestore.dart' as firestore;
 import 'package:tekartik_firebase_firestore_node/src/firestore_node.dart' // ignore: implementation_imports
     as firestore_node;
-import 'package:tekartik_firebase_firestore/firestore.dart' as firestore;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
-import 'package:firebase_admin_interop/firebase_admin_interop.dart' as node;
+
 import 'firebase_functions_node.dart';
 
 class FirestoreFunctionsNode implements common.FirestoreFunctions {
   final FirebaseFunctionsNode functions;
 
   FirestoreFunctionsNode(this.functions);
+
   @override
   common.DocumentBuilder document(String path) =>
       DocumentBuilderNode(functions.implFunctions.firestore.document(path));
@@ -115,9 +117,8 @@ class EventContextNode implements common.EventContext {
 
   /// Timestamp for the event.
   @override
-  firestore.Timestamp get timestamp => implEventContext.timestamp == null
-      ? null
-      : firestore.Timestamp.fromDateTime(implEventContext.timestamp);
+  firestore.Timestamp get timestamp =>
+      firestore.Timestamp.fromDateTime(implEventContext.timestamp);
 
   @override
   String toString() {

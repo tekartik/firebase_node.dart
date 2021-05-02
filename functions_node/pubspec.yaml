@@ -1,99 +1,121 @@
 name: tekartik_firebase_functions_node
 description: Firebase functions node
-version: 0.3.6+3
+version: 0.4.0
 publish_to: none
 #homepage: https://www.example.com
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.9.0-0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  # Temp nnbd
-  pedantic: '<1.10.0-0'
-  collection: '<1.15.0-0'
-  synchronized: '<3.0.0-0'
-  js: '<0.6.3-0'
-
   tekartik_firebase_functions:
     git:
       url: git://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
-      ref: dart2
+      ref: null_safety
     version: '>=0.3.5'
   tekartik_firebase_functions_io:
     git:
       url: git://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_io
-      ref: dart2
-    version: '>=0.3.6'
+      ref: null_safety
+    version: '>=0.4.0'
   tekartik_firebase_firestore_node:
     git:
-      url: git://github.com/tekartik/firebase_node
+      url: git://github.com/tekartik/firebase_node.dart
       path: firestore_node
-      ref: dart2
+      ref: null_safety
     version: '>=0.8.0'
   tekartik_app_node_utils:
     git:
       url: git://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
+  tekartik_firebase_auth_node:
+    git:
+      url: git://github.com/tekartik/firebase_node.dart
+      path: auth_node
+      ref: null_safety
   sembast: '>=1.9.0-dev.1'
   uuid: '>=1.0.0'
   # firebase_functions_interop: ">=1.0.0 <1.0.2"
-  firebase_functions_interop: ">=1.0.1 <3.0.0"
+  # firebase_functions_interop: ">=1.0.1 <3.0.0"
   # node_io: ">=1.0.0-dev.10.0 <1.0.0"
-  node_io: '>=1.0.1+2 <3.0.0'
-  firebase_admin_interop: ">=1.1.0"
-
-  # Temp
-  path: '<1.8.0-0'
-  # node_interop: '<1.2.0'
-  # build_node_compilers: '<0.3.0'
-
+  # node_io: '>=1.0.1+2 <3.0.0'
+  # firebase_admin_interop: ">=1.1.0"
+  firebase_functions_interop:
+    git:
+      url: git://github.com/tekartikdev/firebase-functions-interop
+      ref: null_safety
+  tekartik_fs_node:
+    git:
+      url: git://github.com/tekartik/common_node.dart
+      path: fs_node
+      ref: null_safety
+    version: '>=0.4.0'
 dev_dependencies:
-
+  pedantic:
   tekartik_app_node_build:
     git:
       url: git://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart2
-    version: '>=0.1.0'
+      ref: null_safety
+    version: '>=0.3.0'
   test: "^1.2.0"
   dev_test: '>=0.13.3+12'
   grinder: any
   tekartik_build_utils:
     git:
       url: git://github.com/tekartik/build_utils.dart
-      ref: dart2
+      ref: null_safety
   tekartik_firebase_functions_test:
     git:
       url: git://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_test
-      ref: dart2
+      ref: null_safety
     version: '>=0.2.1'
   tekartik_http_node:
     git:
-      url: git://github.com/tekartik/http.dart
+      url: git://github.com/tekartik/common_node.dart
       path: http_node
-      ref: dart2
+      ref: null_safety
     version: '>=0.4.0+1'
   tekartik_http_io:
     git:
       url: git://github.com/tekartik/http.dart
       path: http_io
-      ref: dart2
+      ref: null_safety
     version: '>=0.1.0'
-  build_runner: ">=0.9.0"
-  build_node_compilers: ">=0.1.8"
   process_run: '>=0.11.1-dev.1'
+  # needed node dependencies
+  build_web_compilers:
+  build_runner:
+  tekartik_build_node:
+    git:
+      url: git://github.com/tekartik/build_node.dart
+      path: packages/build_node
+      ref: null_safety
 
 dependency_overrides:
   tekartik_firebase_firestore_node:
     path: ../firestore_node
   tekartik_firebase_node:
     path: ../firebase_node
+  tekartik_firebase_auth_node:
+    path: ../auth_node
+  # Temp
+  # firebase_functions_interop:
+  #  path: /media/big_hd/local/extdevx/git/github.com/tekartikdev/firebase-functions-interop
+
+  # temp
+  # tekartik_http_node:
+  #  path: ../../../tekartik/common_node.dart/http_node
+  # tekartik_firebase_functions:
+  #  path: ../../../tekartik/firebase_functions.dart/firebase_functions
+  # tekartik_app_node_build:
+  #  path: ../../../tekartik/app_node_utils.dart/app_build
   # Temp
   # tekartik_app_node_build:
   #   path: ../../app_node_utils.dart/app_build
