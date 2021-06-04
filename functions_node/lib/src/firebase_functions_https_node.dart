@@ -28,8 +28,12 @@ class HttpsFunctionsNode
   common.CallFunction onCall(common.CallHandler handler) {
     FutureOr<dynamic> _handle(
         dynamic data, impl.CallableContext context) async {
-      var _request = CallRequestNode(data, context);
-      return handler(_request);
+      try {
+        var _request = CallRequestNode(data, context);
+        return handler(_request);
+      } on common.HttpsError catch (e) {
+        throw impl.HttpsError(e.code, e.message, e.details);
+      }
     }
 
     return CallFunctionNode(functions.implFunctions.https.onCall(_handle));

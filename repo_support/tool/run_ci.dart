@@ -12,6 +12,7 @@ Future<void> main() async {
     'auth_node',
   ]) {
     var path = join(topDir, dir);
+    print('# dir');
     await nodePackageRunCi(path);
   }
 }
