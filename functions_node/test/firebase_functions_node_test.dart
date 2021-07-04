@@ -57,13 +57,13 @@ Future<Process> firebaseBuildCopyAndServe({TestContext? context}) async {
       .listen((line) {
     print('error: $line');
   });
-  unawaited(process.exitCode.then((exitCode) async {
+  process.exitCode.then((exitCode) async {
     if (!completer.isCompleted) {
       //await stderr.addStream(process.stderr);
       print('exitCode: $exitCode');
       completer.completeError('exitCode: $exitCode');
     }
-  }));
+  }).unawait();
 
   return completer.future;
 }

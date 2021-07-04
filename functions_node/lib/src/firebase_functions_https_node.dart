@@ -4,6 +4,7 @@ import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 import 'package:tekartik_firebase_functions_node/src/express_http_request_node.dart';
+import 'package:tekartik_firebase_functions_node/src/import.dart';
 
 import 'call_request_node.dart';
 import 'firebase_functions_node.dart';
@@ -26,11 +27,10 @@ class HttpsFunctionsNode
 
   @override
   common.CallFunction onCall(common.CallHandler handler) {
-    FutureOr<dynamic> _handle(
-        dynamic data, impl.CallableContext context) async {
+    Future<dynamic> _handle(dynamic data, impl.CallableContext context) async {
       try {
         var _request = CallRequestNode(data, context);
-        return handler(_request);
+        return await handler(_request);
       } on common.HttpsError catch (e) {
         throw impl.HttpsError(e.code, e.message, e.details);
       }
