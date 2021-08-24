@@ -19,7 +19,7 @@ import 'package:test/test.dart';
 
 String buildFolder = join('build', 'tekartik_firebase_function_node');
 
-@deprecated
+@Deprecated('Obsolete use build_node instead')
 Future<Process> firebaseBuildCopyAndServe({TestContext? context}) async {
   await runCmd(
       PubCmd(['run', 'build_runner', 'build', '--output', 'bin:$buildFolder']));
@@ -33,8 +33,7 @@ Future<Process> firebaseBuildCopyAndServe({TestContext? context}) async {
   print('firebase serve');
   //await Shell().cd('deploy').run('firebase serve');
 
-  var process = await Process.start(
-      await (which('firebase') as FutureOr<String>), ['serve'],
+  var process = await Process.start((await which('firebase'))!, ['serve'],
       workingDirectory: 'deploy');
   process.stdout
       .transform(const Utf8Decoder())

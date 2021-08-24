@@ -59,7 +59,8 @@ class FileNode with FileMixin implements File {
   FileNode(this.nativeInstance);
 
   @override
-  Future save(data) => promiseToFuture(nativeInstance.save(data));
+  Future save(/* String | List<int> */ dynamic content) =>
+      promiseToFuture(nativeInstance.save(content));
 
   @override
   Future<bool> exists() async {
