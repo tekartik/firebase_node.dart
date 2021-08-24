@@ -153,7 +153,6 @@ abstract class QueryMixin implements Query {
   Future<QuerySnapshot> get() async =>
       _wrapQuerySnapshot(await nativeInstance.get());
 
-  @deprecated
   @override
   Query select(List<String> fieldPaths) =>
       _wrapQuery(nativeInstance.select(fieldPaths));
