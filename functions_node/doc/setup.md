@@ -3,12 +3,25 @@
 - Follow the [node app setup](https://github.com/tekartik/app_node_utils.dart/tree/master/app_build) instructions
 - Add `firebase_functions` dependencies:
   ```yaml
-  tekartik_firebase_functions_node:
-    git:
-      url: git://github.com/tekartik/firebase_functions.dart
-      path: firebase_functions_node
+  dependencies:
+    tekartik_firebase_functions_node:
+      git:
+        url: git://github.com/tekartik/firebase_node.dart
+        path: functions_node
+        ref: null_safety
+      version: '>=0.2.1'
+  ```
+- Add `dev_dependencies`:
+  ```yaml
+  dev_dependencies:
+    # needed node dependencies
+    build_web_compilers:
+    build_runner:
+    tekartik_build_node:
+      git:
+      url: git://github.com/tekartik/build_node.dart
+      path: packages/build_node
       ref: null_safety
-    version: '>=0.2.1'
   ```
 - `bin/main.dart`
 
