@@ -61,9 +61,9 @@ Future<void> main() async {
     */
 
       test('app', () {
-        print(app.options!.apiKey);
-        print(app.options!.storageBucket);
-        print(app.options!.projectId);
+        print(app.options.apiKey);
+        print(app.options.storageBucket);
+        print(app.options.projectId);
       });
 
       test('custom', () async {

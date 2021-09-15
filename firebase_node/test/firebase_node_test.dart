@@ -29,7 +29,7 @@ void main() {
                 .getAccessToken())
             .data);
         print(app.options);
-        print(app.options!.projectId);
+        print(app.options.projectId);
         await app.delete();
       });
     }
