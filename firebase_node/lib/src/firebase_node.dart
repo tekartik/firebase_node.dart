@@ -7,7 +7,6 @@ import 'package:node_interop/node.dart';
 import 'package:node_interop/util.dart';
 import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase/firebase_admin.dart';
-
 // ignore: implementation_imports
 import 'package:tekartik_firebase/src/firebase_mixin.dart';
 
@@ -127,5 +126,5 @@ class AppNode with FirebaseAppMixin {
   }
 
   @override
-  AppOptions? get options => _wrapAppOptions(nativeInstance!.options);
+  AppOptions get options => _wrapAppOptions(nativeInstance!.options);
 }
