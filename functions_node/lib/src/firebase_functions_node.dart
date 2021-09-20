@@ -1,6 +1,5 @@
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
-
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
 import 'package:tekartik_firebase_functions_node/src/firebase_functions_firestore_node.dart';
@@ -50,7 +49,7 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp
 
   @override
   operator []=(String key, common.FirebaseFunction function) {
-    implFunctions[key] = (function as FirebaseFunctionNode).value;
+    implFunctions[key] = (function as FirebaseFunctionNode).value as Object;
   }
 /*
   @override
