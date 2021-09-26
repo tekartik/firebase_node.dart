@@ -44,6 +44,11 @@ class ScheduleBuilderNode implements common.ScheduleBuilder {
 
     return PubsubFunctionNode(_implScheduleBuilder.onRun(_handle));
   }
+
+  @override
+  common.ScheduleBuilder timeZone(String timeZone) {
+    return ScheduleBuilderNode(_implScheduleBuilder.timeZone(timeZone));
+  }
 }
 
 class ScheduleContextNode implements common.ScheduleContext {

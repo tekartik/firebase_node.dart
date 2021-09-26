@@ -46,3 +46,7 @@ Future helloWorld(ExpressHttpRequest request) async {
 
 
 - Add `deploy/functions/package.json` and run `npm install on it`
+```shell
+cd deploy/functions
+npm install firebase-functions@latest firebase-admin@latest --save
+```
