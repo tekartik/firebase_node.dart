@@ -1,15 +1,12 @@
 @TestOn('vm')
 library tekartik_firebase_functions_node.test.firebase_functions_test;
 
-import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fs_shim/utils/io/copy.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
-import 'package:process_run/which.dart';
 import 'package:tekartik_app_node_build/gcf_build.dart';
 import 'package:tekartik_build_utils/cmd_run.dart';
 import 'package:tekartik_build_utils/travis/travis.dart';

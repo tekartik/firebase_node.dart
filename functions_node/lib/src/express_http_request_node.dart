@@ -1,11 +1,9 @@
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
-
-// ignore: implementation_imports
-import 'package:tekartik_http/http_server.dart';
 import 'package:tekartik_http_node/src/http_server_node.dart'; // ignore: implementation_imports
 import 'package:tekartik_http_node/src/node/http_server.dart'; // ignore: implementation_imports
+
 import 'import_node.dart';
 
 class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
