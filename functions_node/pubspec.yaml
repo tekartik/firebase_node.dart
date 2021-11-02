@@ -11,33 +11,33 @@ environment:
 dependencies:
   tekartik_firebase_functions:
     git:
-      url: git://github.com/tekartik/firebase_functions.dart
+      url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.3.10'
   tekartik_firebase_functions_io:
     git:
-      url: git://github.com/tekartik/firebase_functions.dart
+      url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_io
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0'
   tekartik_firebase_firestore_node:
     git:
-      url: git://github.com/tekartik/firebase_node.dart
+      url: https://github.com/tekartik/firebase_node.dart
       path: firestore_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.8.0'
   tekartik_app_node_utils:
     git:
-      url: git://github.com/tekartik/app_node_utils.dart
+      url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
   tekartik_firebase_auth_node:
     git:
-      url: git://github.com/tekartik/firebase_node.dart
+      url: https://github.com/tekartik/firebase_node.dart
       path: auth_node
-      ref: null_safety
+      ref: dart2_3
   sembast: '>=1.9.0-dev.1'
   uuid: '>=1.0.0'
   # firebase_functions_interop: ">=1.0.0 <1.0.2"
@@ -47,46 +47,46 @@ dependencies:
   # firebase_admin_interop: ">=1.1.0"
   firebase_functions_interop:
     git:
-      url: git://github.com/tekartikdev/firebase-functions-interop
-      ref: null_safety
+      url: https://github.com/tekartikdev/firebase-functions-interop
+      ref: dart2_3
   tekartik_fs_node:
     git:
-      url: git://github.com/tekartik/common_node.dart
+      url: https://github.com/tekartik/common_node.dart
       path: fs_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0'
 dev_dependencies:
   pedantic:
   tekartik_app_node_build:
     git:
-      url: git://github.com/tekartik/app_node_utils.dart
+      url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.3.0'
   test: "^1.2.0"
   dev_test: '>=0.13.3+12'
   grinder: any
   tekartik_build_utils:
     git:
-      url: git://github.com/tekartik/build_utils.dart
-      ref: null_safety
+      url: https://github.com/tekartik/build_utils.dart
+      ref: dart2_3
   tekartik_firebase_functions_test:
     git:
-      url: git://github.com/tekartik/firebase_functions.dart
+      url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_test
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.2.1'
   tekartik_http_node:
     git:
-      url: git://github.com/tekartik/common_node.dart
+      url: https://github.com/tekartik/common_node.dart
       path: http_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0+1'
   tekartik_http_io:
     git:
-      url: git://github.com/tekartik/http.dart
+      url: https://github.com/tekartik/http.dart
       path: http_io
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
   process_run: '>=0.11.1-dev.1'
   # needed node dependencies
@@ -94,9 +94,9 @@ dev_dependencies:
   build_runner:
   tekartik_build_node:
     git:
-      url: git://github.com/tekartik/build_node.dart
+      url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: null_safety
+      ref: dart2_3
 
 dependency_overrides:
   tekartik_firebase_firestore_node:

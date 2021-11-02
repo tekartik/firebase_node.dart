@@ -3,9 +3,9 @@
 ```yaml
   tekartik_firebase_firestore_node:
     git:
-      url: git://github.com/tekartik/firebase_node.dart
+      url: https://github.com/tekartik/firebase_node.dart
       path: firestore_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.8.1'
 ```
 ## Test setup

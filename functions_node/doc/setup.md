@@ -6,9 +6,9 @@
   dependencies:
     tekartik_firebase_functions_node:
       git:
-        url: git://github.com/tekartik/firebase_node.dart
+        url: https://github.com/tekartik/firebase_node.dart
         path: functions_node
-        ref: null_safety
+        ref: dart2_3
       version: '>=0.2.1'
   ```
 - Add `dev_dependencies`:
@@ -19,9 +19,9 @@
     build_runner:
     tekartik_build_node:
       git:
-      url: git://github.com/tekartik/build_node.dart
+      url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: null_safety
+      ref: dart2_3
   ```
 - `bin/main.dart`
 

@@ -14,49 +14,49 @@ dependencies:
   uuid: '>=1.0.0'
   tekartik_firebase:
     git:
-      url: git://github.com/tekartik/firebase.dart
+      url: https://github.com/tekartik/firebase.dart
       path: firebase
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.7.3'
   tekartik_firebase_local:
     git:
-      url: git://github.com/tekartik/firebase.dart
+      url: https://github.com/tekartik/firebase.dart
       path: firebase_local
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.6.0'
   tekartik_platform_node:
     git:
-      url: git://github.com/tekartik/common_node.dart
+      url: https://github.com/tekartik/common_node.dart
       path: platform_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.2.1'
   # firebase_admin_interop: ">=1.1.0"
   firebase_admin_interop:
     git:
-      url: git://github.com/tekartikdev/firebase-admin-interop
-      ref: null_safety
+      url: https://github.com/tekartikdev/firebase-admin-interop
+      ref: dart2_3
 
 dev_dependencies:
   test: ">=1.2.0"
   grinder: any
   tekartik_build_utils:
     git:
-      url: git://github.com/tekartik/build_utils.dart
-      ref: null_safety
+      url: https://github.com/tekartik/build_utils.dart
+      ref: dart2_3
   tekartik_firebase_test:
     git:
-      url: git://github.com/tekartik/firebase.dart
+      url: https://github.com/tekartik/firebase.dart
       path: firebase_test
-      ref: null_safety
+      ref: dart2_3
       version: '>=0.7.3'
   process_run:
   # needed node dependencies
   build_runner:
   tekartik_build_node:
     git:
-      url: git://github.com/tekartik/build_node.dart
+      url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: null_safety
+      ref: dart2_3
 
 dependency_overrides:
   # tekartik_firebase:
@@ -65,4 +65,4 @@ dependency_overrides:
   #  path: ../firebase_local
   # quiver_hashcode: '>=1.0.0'
 #  firebase_admin_interop:
-#    git: git://github.com/asaarnak/firebase-admin-interop
+#    git: https://github.com/asaarnak/firebase-admin-interop
