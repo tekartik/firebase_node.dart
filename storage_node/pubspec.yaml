@@ -15,27 +15,27 @@ dependencies:
   uuid: '>=1.0.0'
   tekartik_firebase_node:
     git:
-      url: git://github.com/tekartik/firebase_node.dart
+      url: https://github.com/tekartik/firebase_node.dart
       path: firebase_node
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0'
   tekartik_firebase_storage:
     git:
-      url: git://github.com/tekartik/firebase_storage.dart
+      url: https://github.com/tekartik/firebase_storage.dart
       path: storage
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0'
   tekartik_firebase_storage_fs:
     git:
-      url: git://github.com/tekartik/firebase_storage.dart
+      url: https://github.com/tekartik/firebase_storage.dart
       path: storage_fs
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.2'
   tekartik_app_node_utils:
     git:
-      url: git://github.com/tekartik/app_node_utils.dart
+      url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
 
 dev_dependencies:
@@ -44,30 +44,30 @@ dev_dependencies:
   grinder: any
   tekartik_build_utils:
     git:
-      url: git://github.com/tekartik/build_utils.dart
-      ref: null_safety
+      url: https://github.com/tekartik/build_utils.dart
+      ref: dart2_3
   tekartik_firebase_storage_test:
     git:
-      url: git://github.com/tekartik/firebase_storage.dart
+      url: https://github.com/tekartik/firebase_storage.dart
       path: storage_test
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.4.0'
   process_run: '>=0.10.2'
 
   # Node needed dev dependencies
   tekartik_app_node_build:
     git:
-      url: git://github.com/tekartik/app_node_utils.dart
+      url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: null_safety
+      ref: dart2_3
     version: '>=0.1.0'
   # needed node dependencies
   build_runner:
   tekartik_build_node:
     git:
-      url: git://github.com/tekartik/build_node.dart
+      url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: null_safety
+      ref: dart2_3
 dependency_overrides:
   tekartik_firebase_node:
     path: ../firebase_node

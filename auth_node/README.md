@@ -5,9 +5,9 @@ In your `pubspec.yaml`:
 ```yaml
 tekartik_firebase_auth_node:
   git:
-    url: git://github.com/tekartik/firebase_node.dart
+    url: https://github.com/tekartik/firebase_node.dart
     path: auth_node
-    ref: null_safety
+    ref: dart2_3
 ```
 ## Test setup
 
