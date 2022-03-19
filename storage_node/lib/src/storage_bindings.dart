@@ -110,8 +110,17 @@ class GetFilesResponse {
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
     [GetFilesOptions? options]) async {
   var response = (await promiseToFuture(bucket.getFiles(options))) as List;
-  // devPrint(response);
+  devPrint(response);
   // The reponse is an array!
+  // [[[object Object], [object Object]], [object Object], [object Object]]
+  // [[[object Object]], null, [object Object]]
+
+  // https://googleapis.dev/nodejs/storage/latest/global.html#GetFilesResponse
+  // GetFilesResponse
+  // PROPERTIES:
+  // Name	Type	Description
+  // 0	Array.<File>
+  // Array of File instances.
 
   var files = (response[0] as List).cast<File>().toList();
 
@@ -130,8 +139,8 @@ Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
   GetFilesOptions? nextQuery;
   if (response.length > 1) {
     // The second object is the whole query!
-
-    nextQuery = response[1] as GetFilesOptions;
+    // This can be null
+    nextQuery = response[1] as GetFilesOptions?;
   }
 
   /// response is an array with first item being an array.

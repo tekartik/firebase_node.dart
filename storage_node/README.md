@@ -4,7 +4,7 @@
 dependencies:
   tekartik_firebase_storage_node:
     git:
-      url: https://github.com/tekartik/firebase_storage.dart
+      url: https://github.com/tekartik/firebase_node.dart
       path: storage_node
       ref: dart2_3
     version: '>=0.4.0'
