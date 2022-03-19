@@ -93,6 +93,13 @@ class FileNode with FileMixin implements File {
   FileMetadata? get metadata => nativeInstance.metadata == null
       ? null
       : FileMetadataNode(nativeInstance.metadata!);
+
+  @override
+  Future<FileMetadata> getMetadata() async {
+    var nativeMetadata =
+        (await native.fileGetMetaData(nativeInstance)).metadata;
+    return FileMetadataNode(nativeMetadata);
+  }
 }
 
 class BucketNode implements Bucket {

@@ -73,6 +73,9 @@ abstract class File {
   ///
   /// Null for object that are 'folder' like (trailing /)
   external FileMetadata? get metadata;
+
+  /// Get meta data info for the current file
+  external Promise getMetadata();
 }
 
 /*
@@ -110,7 +113,6 @@ class GetFilesResponse {
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
     [GetFilesOptions? options]) async {
   var response = (await promiseToFuture(bucket.getFiles(options))) as List;
-  devPrint(response);
   // The reponse is an array!
   // [[[object Object], [object Object]], [object Object], [object Object]]
   // [[[object Object]], null, [object Object]]
@@ -145,6 +147,28 @@ Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
 
   /// response is an array with first item being an array.
   return GetFilesResponse(files, nextQuery);
+}
+
+class GetFileMetadataResponse {
+  final FileMetadata metadata;
+
+  GetFileMetadataResponse({required this.metadata});
+}
+
+// getMetadata(optionsopt, callbackopt) → {Promise.<GetFileMetadataResponse>}
+// GetFileMetadataResponse
+// PROPERTIES:
+// Name	Type	Description
+// 0	object
+// The File metadata.
+// 1	object
+// The full API response.
+Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
+  var response = (await promiseToFuture(file.getMetadata())) as List;
+  // The reponse is an array! first item being the meta data
+  // devPrint('fileGetMetadataResponse: $response');
+  var fileMetadata = response[0] as FileMetadata;
+  return GetFileMetadataResponse(metadata: fileMetadata);
 }
 
 @JS()
