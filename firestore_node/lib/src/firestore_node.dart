@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:firebase_admin_interop/firebase_admin_interop.dart' as node;
-import 'package:firebase_admin_interop/src/bindings.dart' // ignore: implementation_imports
-    as js;
-import 'package:tekartik_common_utils/common_utils_import.dart';
-import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase_firestore/firestore.dart';
 import 'package:tekartik_firebase_firestore/src/common/firestore_service_mixin.dart'; // ignore: implementation_imports
 import 'package:tekartik_firebase_firestore/src/firestore.dart'; // ignore: implementation_imports
 import 'package:tekartik_firebase_firestore/utils/firestore_mixin.dart';
 import 'package:tekartik_firebase_node/src/firebase_node.dart'; // ignore: implementation_imports
+
+import 'binding_import.dart' // ignore: implementation_imports
+    as js;
+import 'common_import.dart';
+import 'node_import.dart' as node;
 
 js.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
   var nativeSettings = js.FirestoreSettings(
@@ -56,8 +56,10 @@ class FirestoreServiceNode
 }
 
 FirestoreServiceNode? _firestoreServiceNode;
+
 FirestoreServiceNode get firestoreServiceNode =>
     _firestoreServiceNode ??= FirestoreServiceNode();
+
 FirestoreService get firestoreService => firestoreServiceNode;
 
 class FirestoreNode implements Firestore {
@@ -98,13 +100,13 @@ class FirestoreNode implements Firestore {
   String toString() => 'FirestoreNode()';
 }
 
-FirestoreNode firestore(node.Firestore _impl) => FirestoreNode(_impl);
+FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
 
-CollectionReferenceNode _collectionReference(node.CollectionReference _impl) =>
-    CollectionReferenceNode._(_impl);
+CollectionReferenceNode _collectionReference(node.CollectionReference impl) =>
+    CollectionReferenceNode._(impl);
 
-DocumentReferenceNode? _wrapDocumentReference(node.DocumentReference? _impl) =>
-    _impl != null ? DocumentReferenceNode._(_impl) : null;
+DocumentReferenceNode? _wrapDocumentReference(node.DocumentReference? impl) =>
+    impl != null ? DocumentReferenceNode._(impl) : null;
 
 node.DocumentReference? _unwrapDocumentReference(DocumentReference? docRef) =>
     (docRef as DocumentReferenceNode?)?.nativeInstance;
@@ -569,6 +571,7 @@ class TransactionNode implements Transaction {
   final node.Transaction nativeInstance;
 
   TransactionNode(this.nativeInstance);
+
   @override
   void delete(DocumentReference documentRef) {
     nativeInstance.delete(_unwrapDocumentReference(documentRef)!);

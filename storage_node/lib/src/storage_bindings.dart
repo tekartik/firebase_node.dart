@@ -2,11 +2,9 @@
 library tekartik_firebase_node.storage_binding;
 
 import 'package:js/js.dart';
-import 'package:js/js_util.dart';
-import 'package:node_interop/node_interop.dart';
 
-// https://googleapis.dev/nodejs/storage/latest/
-import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'common_import.dart';
+import 'node_import.dart';
 
 @JS()
 @anonymous

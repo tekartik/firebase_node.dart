@@ -18,8 +18,8 @@ class HttpsFunctionsNode
   @override
   common.HttpsFunction onRequest(common.RequestHandler handler) {
     void _handle(impl.ExpressHttpRequest request) {
-      var _request = ExpressHttpRequestNode(request, request.uri);
-      handler(_request);
+      var expressRequest = ExpressHttpRequestNode(request, request.uri);
+      handler(expressRequest);
     }
 
     return HttpsFunctionNode(functions.implFunctions.https.onRequest(_handle));
@@ -29,8 +29,8 @@ class HttpsFunctionsNode
   common.CallFunction onCall(common.CallHandler handler) {
     Future<dynamic> _handle(dynamic data, impl.CallableContext context) async {
       try {
-        var _request = CallRequestNode(data, context);
-        return await handler(_request);
+        var callRequest = CallRequestNode(data, context);
+        return await handler(callRequest);
       } on common.HttpsError catch (e) {
         throw impl.HttpsError(e.code, e.message, e.details);
       }

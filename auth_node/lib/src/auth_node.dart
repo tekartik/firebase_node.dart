@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:firebase_admin_interop/firebase_admin_interop.dart' as node;
-import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
 import 'package:tekartik_firebase_node/src/firebase_node.dart';
+
+import 'common_import.dart';
+import 'node_import.dart' as node;
 // ignore_for_file: implementation_imports
 
 class AuthServiceNode with AuthServiceMixin implements AuthService {
@@ -200,4 +201,4 @@ class AuthNode with AuthMixin {
       throw UnsupportedError('reloadCurrentUser not supported for node');
 }
 
-AuthNode auth(node.Auth _impl) => AuthNode(_impl);
+AuthNode auth(node.Auth impl) => AuthNode(impl);
