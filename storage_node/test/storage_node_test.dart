@@ -69,6 +69,9 @@ Future<void> main() async {
         var storageNode = storageServiceNode.storage(app) as StorageNode;
         var bucketNode =
             storageNode.bucket(storageOptionsFromEnv!.bucket) as BucketNode;
+
+        // Add 2 files
+
         GetFilesOptions? query = GetFilesOptions(
             maxResults: 10, prefix: 'tests', autoPaginate: false);
         while (true) {
@@ -81,7 +84,7 @@ Future<void> main() async {
             break;
           }
         }
-      }, skip: 'temp node test');
+      }); //, skip: 'temp node test');
       // runApp(app, storageService: storageService);
     });
   }

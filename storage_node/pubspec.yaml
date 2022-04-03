@@ -9,6 +9,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
+  path:
   collection: '>=1.14.10'
   js: any
   sembast: '>=1.7.0'
