@@ -12,3 +12,6 @@ pubspec.lock
 # nodes
 node_modules/
 package-lock.json
+
+# local
+.local*

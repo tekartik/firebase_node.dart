@@ -2,11 +2,9 @@
 library tekartik_firebase_node.storage_binding;
 
 import 'package:js/js.dart';
-import 'package:js/js_util.dart';
-import 'package:node_interop/node_interop.dart';
 
-// https://googleapis.dev/nodejs/storage/latest/
-import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'common_import.dart';
+import 'node_import.dart';
 
 @JS()
 @anonymous
@@ -73,6 +71,9 @@ abstract class File {
   ///
   /// Null for object that are 'folder' like (trailing /)
   external FileMetadata? get metadata;
+
+  /// Get meta data info for the current file
+  external Promise getMetadata();
 }
 
 /*
@@ -110,8 +111,16 @@ class GetFilesResponse {
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
     [GetFilesOptions? options]) async {
   var response = (await promiseToFuture(bucket.getFiles(options))) as List;
-  // devPrint(response);
   // The reponse is an array!
+  // [[[object Object], [object Object]], [object Object], [object Object]]
+  // [[[object Object]], null, [object Object]]
+
+  // https://googleapis.dev/nodejs/storage/latest/global.html#GetFilesResponse
+  // GetFilesResponse
+  // PROPERTIES:
+  // Name	Type	Description
+  // 0	Array.<File>
+  // Array of File instances.
 
   var files = (response[0] as List).cast<File>().toList();
 
@@ -130,12 +139,34 @@ Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
   GetFilesOptions? nextQuery;
   if (response.length > 1) {
     // The second object is the whole query!
-
-    nextQuery = response[1] as GetFilesOptions;
+    // This can be null
+    nextQuery = response[1] as GetFilesOptions?;
   }
 
   /// response is an array with first item being an array.
   return GetFilesResponse(files, nextQuery);
+}
+
+class GetFileMetadataResponse {
+  final FileMetadata metadata;
+
+  GetFileMetadataResponse({required this.metadata});
+}
+
+// getMetadata(optionsopt, callbackopt) → {Promise.<GetFileMetadataResponse>}
+// GetFileMetadataResponse
+// PROPERTIES:
+// Name	Type	Description
+// 0	object
+// The File metadata.
+// 1	object
+// The full API response.
+Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
+  var response = (await promiseToFuture(file.getMetadata())) as List;
+  // The reponse is an array! first item being the meta data
+  // devPrint('fileGetMetadataResponse: $response');
+  var fileMetadata = response[0] as FileMetadata;
+  return GetFileMetadataResponse(metadata: fileMetadata);
 }
 
 @JS()

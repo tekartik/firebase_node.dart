@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:firebase_admin_interop/firebase_admin_interop.dart' as native;
 import 'package:firebase_admin_interop/js.dart' as native_js;
-import 'package:node_interop/node.dart';
-import 'package:node_interop/util.dart';
 import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase/firebase_admin.dart';
+
 // ignore: implementation_imports
 import 'package:tekartik_firebase/src/firebase_mixin.dart';
+
+import 'node_import.dart';
 
 FirebaseNode? _firebaseNode;
 
