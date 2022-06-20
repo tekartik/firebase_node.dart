@@ -206,9 +206,6 @@ abstract class QueryMixin implements Query {
     if (arrayContainsAny != null) {
       throw UnsupportedError('arrayContainsAny');
     }
-    if (whereIn != null) {
-      throw UnsupportedError('whereIn');
-    }
     return _wrapQuery(nativeInstance.where(fieldPath,
         isEqualTo: _unwrapValue(isEqualTo),
         isLessThan: _unwrapValue(isLessThan),
@@ -216,6 +213,7 @@ abstract class QueryMixin implements Query {
         isGreaterThan: _unwrapValue(isGreaterThan),
         isGreaterThanOrEqualTo: _unwrapValue(isGreaterThanOrEqualTo),
         arrayContains: _unwrapValue(arrayContains),
+        whereIn: _unwrapValues(whereIn),
         isNull: isNull));
   }
 
