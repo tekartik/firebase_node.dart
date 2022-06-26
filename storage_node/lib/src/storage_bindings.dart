@@ -2,6 +2,7 @@
 library tekartik_firebase_node.storage_binding;
 
 import 'package:js/js.dart';
+import 'package:node_interop/util.dart' as node_util;
 
 import 'common_import.dart';
 import 'node_import.dart';
@@ -110,7 +111,8 @@ class GetFilesResponse {
 
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
     [GetFilesOptions? options]) async {
-  var response = (await promiseToFuture(bucket.getFiles(options))) as List;
+  var response =
+      (await node_util.promiseToFuture(bucket.getFiles(options))) as List;
   // The reponse is an array!
   // [[[object Object], [object Object]], [object Object], [object Object]]
   // [[[object Object]], null, [object Object]]
@@ -162,7 +164,7 @@ class GetFileMetadataResponse {
 // 1	object
 // The full API response.
 Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
-  var response = (await promiseToFuture(file.getMetadata())) as List;
+  var response = (await node_util.promiseToFuture(file.getMetadata())) as List;
   // The reponse is an array! first item being the meta data
   // devPrint('fileGetMetadataResponse: $response');
   var fileMetadata = response[0] as FileMetadata;
