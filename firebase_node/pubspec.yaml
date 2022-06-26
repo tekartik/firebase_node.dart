@@ -36,6 +36,7 @@ dependencies:
       url: https://github.com/tekartikdev/firebase-admin-interop
       ref: dart2_3
     version: '>=2.3.0'
+  node_interop:
 
 dev_dependencies:
   test: ">=1.2.0"

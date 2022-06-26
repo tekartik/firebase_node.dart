@@ -38,11 +38,11 @@ class ScheduleBuilderNode implements common.ScheduleBuilder {
 
   @override
   common.PubsubFunction onRun(common.ScheduleEventHandler handler) {
-    FutureOr<void> _handle(dynamic data, impl.EventContext context) {
+    FutureOr<void> handleRun(dynamic data, impl.EventContext context) {
       return handler(ScheduleContextNode(context));
     }
 
-    return PubsubFunctionNode(_implScheduleBuilder.onRun(_handle));
+    return PubsubFunctionNode(_implScheduleBuilder.onRun(handleRun));
   }
 
   @override

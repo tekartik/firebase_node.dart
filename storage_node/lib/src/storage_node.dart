@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
+import 'package:node_interop/util.dart' as node_util;
 import 'package:tekartik_firebase_node/impl/firebase_node.dart';
 import 'package:tekartik_firebase_storage/storage.dart';
 import 'package:tekartik_firebase_storage_node/src/storage_bindings.dart'
     as native;
 
 import 'common_import.dart';
-import 'node_import.dart';
 
 class StorageServiceNode implements StorageService {
   final _storages = <AppNode, StorageNode>{};
@@ -42,7 +42,8 @@ class StorageNode with StorageMixin implements Storage {
   Bucket bucket([String? name]) {
     native.Bucket? nativeBucket;
     if (name == null) {
-      nativeBucket = callMethod(nativeInstance, 'bucket', []) as native.Bucket?;
+      nativeBucket =
+          node_util.callMethod(nativeInstance, 'bucket', []) as native.Bucket?;
     } else {
       nativeBucket = nativeInstance.bucket(name);
     }
@@ -57,13 +58,13 @@ class FileNode with FileMixin implements File {
 
   @override
   Future save(/* String | List<int> */ dynamic content) =>
-      promiseToFuture(nativeInstance.save(content));
+      node_util.promiseToFuture(nativeInstance.save(content));
 
   @override
   Future<bool> exists() async {
     // Array with first bool as the response
     var fileExistsResponse =
-        (await promiseToFuture(nativeInstance.exists())) as List;
+        (await node_util.promiseToFuture(nativeInstance.exists())) as List;
     return fileExistsResponse[0] as bool;
   }
 
@@ -71,12 +72,12 @@ class FileNode with FileMixin implements File {
   Future<Uint8List> download() async {
     // Array with first item as the response
     var downloadResponse =
-        (await promiseToFuture(nativeInstance.download())) as List;
+        (await node_util.promiseToFuture(nativeInstance.download())) as List;
     return downloadResponse[0] as Uint8List;
   }
 
   @override
-  Future delete() => promiseToFuture(nativeInstance.delete());
+  Future delete() => node_util.promiseToFuture(nativeInstance.delete());
 
   @override
   String toString() =>
@@ -110,7 +111,8 @@ class BucketNode implements Bucket {
   File file(String path) => _wrapFile(nativeInstance.file(path));
 
   @override
-  Future<bool> exists() => promiseToFuture(nativeInstance.exists())
+  Future<bool> exists() => node_util
+      .promiseToFuture(nativeInstance.exists())
       .then((data) => (data as List)[0] as bool);
 
   @override

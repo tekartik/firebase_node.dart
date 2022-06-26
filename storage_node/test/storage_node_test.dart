@@ -1,6 +1,7 @@
 @TestOn('node')
 library tekartik_firebase_storage_node.storage_node_test;
 
+import 'package:node_interop/util.dart' as node_util;
 import 'package:tekartik_firebase_node/firebase_node.dart' show firebaseNode;
 import 'package:tekartik_firebase_storage/storage.dart';
 import 'package:tekartik_firebase_storage_node/src/common_import.dart';
@@ -16,7 +17,7 @@ Map errorToMap(Object e) {
   for (var key in interop.objectKeys(e)) {
     //print('$key ${e[key]}');
     print(key);
-    print(interop.getProperty(e, key));
+    print(node_util.getProperty(e, key));
     //map[key] = e[key];
   }
   return map;

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_admin_interop/firebase_admin_interop.dart' as native;
 import 'package:firebase_admin_interop/js.dart' as native_js;
+import 'package:node_interop/util.dart' as node_util;
 import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase/firebase_admin.dart';
-
 // ignore: implementation_imports
 import 'package:tekartik_firebase/src/firebase_mixin.dart';
 
@@ -41,8 +41,8 @@ class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
   @override
   Future<FirebaseAdminAccessToken> getAccessToken() async {
     // Don't use admin interop implementation (missing Future)
-    var future = promiseToFuture(
-        callMethod(nativeInstance, 'getAccessToken', []) as Promise);
+    var future = node_util.promiseToFuture(
+        node_util.callMethod(nativeInstance, 'getAccessToken', []) as Promise);
     var nativeToken = (await future) as native_js.AccessToken;
     return FirebaseAdminAccessTokenNode(nativeToken);
   }
