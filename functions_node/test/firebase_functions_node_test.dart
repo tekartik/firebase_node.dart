@@ -102,7 +102,7 @@ Future main() async {
       Process? process;
       setUpAll(() async {
         //process = await firebaseBuildCopyAndServe(context: context);
-        await gcfNodeBuild();
+        await gcfNodePackageBuild('.');
         await gcfNodeCopyToDeploy();
       });
 
