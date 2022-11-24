@@ -63,6 +63,12 @@ dev_dependencies:
       path: app_build
       ref: dart2_3
     version: '>=0.3.0'
+  tekartik_app_node_build_menu:
+    git:
+      url: https://github.com/tekartik/app_node_utils.dart
+      path: app_build_menu
+      ref: dart2_3
+    version: '>=0.3.0'
   test: "^1.2.0"
   dev_test: '>=0.13.3+12'
   grinder: any

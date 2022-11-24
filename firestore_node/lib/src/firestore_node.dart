@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:tekartik_firebase_firestore/firestore.dart';
-import 'package:tekartik_firebase_firestore/src/common/firestore_service_mixin.dart'; // ignore: implementation_imports
-import 'package:tekartik_firebase_firestore/src/firestore.dart'; // ignore: implementation_imports
-import 'package:tekartik_firebase_firestore/utils/firestore_mixin.dart';
+import 'package:tekartik_firebase_firestore/firestore.dart'; // ignore: unnecessary_import
+
+import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
 import 'package:tekartik_firebase_node/src/firebase_node.dart'; // ignore: implementation_imports
 
 import 'binding_import.dart' // ignore: implementation_imports
@@ -141,7 +140,7 @@ class WriteBatchNode implements WriteBatch {
           documentDataToNativeUpdateData(DocumentData(data))!);
 }
 
-class QueryNode extends Object with QueryMixin {
+class QueryNode extends Object with QueryMixin, FirestoreQueryExecutorMixin {
   @override
   final node.DocumentQuery nativeInstance;
 
