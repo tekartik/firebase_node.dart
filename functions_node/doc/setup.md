@@ -1,3 +1,10 @@
+# Firebase setup
+
+In deploy:
+
+```bash
+firebase use --add <firebase-project-id>
+```
 # Setup
 
 - Follow the [node app setup](https://github.com/tekartik/app_node_utils.dart/tree/master/app_build) instructions
