@@ -27,6 +27,19 @@ class HttpsFunctionsNode
   }
 
   @override
+  common.HttpsFunction onRequestV2(
+      common.HttpsOptions httpsOptions, common.RequestHandler handler) {
+    void handleRequest(impl.ExpressHttpRequest request) {
+      var expressRequest = ExpressHttpRequestNode(request, request.uri);
+      handler(expressRequest);
+    }
+
+    return HttpsFunctionNode(functions.implFunctions.https.onRequestV2(
+        impl.HttpsOptions(region: httpsOptions.region ?? httpsOptions.regions),
+        handleRequest));
+  }
+
+  @override
   common.CallFunction onCall(common.CallHandler handler) {
     Future<dynamic> handleCall(
         dynamic data, impl.CallableContext context) async {

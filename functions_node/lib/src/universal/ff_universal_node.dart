@@ -27,4 +27,7 @@ class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNode
 FirebaseFunctionsUniversal firebaseFunctionsUniversal =
     FirebaseFunctionsNodeUniversal(impl.functions);
 
+FirebaseFunctionsUniversal firebaseFunctionsUniversalV2 =
+    FirebaseFunctionsNodeUniversal(impl.functionsV2);
+
 FirebaseFunctions get firebaseFunctions => firebaseFunctionsNode;

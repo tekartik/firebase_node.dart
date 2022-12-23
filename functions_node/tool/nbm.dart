@@ -9,16 +9,19 @@ Future<void> main(List<String> arguments) async {
   menu('config', () {
     item('projectId', () {});
   });
-  gcfMenuAppContent(
-      options: GcfNodeAppOptions(
-          projectId: projectId,
-          deployDir: 'deploy',
-          functions: ['helloWorld', 'helloCall']));
+  gcfMenuAppContent(options: GcfNodeAppOptions(projectId: projectId,
+      // deployDir: 'deploy',
+      functions: ['thelloworldv1', 'thelloworldv2']));
   nbm(arguments);
   menu('rest_test', () async {
     item('helloWorld', () async {
       var hello = await read(Uri.parse(
-          'https://europe-west1-tekartik-eu-dev.cloudfunctions.net/helloWorld'));
+          'https://europe-west1-tekartik-eu-dev.cloudfunctions.net/thelloworldv1'));
+      print(hello);
+    });
+    item('helloWorldv2', () async {
+      var hello = await read(Uri.parse(
+          'https://europe-west1-tekartik-eu-dev.cloudfunctions.net/thelloworldv2'));
       print(hello);
     });
   });

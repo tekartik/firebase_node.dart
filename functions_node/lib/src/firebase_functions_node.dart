@@ -13,6 +13,10 @@ FirebaseFunctionsNode? _firebaseFunctionsNode;
 FirebaseFunctionsHttp get firebaseFunctionsNode =>
     _firebaseFunctionsNode ??= FirebaseFunctionsNode(impl.functions);
 
+/// V2 node functions.
+FirebaseFunctionsHttp get firebaseFunctionsNodeV2 =>
+    _firebaseFunctionsNode ??= FirebaseFunctionsNode(impl.functionsV2);
+
 //import 'package:firebase_functions_interop/
 class FirebaseFunctionsNode extends FirebaseFunctionsHttp
     implements common.FirebaseFunctions {

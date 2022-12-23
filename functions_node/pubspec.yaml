@@ -14,7 +14,7 @@ dependencies:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
       ref: dart2_3
-    version: '>=0.3.10'
+    version: '>=0.4.0'
   tekartik_firebase_functions_io:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
@@ -49,6 +49,7 @@ dependencies:
     git:
       url: https://github.com/tekartikdev/firebase-functions-interop
       ref: dart2_3
+      version: '>=2.2.0'
   tekartik_fs_node:
     git:
       url: https://github.com/tekartik/common_node.dart
@@ -113,7 +114,7 @@ dependency_overrides:
     path: ../auth_node
   # Temp
   # firebase_functions_interop:
-  #  path: /media/big_hd/local/extdevx/git/github.com/tekartikdev/firebase-functions-interop
+  #  path: ../../../../github.com/tekartikdev/firebase-functions-interop
 
   # temp
   # tekartik_http_node:
