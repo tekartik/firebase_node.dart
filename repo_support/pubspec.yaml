@@ -4,7 +4,7 @@ version: 0.2.0
 publish_to: none
 
 environment:
-  sdk: '>=2.10.0-0 <3.0.0'
+  sdk: '>=2.18.0 <3.0.0'
 
 dev_dependencies:
   path:
@@ -12,7 +12,6 @@ dev_dependencies:
   process_run: '>=0.10.3'
   test:
   dev_test:
-  pedantic:
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart

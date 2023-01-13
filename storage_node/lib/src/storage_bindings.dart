@@ -111,8 +111,8 @@ class GetFilesResponse {
 
 Future<GetFilesResponse> bucketGetFiles(Bucket bucket,
     [GetFilesOptions? options]) async {
-  var response =
-      (await node_util.promiseToFuture(bucket.getFiles(options))) as List;
+  var response = (await node_util
+      .promiseToFuture<Object?>(bucket.getFiles(options))) as List;
   // The reponse is an array!
   // [[[object Object], [object Object]], [object Object], [object Object]]
   // [[[object Object]], null, [object Object]]
@@ -164,7 +164,8 @@ class GetFileMetadataResponse {
 // 1	object
 // The full API response.
 Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
-  var response = (await node_util.promiseToFuture(file.getMetadata())) as List;
+  var response =
+      (await node_util.promiseToFuture<Object?>(file.getMetadata())) as List;
   // The reponse is an array! first item being the meta data
   // devPrint('fileGetMetadataResponse: $response');
   var fileMetadata = response[0] as FileMetadata;

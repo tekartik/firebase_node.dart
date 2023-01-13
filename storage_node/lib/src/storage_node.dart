@@ -63,21 +63,22 @@ class FileNode with FileMixin implements File {
   @override
   Future<bool> exists() async {
     // Array with first bool as the response
-    var fileExistsResponse =
-        (await node_util.promiseToFuture(nativeInstance.exists())) as List;
+    var fileExistsResponse = (await node_util
+        .promiseToFuture<Object?>(nativeInstance.exists())) as List;
     return fileExistsResponse[0] as bool;
   }
 
   @override
   Future<Uint8List> download() async {
     // Array with first item as the response
-    var downloadResponse =
-        (await node_util.promiseToFuture(nativeInstance.download())) as List;
+    var downloadResponse = (await node_util
+        .promiseToFuture<Object?>(nativeInstance.download())) as List;
     return downloadResponse[0] as Uint8List;
   }
 
   @override
-  Future delete() => node_util.promiseToFuture(nativeInstance.delete());
+  Future delete() =>
+      node_util.promiseToFuture<Object?>(nativeInstance.delete());
 
   @override
   String toString() =>
@@ -112,7 +113,7 @@ class BucketNode implements Bucket {
 
   @override
   Future<bool> exists() => node_util
-      .promiseToFuture(nativeInstance.exists())
+      .promiseToFuture<Object?>(nativeInstance.exists())
       .then((data) => (data as List)[0] as bool);
 
   @override

@@ -9,8 +9,7 @@ Future<void> main(List<String> arguments) async {
   menu('config', () {
     item('projectId', () {});
   });
-  gcfMenuAppContent(options: GcfNodeAppOptions(
-      projectId: projectId,
+  gcfMenuAppContent(options: GcfNodeAppOptions(projectId: projectId,
       // deployDir: 'deploy',
       functions: ['thelloworldv1', 'thelloworldv2']));
   nbm(arguments);

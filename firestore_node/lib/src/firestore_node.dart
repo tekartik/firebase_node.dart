@@ -279,7 +279,7 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 List? _unwrapValues(List? values) =>
     values?.map(_unwrapValue).toList(growable: false);
 
-dynamic _unwrapValue(value) {
+dynamic _unwrapValue(Object? value) {
   if (value == null || value is num || value is bool || value is String) {
     return value;
   } else if (value is DateTime) {
