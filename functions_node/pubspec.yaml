@@ -6,7 +6,7 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
   tekartik_firebase_functions:
@@ -14,7 +14,7 @@ dependencies:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
       ref: dart2_3
-    version: '>=0.3.13'
+    version: '>=0.4.0'
   tekartik_firebase_functions_io:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
@@ -49,7 +49,7 @@ dependencies:
     git:
       url: https://github.com/tekartikdev/firebase-functions-interop
       ref: dart2_3
-      version: '>=2.1.0'
+      version: '>=2.2.0'
   tekartik_fs_node:
     git:
       url: https://github.com/tekartik/common_node.dart
@@ -57,7 +57,6 @@ dependencies:
       ref: dart2_3
     version: '>=0.4.0'
 dev_dependencies:
-  pedantic:
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
@@ -70,7 +69,7 @@ dev_dependencies:
       path: app_build_menu
       ref: dart2_3
     version: '>=0.3.0'
-  test: "^1.2.0"
+  test: '>=1.2.0'
   dev_test: '>=0.13.3+12'
   grinder: any
   tekartik_build_utils:
@@ -114,7 +113,7 @@ dependency_overrides:
     path: ../auth_node
   # Temp
   # firebase_functions_interop:
-  # path: ../../../../github.com/tekartikdev/firebase-functions-interop
+  #  path: ../../../../github.com/tekartikdev/firebase-functions-interop
 
   # temp
   # tekartik_http_node:

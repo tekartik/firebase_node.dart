@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   group('pubsub_node', () {
     test('First Test', () {
-      print(jsObjectKeys(pubsubJs));
+      print(jsObjectKeys(pubsubJs as Object));
     });
   });
 }

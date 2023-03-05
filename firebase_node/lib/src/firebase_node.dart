@@ -41,7 +41,7 @@ class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
   @override
   Future<FirebaseAdminAccessToken> getAccessToken() async {
     // Don't use admin interop implementation (missing Future)
-    var future = node_util.promiseToFuture(
+    var future = node_util.promiseToFuture<Object?>(
         node_util.callMethod(nativeInstance, 'getAccessToken', []) as Promise);
     var nativeToken = (await future) as native_js.AccessToken;
     return FirebaseAdminAccessTokenNode(nativeToken);

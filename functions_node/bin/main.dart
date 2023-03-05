@@ -4,11 +4,12 @@ import 'package:tekartik_firebase_functions_node/firebase_functions_universal.da
 
 Future main() async {
   print('starting...');
-  firebaseFunctionsUniversal['helloWorld'] =
+  firebaseFunctionsUniversal['thelloworldv1'] =
       firebaseFunctionsUniversal.https.onRequest(helloWorld);
   // v2 function name(s) can only contain lower case letters, numbers, hyphens, and not exceed 62 characters in length
-  firebaseFunctionsUniversal['helloworldv2'] =
-      firebaseFunctionsUniversalV2.https.onRequest(helloWorld);
+  firebaseFunctionsUniversal['thelloworldv2'] = firebaseFunctionsUniversalV2
+      .https
+      .onRequestV2(HttpsOptions(region: regionBelgium), helloWorld);
   await firebaseFunctionsUniversal.serve();
   print('serving...');
 }
