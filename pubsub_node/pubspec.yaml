@@ -7,8 +7,8 @@ environment:
   sdk: '>=2.18.0 <3.0.0'
 
 dependencies:
-  js: ^0.6.1+1
-  meta: ^1.1.8
+  js: '>=0.6.1+1'
+  meta: '>=1.1.8'
   node_interop:
   tekartik_js_utils:
     git:
@@ -24,7 +24,7 @@ dependencies:
     version: '>=0.1.0'
 dev_dependencies:
   process_run:
-  test: ^1.14.4
+  test: '>=1.14.4'
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
