@@ -35,7 +35,9 @@ class HttpsFunctionsNode
     }
 
     return HttpsFunctionNode(functions.implFunctions.https.onRequestV2(
-        impl.HttpsOptions(region: httpsOptions.region ?? httpsOptions.regions),
+        impl.HttpsOptions(
+            region: httpsOptions.region ?? httpsOptions.regions,
+            cors: httpsOptions.cors),
         handleRequest));
   }
 

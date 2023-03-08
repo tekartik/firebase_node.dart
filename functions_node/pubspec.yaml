@@ -14,13 +14,13 @@ dependencies:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
       ref: dart2_3
-    version: '>=0.4.0'
+    version: '>=0.4.1'
   tekartik_firebase_functions_io:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_io
       ref: dart2_3
-    version: '>=0.4.0'
+    version: '>=0.4.1'
   tekartik_firebase_firestore_node:
     git:
       url: https://github.com/tekartik/firebase_node.dart
@@ -57,6 +57,12 @@ dependencies:
       ref: dart2_3
     version: '>=0.4.0'
 dev_dependencies:
+  tekartik_test_menu_browser:
+    git:
+      url: https://github.com/tekartik/test_menu.dart
+      path: test_menu_browser
+      ref: dart2_3
+    version: '>=0.4.7'
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
@@ -71,7 +77,6 @@ dev_dependencies:
     version: '>=0.3.0'
   test: '>=1.2.0'
   dev_test: '>=0.13.3+12'
-  grinder: any
   tekartik_build_utils:
     git:
       url: https://github.com/tekartik/build_utils.dart
