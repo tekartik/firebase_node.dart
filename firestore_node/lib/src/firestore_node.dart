@@ -442,7 +442,7 @@ class DocumentReferenceNode implements DocumentReference {
   String get path => nativeInstance.path;
 
   @override
-  Stream<DocumentSnapshot> onSnapshot() {
+  Stream<DocumentSnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.DocumentSnapshot nativeDocumentSnapshot,
             EventSink<DocumentSnapshot> sink) {
