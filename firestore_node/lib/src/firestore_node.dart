@@ -217,7 +217,7 @@ abstract class QueryMixin implements Query {
   }
 
   @override
-  Stream<QuerySnapshot> onSnapshot() {
+  Stream<QuerySnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.QuerySnapshot nativeQuerySnapshot,
             EventSink<QuerySnapshot> sink) {
@@ -470,7 +470,9 @@ class DocumentReferenceNode implements DocumentReference {
   }
 }
 
-class DocumentSnapshotNode implements DocumentSnapshot {
+class DocumentSnapshotNode
+    with DocumentSnapshotMixin
+    implements DocumentSnapshot {
   final node.DocumentSnapshot nativeInstance;
 
   DocumentSnapshotNode(this.nativeInstance);
