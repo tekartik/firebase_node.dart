@@ -162,8 +162,14 @@ abstract class QueryMixin implements Query {
   Query limit(int limit) => _wrapQuery(nativeInstance.limit(limit));
 
   @override
-  Query orderBy(String key, {bool? descending}) =>
-      _wrapQuery(nativeInstance.orderBy(key, descending: descending == true));
+  Query orderBy(String key, {bool? descending}) {
+    if (key == firestoreNameFieldPath) {
+      return _wrapQuery(
+          nativeInstance.orderByKey(descending: descending == true));
+    }
+    return _wrapQuery(
+        nativeInstance.orderBy(key, descending: descending == true));
+  }
 
   @override
   QueryNode startAt({DocumentSnapshot? snapshot, List? values}) =>
@@ -217,7 +223,7 @@ abstract class QueryMixin implements Query {
   }
 
   @override
-  Stream<QuerySnapshot> onSnapshot() {
+  Stream<QuerySnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.QuerySnapshot nativeQuerySnapshot,
             EventSink<QuerySnapshot> sink) {
@@ -442,7 +448,7 @@ class DocumentReferenceNode implements DocumentReference {
   String get path => nativeInstance.path;
 
   @override
-  Stream<DocumentSnapshot> onSnapshot() {
+  Stream<DocumentSnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.DocumentSnapshot nativeDocumentSnapshot,
             EventSink<DocumentSnapshot> sink) {
@@ -470,7 +476,9 @@ class DocumentReferenceNode implements DocumentReference {
   }
 }
 
-class DocumentSnapshotNode implements DocumentSnapshot {
+class DocumentSnapshotNode
+    with DocumentSnapshotMixin
+    implements DocumentSnapshot {
   final node.DocumentSnapshot nativeInstance;
 
   DocumentSnapshotNode(this.nativeInstance);

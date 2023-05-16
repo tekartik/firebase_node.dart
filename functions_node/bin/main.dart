@@ -10,6 +10,9 @@ Future main() async {
   firebaseFunctionsUniversal['thelloworldv2'] = firebaseFunctionsUniversalV2
       .https
       .onRequestV2(HttpsOptions(region: regionBelgium), helloWorld);
+  firebaseFunctionsUniversal['thelloworldcorsv2'] = firebaseFunctionsUniversalV2
+      .https
+      .onRequestV2(HttpsOptions(region: regionBelgium, cors: true), helloWorld);
   await firebaseFunctionsUniversal.serve();
   print('serving...');
 }

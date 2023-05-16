@@ -6,10 +6,12 @@ targets:
       - test/**
       - node/**
       - bin/**
+      - example/**
     builders:
       build_web_compilers|entrypoint:
         generate_for:
           - bin/**
+          - example/**
         options:
           compiler: dart2js
 
