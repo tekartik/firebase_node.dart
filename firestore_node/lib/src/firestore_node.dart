@@ -162,8 +162,14 @@ abstract class QueryMixin implements Query {
   Query limit(int limit) => _wrapQuery(nativeInstance.limit(limit));
 
   @override
-  Query orderBy(String key, {bool? descending}) =>
-      _wrapQuery(nativeInstance.orderBy(key, descending: descending == true));
+  Query orderBy(String key, {bool? descending}) {
+    if (key == firestoreNameFieldPath) {
+      return _wrapQuery(
+          nativeInstance.orderByKey(descending: descending == true));
+    }
+    return _wrapQuery(
+        nativeInstance.orderBy(key, descending: descending == true));
+  }
 
   @override
   QueryNode startAt({DocumentSnapshot? snapshot, List? values}) =>
