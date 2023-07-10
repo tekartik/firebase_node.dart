@@ -6,38 +6,38 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   tekartik_firebase_functions:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.1'
   tekartik_firebase_functions_io:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_io
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.1'
   tekartik_firebase_firestore_node:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: firestore_node
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.8.0'
   tekartik_app_node_utils:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   tekartik_firebase_auth_node:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: auth_node
-      ref: dart2_3
+      ref: dart3a
   sembast: '>=1.9.0-dev.1'
   uuid: '>=1.0.0'
   # firebase_functions_interop: ">=1.0.0 <1.0.2"
@@ -48,56 +48,56 @@ dependencies:
   firebase_functions_interop:
     git:
       url: https://github.com/tekartikdev/firebase-functions-interop
-      ref: dart2_3
+      ref: dart3a
       version: '>=2.2.0'
   tekartik_fs_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: fs_node
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.0'
 dev_dependencies:
   tekartik_test_menu_browser:
     git:
       url: https://github.com/tekartik/test_menu.dart
       path: test_menu_browser
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.7'
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.3.0'
   tekartik_app_node_build_menu:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build_menu
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.3.0'
   test: '>=1.2.0'
   dev_test: '>=0.13.3+12'
   tekartik_build_utils:
     git:
       url: https://github.com/tekartik/build_utils.dart
-      ref: dart2_3
+      ref: dart3a
   tekartik_firebase_functions_test:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_test
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.2.1'
   tekartik_http_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: http_node
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.0+1'
   tekartik_http_io:
     git:
       url: https://github.com/tekartik/http.dart
       path: http_io
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   process_run: '>=0.11.1-dev.1'
   # needed node dependencies
@@ -107,7 +107,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart2_3
+      ref: dart3a
 
 dependency_overrides:
   tekartik_firebase_firestore_node:

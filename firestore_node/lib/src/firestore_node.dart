@@ -147,7 +147,7 @@ class QueryNode extends Object with QueryMixin, FirestoreQueryExecutorMixin {
   QueryNode(this.nativeInstance);
 }
 
-abstract class QueryMixin implements Query {
+abstract mixin class QueryMixin implements Query {
   node.DocumentQuery get nativeInstance;
 
   @override

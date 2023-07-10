@@ -15,7 +15,7 @@ firebase use --add <firebase-project-id>
       git:
         url: https://github.com/tekartik/firebase_node.dart
         path: functions_node
-        ref: dart2_3
+        ref: dart3a
       version: '>=0.2.1'
   ```
 - Add `dev_dependencies`:
@@ -28,7 +28,7 @@ firebase use --add <firebase-project-id>
       git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart2_3
+      ref: dart3a
   ```
 - `bin/main.dart`
 
