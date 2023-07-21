@@ -24,7 +24,11 @@ class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNode
   Future<FfServer> serve({int? port}) async => FfServerNode();
 }
 
+/// V1 by default
 FirebaseFunctionsUniversal firebaseFunctionsUniversal =
+    firebaseFunctionsUniversalV1;
+
+FirebaseFunctionsUniversal firebaseFunctionsUniversalV1 =
     FirebaseFunctionsNodeUniversal(impl.functions);
 
 FirebaseFunctionsUniversal firebaseFunctionsUniversalV2 =
