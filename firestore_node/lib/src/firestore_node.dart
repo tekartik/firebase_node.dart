@@ -61,7 +61,7 @@ FirestoreServiceNode get firestoreServiceNode =>
 
 FirestoreService get firestoreService => firestoreServiceNode;
 
-class FirestoreNode implements Firestore {
+class FirestoreNode with FirestoreDefaultMixin implements Firestore {
   @override
   final FirestoreServiceNode service;
   final node.Firestore nativeInstance;
