@@ -15,7 +15,7 @@ dependencies:
       url: https://github.com/tekartik/firebase_firestore.dart
       path: firestore
       ref: dart3a
-    version: '>=0.9.0'
+    version: '>=1.0.0'
   tekartik_firebase_firestore_sembast:
     git:
       url: https://github.com/tekartik/firebase_firestore.dart
@@ -56,6 +56,9 @@ dependency_overrides:
   tekartik_firebase_node:
     path: ../firebase_node
   # temp test
+  # tekartik_firebase_firestore:
+  #  path: ../../firebase_firestore.dart/firestore
+
   # tekartik_firebase_firestore_test:
   #    path: ../../firebase_firestore.dart/firestore_test
   # firebase_admin_interop:

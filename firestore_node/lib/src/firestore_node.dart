@@ -18,14 +18,14 @@ js.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
 }
 
 class FirestoreServiceNode
-    with FirestoreServiceMixin
+    with FirestoreServiceDefaultMixin, FirestoreServiceMixin
     implements FirestoreService {
   @override
   Firestore firestore(App app) {
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return FirestoreNode(appNode.nativeInstance!.firestore());
+      return FirestoreNode(this, appNode.nativeInstance!.firestore());
     });
   }
 
@@ -62,9 +62,11 @@ FirestoreServiceNode get firestoreServiceNode =>
 FirestoreService get firestoreService => firestoreServiceNode;
 
 class FirestoreNode implements Firestore {
+  @override
+  final FirestoreServiceNode service;
   final node.Firestore nativeInstance;
 
-  FirestoreNode(this.nativeInstance);
+  FirestoreNode(this.service, this.nativeInstance);
 
   @override
   CollectionReference collection(String path) =>
@@ -99,7 +101,7 @@ class FirestoreNode implements Firestore {
   String toString() => 'FirestoreNode()';
 }
 
-FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
+//FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
 
 CollectionReferenceNode _collectionReference(node.CollectionReference impl) =>
     CollectionReferenceNode._(impl);
