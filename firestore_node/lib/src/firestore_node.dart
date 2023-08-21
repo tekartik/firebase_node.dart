@@ -405,7 +405,9 @@ node.UpdateData? documentDataToNativeUpdateData(DocumentData documentData) {
   return nativeInstance;
 }
 
-class DocumentReferenceNode implements DocumentReference {
+class DocumentReferenceNode
+    with DocumentReferenceDefaultMixin
+    implements DocumentReference {
   final node.DocumentReference nativeInstance;
 
   DocumentReferenceNode._(this.nativeInstance);
