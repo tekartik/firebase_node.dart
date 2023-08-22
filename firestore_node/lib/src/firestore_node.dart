@@ -51,6 +51,9 @@ class FirestoreServiceNode
   bool get supportsTrackChanges => true;
 
   @override
+  bool get supportsListCollections => true;
+
+  @override
   String toString() => 'FirestoreServiceNode()';
 }
 
@@ -96,6 +99,13 @@ class FirestoreNode with FirestoreDefaultMixin implements Firestore {
   Future<List<DocumentSnapshot>> getAll(List<DocumentReference> refs) async =>
       _wrapDocumentSnapshots(
           await nativeInstance.getAll(_unwrapDocumentReferences(refs)));
+
+  @override
+  Future<List<CollectionReference>> listCollections() async {
+    return (await nativeInstance.listCollections())
+        .map((e) => _collectionReference(e))
+        .toList();
+  }
 
   @override
   String toString() => 'FirestoreNode()';
@@ -477,6 +487,13 @@ class DocumentReferenceNode
       return other.path == path;
     }
     return false;
+  }
+
+  @override
+  Future<List<CollectionReference>> listCollections() async {
+    return (await nativeInstance.listCollections())
+        .map((e) => _collectionReference(e))
+        .toList();
   }
 }
 
