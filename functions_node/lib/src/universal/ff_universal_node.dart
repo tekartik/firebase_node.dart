@@ -16,8 +16,7 @@ class FfServerNode implements FfServer {
 /// Node implementation
 class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNode
     implements FirebaseFunctionsUniversal {
-  FirebaseFunctionsNodeUniversal(impl.FirebaseFunctions implFunctions)
-      : super(implFunctions);
+  FirebaseFunctionsNodeUniversal(super.implFunctions);
 
   /// Dummy implementation on node. Must be served using `firebase serve`
   @override

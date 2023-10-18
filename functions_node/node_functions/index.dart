@@ -11,11 +11,10 @@ class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext {
   // ignore: overridden_fields
   final String baseUrl = 'http://localhost:5000/tekartik-free-dev/us-central1';
 
-  FirebaseFunctionsTestContextNode({String? baseUrl})
+  FirebaseFunctionsTestContextNode({super.baseUrl})
       : super(
             httpClientFactory: httpClientFactoryNode,
-            firebaseFunctions: firebaseFunctionsNode,
-            baseUrl: baseUrl);
+            firebaseFunctions: firebaseFunctionsNode);
 
   @override
   Future<FfServer> serve() {

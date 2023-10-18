@@ -27,6 +27,5 @@ class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
 
 class ExpressHttpResponseNode extends ExpressHttpResponseWrapperBase
     implements ExpressHttpResponse {
-  ExpressHttpResponseNode(HttpResponse implHttpResponse)
-      : super(implHttpResponse);
+  ExpressHttpResponseNode(super.implHttpResponse);
 }

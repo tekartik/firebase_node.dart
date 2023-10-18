@@ -97,9 +97,7 @@ abstract class ChangeNode<T> implements common.Change<T> {
 
 class DocumentSnapshotChangeNode
     extends ChangeNode<firebase_firestore.DocumentSnapshot> {
-  DocumentSnapshotChangeNode(
-      firebase_firestore.Firestore firestore, impl.Change implChange)
-      : super(firestore, implChange);
+  DocumentSnapshotChangeNode(super.firestore, super.implChange);
 
   @override
   firebase_firestore.DocumentSnapshot get after =>
