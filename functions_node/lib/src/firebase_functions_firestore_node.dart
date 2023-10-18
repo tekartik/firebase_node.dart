@@ -1,7 +1,8 @@
 import 'package:firebase_admin_interop/firebase_admin_interop.dart' as node;
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
-import 'package:tekartik_firebase_firestore/firestore.dart' as firestore;
+import 'package:tekartik_firebase_firestore/firestore.dart'
+    as firebase_firestore;
 import 'package:tekartik_firebase_firestore_node/src/firestore_node.dart' // ignore: implementation_imports
     as firestore_node;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
@@ -9,27 +10,29 @@ import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 import 'firebase_functions_node.dart';
 
 class FirestoreFunctionsNode implements common.FirestoreFunctions {
+  final firebase_firestore.Firestore firestore;
   final FirebaseFunctionsNode functions;
 
-  FirestoreFunctionsNode(this.functions);
+  FirestoreFunctionsNode(this.firestore, this.functions);
 
   @override
-  common.DocumentBuilder document(String path) =>
-      DocumentBuilderNode(functions.implFunctions.firestore.document(path));
+  common.DocumentBuilder document(String path) => DocumentBuilderNode(
+      firestore, functions.implFunctions.firestore.document(path));
 }
 
 class DocumentBuilderNode implements common.DocumentBuilder {
+  final firebase_firestore.Firestore firestore;
   final impl.DocumentBuilder implBuilder;
 
-  DocumentBuilderNode(this.implBuilder);
+  DocumentBuilderNode(this.firestore, this.implBuilder);
 
   @override
   common.FirestoreFunction onWrite(
       common.ChangeEventHandler<common.DocumentSnapshot> handler) {
     return FirestoreFunctionNode(implBuilder.onWrite((data, context) {
       /// Important to return the handler content here so that the function does not end
-      return handler(
-          DocumentSnapshotChangeNode(data), EventContextNode(context));
+      return handler(DocumentSnapshotChangeNode(firestore, data),
+          EventContextNode(context));
     }));
   }
 
@@ -38,8 +41,8 @@ class DocumentBuilderNode implements common.DocumentBuilder {
       common.DataEventHandler<common.DocumentSnapshot> handler) {
     return FirestoreFunctionNode(implBuilder.onCreate((data, context) {
       /// Important to return the handler content here so that the function does not end
-      return handler(
-          firestore_node.DocumentSnapshotNode(data), EventContextNode(context));
+      return handler(firestore_node.DocumentSnapshotNode(firestore, data),
+          EventContextNode(context));
     }));
   }
 
@@ -48,8 +51,8 @@ class DocumentBuilderNode implements common.DocumentBuilder {
       common.ChangeEventHandler<common.DocumentSnapshot> handler) {
     return FirestoreFunctionNode(implBuilder.onUpdate((data, context) {
       /// Important to return the handler content here so that the function does not end
-      return handler(
-          DocumentSnapshotChangeNode(data), EventContextNode(context));
+      return handler(DocumentSnapshotChangeNode(firestore, data),
+          EventContextNode(context));
     }));
   }
 
@@ -58,8 +61,8 @@ class DocumentBuilderNode implements common.DocumentBuilder {
       common.DataEventHandler<common.DocumentSnapshot> handler) {
     return FirestoreFunctionNode(implBuilder.onDelete((data, context) {
       /// Important to return the handler content here so that the function does not end
-      return handler(
-          firestore_node.DocumentSnapshotNode(data), EventContextNode(context));
+      return handler(firestore_node.DocumentSnapshotNode(firestore, data),
+          EventContextNode(context));
     }));
   }
 }
@@ -75,9 +78,10 @@ class FirestoreFunctionNode extends FirebaseFunctionNode
 }
 
 abstract class ChangeNode<T> implements common.Change<T> {
+  final firebase_firestore.Firestore firestore;
   final impl.Change implChange;
 
-  ChangeNode(this.implChange);
+  ChangeNode(this.firestore, this.implChange);
 
   @override
   T get after => throw UnimplementedError('ChangeNode.after');
@@ -92,16 +96,20 @@ abstract class ChangeNode<T> implements common.Change<T> {
 }
 
 class DocumentSnapshotChangeNode
-    extends ChangeNode<firestore.DocumentSnapshot> {
-  DocumentSnapshotChangeNode(impl.Change implChange) : super(implChange);
+    extends ChangeNode<firebase_firestore.DocumentSnapshot> {
+  DocumentSnapshotChangeNode(
+      firebase_firestore.Firestore firestore, impl.Change implChange)
+      : super(firestore, implChange);
 
   @override
-  firestore.DocumentSnapshot get after => firestore_node.DocumentSnapshotNode(
-      implChange.after as node.DocumentSnapshot);
+  firebase_firestore.DocumentSnapshot get after =>
+      firestore_node.DocumentSnapshotNode(
+          firestore, implChange.after as node.DocumentSnapshot);
 
   @override
-  firestore.DocumentSnapshot get before => firestore_node.DocumentSnapshotNode(
-      implChange.after as node.DocumentSnapshot);
+  firebase_firestore.DocumentSnapshot get before =>
+      firestore_node.DocumentSnapshotNode(
+          firestore, implChange.after as node.DocumentSnapshot);
 }
 
 class EventContextNode implements common.EventContext {
@@ -117,8 +125,8 @@ class EventContextNode implements common.EventContext {
 
   /// Timestamp for the event.
   @override
-  firestore.Timestamp get timestamp =>
-      firestore.Timestamp.fromDateTime(implEventContext.timestamp);
+  firebase_firestore.Timestamp get timestamp =>
+      firebase_firestore.Timestamp.fromDateTime(implEventContext.timestamp);
 
   @override
   String toString() {
