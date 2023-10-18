@@ -1,9 +1,12 @@
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
+import 'package:tekartik_firebase_firestore_node/firestore_node.dart'
+    as firestore_node;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
 import 'package:tekartik_firebase_functions_node/src/firebase_functions_firestore_node.dart';
 import 'package:tekartik_firebase_functions_node/src/firebase_functions_pubsub_node.dart';
+import 'package:tekartik_firebase_node/firebase_node.dart' as firebase_node;
 
 import 'firebase_functions_https_node.dart';
 import 'import_node.dart';
@@ -30,8 +33,14 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp
   common.FirestoreFunctions? _firestore;
 
   @override
-  common.FirestoreFunctions get firestore =>
-      _firestore ??= FirestoreFunctionsNode(this);
+  common.FirestoreFunctions get firestore {
+    _firestore ??= FirestoreFunctionsNode(
+        firestore_node.firestoreServiceNode
+            .firestore(firebase_node.firebaseNode.app()),
+        this);
+
+    return _firestore!;
+  }
 
   common.PubsubFunctions? _pubsub;
 

@@ -4,7 +4,7 @@ version: 0.2.0
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   js: '>=0.6.1+1'
@@ -14,13 +14,13 @@ dependencies:
     git:
       url: https://github.com/tekartik/js_utils.dart
       path: js_utils
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   tekartik_app_node_utils:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
 dev_dependencies:
   process_run:
@@ -29,7 +29,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   # needed node dependencies
   build_runner:
@@ -37,4 +37,4 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart2_3
+      ref: dart3a

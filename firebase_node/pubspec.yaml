@@ -6,7 +6,7 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   collection: '>=1.14.10'
@@ -16,25 +16,25 @@ dependencies:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.7.3'
   tekartik_firebase_local:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase_local
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.6.0'
   tekartik_platform_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: platform_node
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.2.1'
   # firebase_admin_interop: ">=1.1.0"
   firebase_admin_interop:
     git:
       url: https://github.com/tekartikdev/firebase-admin-interop
-      ref: dart2_3
+      ref: dart3a
     version: '>=2.3.0'
   node_interop:
 
@@ -44,12 +44,12 @@ dev_dependencies:
   tekartik_build_utils:
     git:
       url: https://github.com/tekartik/build_utils.dart
-      ref: dart2_3
+      ref: dart3a
   tekartik_firebase_test:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase_test
-      ref: dart2_3
+      ref: dart3a
       version: '>=0.7.3'
   process_run:
   # needed node dependencies
@@ -58,7 +58,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart2_3
+      ref: dart3a
 
 dependency_overrides:
   # tekartik_firebase:

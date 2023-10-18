@@ -18,14 +18,14 @@ js.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
 }
 
 class FirestoreServiceNode
-    with FirestoreServiceMixin
+    with FirestoreServiceDefaultMixin, FirestoreServiceMixin
     implements FirestoreService {
   @override
   Firestore firestore(App app) {
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return FirestoreNode(appNode.nativeInstance!.firestore());
+      return FirestoreNode(this, appNode.nativeInstance!.firestore());
     });
   }
 
@@ -51,6 +51,9 @@ class FirestoreServiceNode
   bool get supportsTrackChanges => true;
 
   @override
+  bool get supportsListCollections => true;
+
+  @override
   String toString() => 'FirestoreServiceNode()';
 }
 
@@ -61,18 +64,20 @@ FirestoreServiceNode get firestoreServiceNode =>
 
 FirestoreService get firestoreService => firestoreServiceNode;
 
-class FirestoreNode implements Firestore {
+class FirestoreNode with FirestoreDefaultMixin implements Firestore {
+  @override
+  final FirestoreServiceNode service;
   final node.Firestore nativeInstance;
 
-  FirestoreNode(this.nativeInstance);
+  FirestoreNode(this.service, this.nativeInstance);
 
   @override
   CollectionReference collection(String path) =>
-      _collectionReference(nativeInstance.collection(path));
+      _collectionReference(this, nativeInstance.collection(path));
 
   @override
   DocumentReference doc(String path) =>
-      _wrapDocumentReference(nativeInstance.document(path))!;
+      _wrapDocumentReference(this, nativeInstance.document(path))!;
 
   @override
   WriteBatch batch() => WriteBatchNode(nativeInstance.batch());
@@ -81,7 +86,7 @@ class FirestoreNode implements Firestore {
   Future<T> runTransaction<T>(
           FutureOr<T> Function(Transaction transaction) updateFunction) =>
       nativeInstance.runTransaction<T>((nativeTransaction) async {
-        var transaction = TransactionNode(nativeTransaction);
+        var transaction = TransactionNode(this, nativeTransaction);
         return await updateFunction(transaction);
       });
 
@@ -93,19 +98,28 @@ class FirestoreNode implements Firestore {
   @override
   Future<List<DocumentSnapshot>> getAll(List<DocumentReference> refs) async =>
       _wrapDocumentSnapshots(
-          await nativeInstance.getAll(_unwrapDocumentReferences(refs)));
+          this, await nativeInstance.getAll(_unwrapDocumentReferences(refs)));
+
+  @override
+  Future<List<CollectionReference>> listCollections() async {
+    return (await nativeInstance.listCollections())
+        .map((e) => _collectionReference(this, e))
+        .toList();
+  }
 
   @override
   String toString() => 'FirestoreNode()';
 }
 
-FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
+//FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
 
-CollectionReferenceNode _collectionReference(node.CollectionReference impl) =>
-    CollectionReferenceNode._(impl);
+CollectionReferenceNode _collectionReference(
+        Firestore firestore, node.CollectionReference impl) =>
+    CollectionReferenceNode._(firestore, impl);
 
-DocumentReferenceNode? _wrapDocumentReference(node.DocumentReference? impl) =>
-    impl != null ? DocumentReferenceNode._(impl) : null;
+DocumentReferenceNode? _wrapDocumentReference(
+        Firestore firestore, node.DocumentReference? impl) =>
+    impl != null ? DocumentReferenceNode._(firestore, impl) : null;
 
 node.DocumentReference? _unwrapDocumentReference(DocumentReference? docRef) =>
     (docRef as DocumentReferenceNode?)?.nativeInstance;
@@ -142,56 +156,62 @@ class WriteBatchNode implements WriteBatch {
 
 class QueryNode extends Object with QueryMixin, FirestoreQueryExecutorMixin {
   @override
+  final Firestore firestore;
+  @override
   final node.DocumentQuery nativeInstance;
 
-  QueryNode(this.nativeInstance);
+  QueryNode(this.firestore, this.nativeInstance);
 }
 
-abstract class QueryMixin implements Query {
+abstract mixin class QueryMixin implements Query {
   node.DocumentQuery get nativeInstance;
 
   @override
   Future<QuerySnapshot> get() async =>
-      _wrapQuerySnapshot(await nativeInstance.get());
+      _wrapQuerySnapshot(firestore, await nativeInstance.get());
 
   @override
   Query select(List<String> fieldPaths) =>
-      _wrapQuery(nativeInstance.select(fieldPaths));
+      _wrapQuery(firestore, nativeInstance.select(fieldPaths));
 
   @override
-  Query limit(int limit) => _wrapQuery(nativeInstance.limit(limit));
+  Query limit(int limit) => _wrapQuery(firestore, nativeInstance.limit(limit));
 
   @override
   Query orderBy(String key, {bool? descending}) {
     if (key == firestoreNameFieldPath) {
       return _wrapQuery(
-          nativeInstance.orderByKey(descending: descending == true));
+          firestore, nativeInstance.orderByKey(descending: descending == true));
     }
     return _wrapQuery(
-        nativeInstance.orderBy(key, descending: descending == true));
+        firestore, nativeInstance.orderBy(key, descending: descending == true));
   }
 
   @override
-  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) =>
-      _wrapQuery(nativeInstance.startAt(
+  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
+      firestore,
+      nativeInstance.startAt(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  Query startAfter({DocumentSnapshot? snapshot, List? values}) =>
-      _wrapQuery(nativeInstance.startAfter(
+  Query startAfter({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
+      firestore,
+      nativeInstance.startAfter(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) =>
-      _wrapQuery(nativeInstance.endAt(
+  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
+      firestore,
+      nativeInstance.endAt(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
   @override
-  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) =>
-      _wrapQuery(nativeInstance.endBefore(
+  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
+      firestore,
+      nativeInstance.endBefore(
           snapshot: _unwrapDocumentSnapshot(snapshot),
           values: _unwrapValues(values)));
 
@@ -211,15 +231,17 @@ abstract class QueryMixin implements Query {
     if (arrayContainsAny != null) {
       throw UnsupportedError('arrayContainsAny');
     }
-    return _wrapQuery(nativeInstance.where(fieldPath,
-        isEqualTo: _unwrapValue(isEqualTo),
-        isLessThan: _unwrapValue(isLessThan),
-        isLessThanOrEqualTo: _unwrapValue(isLessThanOrEqualTo),
-        isGreaterThan: _unwrapValue(isGreaterThan),
-        isGreaterThanOrEqualTo: _unwrapValue(isGreaterThanOrEqualTo),
-        arrayContains: _unwrapValue(arrayContains),
-        whereIn: _unwrapValues(whereIn),
-        isNull: isNull));
+    return _wrapQuery(
+        firestore,
+        nativeInstance.where(fieldPath,
+            isEqualTo: _unwrapValue(isEqualTo),
+            isLessThan: _unwrapValue(isLessThan),
+            isLessThanOrEqualTo: _unwrapValue(isLessThanOrEqualTo),
+            isGreaterThan: _unwrapValue(isGreaterThan),
+            isGreaterThanOrEqualTo: _unwrapValue(isGreaterThanOrEqualTo),
+            arrayContains: _unwrapValue(arrayContains),
+            whereIn: _unwrapValues(whereIn),
+            isNull: isNull));
   }
 
   @override
@@ -227,7 +249,7 @@ abstract class QueryMixin implements Query {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.QuerySnapshot nativeQuerySnapshot,
             EventSink<QuerySnapshot> sink) {
-      sink.add(_wrapQuerySnapshot(nativeQuerySnapshot));
+      sink.add(_wrapQuerySnapshot(firestore, nativeQuerySnapshot));
     });
     return nativeInstance.snapshots.transform(transformer);
   }
@@ -238,17 +260,20 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
   node.CollectionReference get nativeInstance =>
       super.nativeInstance as node.CollectionReference;
 
-  CollectionReferenceNode._(node.CollectionReference implCollectionReference)
-      : super(implCollectionReference);
+  CollectionReferenceNode._(
+      Firestore firestore, node.CollectionReference implCollectionReference)
+      : super(firestore, implCollectionReference);
 
   @override
   DocumentReference doc([String? path]) =>
-      _wrapDocumentReference(nativeInstance.document(path))!;
+      _wrapDocumentReference(firestore, nativeInstance.document(path))!;
 
   @override
   Future<DocumentReference> add(Map<String, dynamic> data) async =>
-      _wrapDocumentReference(await nativeInstance
-          .add(documentDataToNativeDocumentData(DocumentData(data))))!;
+      _wrapDocumentReference(
+          firestore,
+          await nativeInstance
+              .add(documentDataToNativeDocumentData(DocumentData(data))))!;
 
   @override
   // ignore: invalid_use_of_protected_member
@@ -256,7 +281,7 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 
   @override
   DocumentReference? get parent =>
-      _wrapDocumentReference(nativeInstance.parent);
+      _wrapDocumentReference(firestore, nativeInstance.parent);
 
   @override
   // ignore: invalid_use_of_protected_member
@@ -351,7 +376,7 @@ dynamic documentValueToNativeValue(dynamic value) {
   }
 }
 
-dynamic documentValueFromNativeValue(dynamic value) {
+Object? documentValueFromNativeValue(Firestore firestore, Object? value) {
   if (value == null ||
       value is num ||
       value is bool ||
@@ -365,16 +390,18 @@ dynamic documentValueFromNativeValue(dynamic value) {
   } else if (value == node.Firestore.fieldValues.serverTimestamp()) {
     return FieldValue.serverTimestamp;
   } else if (value is List) {
-    return value.map((value) => documentValueFromNativeValue(value)).toList();
+    return value
+        .map((value) => documentValueFromNativeValue(firestore, value))
+        .toList();
   } else if (value is Map) {
-    return value.map<String, dynamic>((key, value) =>
-        MapEntry(key as String, documentValueFromNativeValue(value)));
+    return value.map<String, dynamic>((key, value) => MapEntry(
+        key as String, documentValueFromNativeValue(firestore, value)));
   } else if (value is node.GeoPoint) {
     return GeoPoint(value.latitude, value.longitude);
   } else if (value is node.Blob) {
     return Blob(value.asUint8List());
   } else if (value is node.DocumentReference) {
-    return DocumentReferenceNode._(value);
+    return DocumentReferenceNode._(firestore, value);
   } else {
     throw ArgumentError.value(value, '${value.runtimeType}',
         'Unsupported value for documentValueFromNativeValue');
@@ -389,9 +416,10 @@ node.DocumentData documentDataToNativeDocumentData(DocumentData documentData) {
 }
 
 DocumentData documentDataFromNativeDocumentData(
-    node.DocumentData nativeInstance) {
+    Firestore firestore, node.DocumentData nativeInstance) {
   var nativeMap = nativeInstance.toMap();
-  var map = documentValueFromNativeValue(nativeMap) as Map<String, dynamic>;
+  var map = documentValueFromNativeValue(firestore, nativeMap)
+      as Map<String, dynamic>;
   var documentData = DocumentData(map);
   return documentData;
 }
@@ -403,14 +431,18 @@ node.UpdateData? documentDataToNativeUpdateData(DocumentData documentData) {
   return nativeInstance;
 }
 
-class DocumentReferenceNode implements DocumentReference {
+class DocumentReferenceNode
+    with DocumentReferenceDefaultMixin
+    implements DocumentReference {
+  @override
+  final Firestore firestore;
   final node.DocumentReference nativeInstance;
 
-  DocumentReferenceNode._(this.nativeInstance);
+  DocumentReferenceNode._(this.firestore, this.nativeInstance);
 
   @override
   CollectionReference collection(path) =>
-      _collectionReference(nativeInstance.collection(path));
+      _collectionReference(firestore, nativeInstance.collection(path));
 
   @override
   Future set(Map<String, dynamic> data, [SetOptions? options]) async {
@@ -421,7 +453,7 @@ class DocumentReferenceNode implements DocumentReference {
 
   @override
   Future<DocumentSnapshot> get() async =>
-      _wrapDocumentSnapshot(await nativeInstance.get());
+      _wrapDocumentSnapshot(firestore, await nativeInstance.get());
 
   @override
   Future delete() async {
@@ -438,8 +470,9 @@ class DocumentReferenceNode implements DocumentReference {
   String get id => nativeInstance.documentID;
 
   @override
-  CollectionReference get parent =>
-      _collectionReference(node.CollectionReference(
+  CollectionReference get parent => _collectionReference(
+      firestore,
+      node.CollectionReference(
           // ignore: invalid_use_of_protected_member
           nativeInstance.nativeInstance.parent,
           nativeInstance.firestore));
@@ -452,7 +485,7 @@ class DocumentReferenceNode implements DocumentReference {
     var transformer = StreamTransformer.fromHandlers(handleData:
         (node.DocumentSnapshot nativeDocumentSnapshot,
             EventSink<DocumentSnapshot> sink) {
-      sink.add(_wrapDocumentSnapshot(nativeDocumentSnapshot));
+      sink.add(_wrapDocumentSnapshot(firestore, nativeDocumentSnapshot));
     });
     return nativeInstance.snapshots.transform(transformer);
   }
@@ -474,23 +507,32 @@ class DocumentReferenceNode implements DocumentReference {
     }
     return false;
   }
+
+  @override
+  Future<List<CollectionReference>> listCollections() async {
+    return (await nativeInstance.listCollections())
+        .map((e) => _collectionReference(firestore, e))
+        .toList();
+  }
 }
 
 class DocumentSnapshotNode
     with DocumentSnapshotMixin
     implements DocumentSnapshot {
+  final Firestore firestore;
   final node.DocumentSnapshot nativeInstance;
 
-  DocumentSnapshotNode(this.nativeInstance);
+  DocumentSnapshotNode(this.firestore, this.nativeInstance);
 
   @override
   Map<String, dynamic> get data => (exists
-      ? documentDataFromNativeDocumentData(nativeInstance.data).asMap()
+      ? documentDataFromNativeDocumentData(firestore, nativeInstance.data)
+          .asMap()
       : null)!;
 
   @override
   DocumentReference get ref =>
-      _wrapDocumentReference(nativeInstance.reference)!;
+      _wrapDocumentReference(firestore, nativeInstance.reference)!;
 
   @override
   bool get exists => nativeInstance.exists;
@@ -524,13 +566,14 @@ DocumentChangeType _wrapDocumentChangeType(node.DocumentChangeType type) {
 }
 
 class DocumentChangeNode implements DocumentChange {
+  final Firestore firestore;
   final node.DocumentChange nativeInstance;
 
-  DocumentChangeNode(this.nativeInstance);
+  DocumentChangeNode(this.firestore, this.nativeInstance);
 
   @override
   DocumentSnapshot get document =>
-      _wrapDocumentSnapshot(nativeInstance.document);
+      _wrapDocumentSnapshot(firestore, nativeInstance.document);
 
   @override
   int get newIndex => nativeInstance.newIndex;
@@ -543,9 +586,10 @@ class DocumentChangeNode implements DocumentChange {
 }
 
 class QuerySnapshotNode implements QuerySnapshot {
+  final Firestore firestore;
   final node.QuerySnapshot nativeInstance;
 
-  QuerySnapshotNode._(this.nativeInstance);
+  QuerySnapshotNode._(this.firestore, this.nativeInstance);
 
   @override
   List<DocumentSnapshot> get docs {
@@ -555,7 +599,7 @@ class QuerySnapshotNode implements QuerySnapshot {
     }
     var docs = <DocumentSnapshot?>[];
     for (var implDocumentSnapshot in implDocs) {
-      docs.add(_wrapDocumentSnapshot(implDocumentSnapshot));
+      docs.add(_wrapDocumentSnapshot(firestore, implDocumentSnapshot));
     }
     return docs.cast<DocumentSnapshot>();
   }
@@ -565,7 +609,7 @@ class QuerySnapshotNode implements QuerySnapshot {
     var changes = <DocumentChange>[];
     if (nativeInstance.documentChanges != null) {
       for (var nativeChange in nativeInstance.documentChanges!) {
-        changes.add(DocumentChangeNode(nativeChange));
+        changes.add(DocumentChangeNode(firestore, nativeChange));
       }
     }
     return changes;
@@ -573,9 +617,10 @@ class QuerySnapshotNode implements QuerySnapshot {
 }
 
 class TransactionNode implements Transaction {
+  final Firestore firestore;
   final node.Transaction nativeInstance;
 
-  TransactionNode(this.nativeInstance);
+  TransactionNode(this.firestore, this.nativeInstance);
 
   @override
   void delete(DocumentReference documentRef) {
@@ -584,7 +629,7 @@ class TransactionNode implements Transaction {
 
   @override
   Future<DocumentSnapshot> get(DocumentReference documentRef) async =>
-      _wrapDocumentSnapshot(
+      _wrapDocumentSnapshot(firestore,
           await nativeInstance.get(_unwrapDocumentReference(documentRef)!));
 
   @override
@@ -602,22 +647,25 @@ class TransactionNode implements Transaction {
   }
 }
 
-QueryNode _wrapQuery(node.DocumentQuery nativeInstance) =>
-    QueryNode(nativeInstance);
+QueryNode _wrapQuery(Firestore firestore, node.DocumentQuery nativeInstance) =>
+    QueryNode(firestore, nativeInstance);
 
 DocumentSnapshotNode _wrapDocumentSnapshot(
-        node.DocumentSnapshot nativeInstance) =>
-    DocumentSnapshotNode(nativeInstance);
+        Firestore firestore, node.DocumentSnapshot nativeInstance) =>
+    DocumentSnapshotNode(firestore, nativeInstance);
 
 List<DocumentSnapshotNode> _wrapDocumentSnapshots(
-        Iterable<node.DocumentSnapshot> nativeInstances) =>
-    nativeInstances.map(_wrapDocumentSnapshot).toList(growable: false);
+        Firestore firestore, Iterable<node.DocumentSnapshot> nativeInstances) =>
+    nativeInstances
+        .map((e) => _wrapDocumentSnapshot(firestore, e))
+        .toList(growable: false);
 
 node.DocumentSnapshot? _unwrapDocumentSnapshot(DocumentSnapshot? snapshot) =>
     snapshot != null ? (snapshot as DocumentSnapshotNode).nativeInstance : null;
 
-QuerySnapshotNode _wrapQuerySnapshot(node.QuerySnapshot nativeInstance) =>
-    QuerySnapshotNode._(nativeInstance);
+QuerySnapshotNode _wrapQuerySnapshot(
+        Firestore firestore, node.QuerySnapshot nativeInstance) =>
+    QuerySnapshotNode._(firestore, nativeInstance);
 
 node.SetOptions? _unwrapSetOptions(SetOptions? options) =>
     options != null ? node.SetOptions(merge: options.merge == true) : null;

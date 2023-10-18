@@ -4,5 +4,6 @@ import 'package:test/test.dart';
 void main() {
   test('firebase_universal', () {
     expect(firebase, isNotNull);
+    expect(firebaseUniversal, isNotNull);
   });
 }

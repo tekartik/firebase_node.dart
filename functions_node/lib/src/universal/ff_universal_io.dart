@@ -12,5 +12,8 @@ class FirebaseFunctionsHttpUniversalIo extends FirebaseFunctionsHttpUniversal {
 final FirebaseFunctionsUniversal firebaseFunctionsUniversal =
     FirebaseFunctionsHttpUniversalIo();
 
+final FirebaseFunctionsUniversal firebaseFunctionsUniversalV1 =
+    firebaseFunctionsUniversal;
+
 FirebaseFunctionsUniversal get firebaseFunctionsUniversalV2 =>
     firebaseFunctionsUniversal;

@@ -7,7 +7,7 @@ tekartik_firebase_auth_node:
   git:
     url: https://github.com/tekartik/firebase_node.dart
     path: auth_node
-    ref: dart2_3
+    ref: dart3a
 ```
 ## Test setup
 

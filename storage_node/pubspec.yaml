@@ -6,7 +6,7 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=2.18.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   path:
@@ -18,25 +18,25 @@ dependencies:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: firebase_node
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.0'
   tekartik_firebase_storage:
     git:
       url: https://github.com/tekartik/firebase_storage.dart
       path: storage
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.0'
   tekartik_firebase_storage_fs:
     git:
       url: https://github.com/tekartik/firebase_storage.dart
       path: storage_fs
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.2'
   tekartik_app_node_utils:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   node_interop:
 dev_dependencies:
@@ -46,12 +46,12 @@ dev_dependencies:
   tekartik_build_utils:
     git:
       url: https://github.com/tekartik/build_utils.dart
-      ref: dart2_3
+      ref: dart3a
   tekartik_firebase_storage_test:
     git:
       url: https://github.com/tekartik/firebase_storage.dart
       path: storage_test
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.4.0'
   process_run: '>=0.10.2'
 
@@ -60,7 +60,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart2_3
+      ref: dart3a
     version: '>=0.1.0'
   # needed node dependencies
   build_runner:
@@ -68,7 +68,7 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart2_3
+      ref: dart3a
 dependency_overrides:
   tekartik_firebase_node:
     path: ../firebase_node
