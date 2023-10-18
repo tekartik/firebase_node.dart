@@ -261,8 +261,7 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
       super.nativeInstance as node.CollectionReference;
 
   CollectionReferenceNode._(
-      Firestore firestore, node.CollectionReference implCollectionReference)
-      : super(firestore, implCollectionReference);
+      super.firestore, node.CollectionReference super.implCollectionReference);
 
   @override
   DocumentReference doc([String? path]) =>

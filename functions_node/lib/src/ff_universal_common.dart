@@ -13,8 +13,7 @@ abstract class FirebaseFunctionsUniversal extends FirebaseFunctionsHttp {
 
 abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase
     implements FirebaseFunctionsUniversal {
-  FirebaseFunctionsUniversalBase(HttpServerFactory httpServerFactory)
-      : super(httpServerFactory);
+  FirebaseFunctionsUniversalBase(super.httpServerFactory);
 
   /// No effect on node
   @override
@@ -23,8 +22,7 @@ abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase
 
 class FirebaseFunctionsHttpUniversal extends FirebaseFunctionsHttpBase
     implements FirebaseFunctionsUniversal {
-  FirebaseFunctionsHttpUniversal(HttpServerFactory httpServerFactory)
-      : super(httpServerFactory);
+  FirebaseFunctionsHttpUniversal(super.httpServerFactory);
 
   @override
   Future<FfServer> serve({int? port}) async {
