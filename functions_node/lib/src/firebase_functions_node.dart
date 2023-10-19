@@ -64,14 +64,18 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp
   operator []=(String key, common.FirebaseFunction function) {
     implFunctions[key] = (function as FirebaseFunctionNode).value as Object;
   }
-/*
-  @override
-  operator []=(String key, dynamic function) {
-    devPrint('function $key');
-    implFunctions[key] = function;
 
-    devPrint(jsObjectKeys(exports));
-  }*/
+  @override
+  common.Params get params => _ParamsNode(implFunctions.params);
+}
+
+class _ParamsNode implements common.Params {
+  final impl.Params _params;
+
+  _ParamsNode(this._params);
+
+  @override
+  String get projectId => _params.projectId;
 }
 
 abstract class FirebaseFunctionNode implements common.FirebaseFunction {
