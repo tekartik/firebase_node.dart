@@ -17,3 +17,6 @@ final FirebaseFunctionsUniversal firebaseFunctionsUniversalV1 =
 
 FirebaseFunctionsUniversal get firebaseFunctionsUniversalV2 =>
     firebaseFunctionsUniversal;
+
+FirebaseFunctionsUniversal get firebaseFunctionsUniversalGen2 =>
+    firebaseFunctionsUniversal;

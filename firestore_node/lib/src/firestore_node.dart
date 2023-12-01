@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:tekartik_firebase_firestore/firestore.dart'; // ignore: unnecessary_import
 
 import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
@@ -345,7 +343,8 @@ dynamic documentValueToNativeValue(dynamic value) {
       value is DateTime) {
     return value;
   } else if (value is Timestamp) {
-    return node.Timestamp(value.seconds, value.nanoseconds);
+    var nodeTimestamp = node.Timestamp(value.seconds, value.nanoseconds);
+    return nodeTimestamp;
   } else if (value is FieldValue) {
     if (value == FieldValue.delete) {
       return node.Firestore.fieldValues.delete();
