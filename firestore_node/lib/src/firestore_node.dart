@@ -152,7 +152,8 @@ class WriteBatchNode implements WriteBatch {
           documentDataToNativeUpdateData(DocumentData(data))!);
 }
 
-class QueryNode extends Object with QueryMixin, FirestoreQueryExecutorMixin {
+class QueryNode extends Object
+    with QueryDefaultMixin, QueryMixin, FirestoreQueryExecutorMixin {
   @override
   final Firestore firestore;
   @override
