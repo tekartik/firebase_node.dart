@@ -12,4 +12,5 @@ pubspec.lock
 # nodes
 node_modules/
 package-lock.json
-/pubspec_overrides.yaml
+/_pubspec_overrides.yaml
+/_pubspec_overrides.yaml

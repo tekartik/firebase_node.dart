@@ -61,5 +61,5 @@ _temp_dependency_overrides:
     path: ../../firebase_firestore.dart/firestore
   tekartik_firebase_firestore_test:
     path: ../../firebase_firestore.dart/firestore_test
-  # firebase_admin_interop:
-  #  path: ../../../tekartikdev/firebase-admin-interop
+  firebase_admin_interop:
+    path: ../../../tekartikdev/firebase-admin-interop

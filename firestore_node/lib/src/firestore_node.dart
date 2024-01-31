@@ -52,6 +52,9 @@ class FirestoreServiceNode
   bool get supportsListCollections => true;
 
   @override
+  bool get supportsAggregateQueries => true;
+
+  @override
   String toString() => 'FirestoreServiceNode()';
 }
 
@@ -153,7 +156,7 @@ class WriteBatchNode implements WriteBatch {
 }
 
 class QueryNode extends Object
-    with QueryDefaultMixin, QueryMixin, FirestoreQueryExecutorMixin {
+    with QueryDefaultMixin, FirestoreQueryExecutorMixin, QueryNodeMixin {
   @override
   final Firestore firestore;
   @override
@@ -162,7 +165,7 @@ class QueryNode extends Object
   QueryNode(this.firestore, this.nativeInstance);
 }
 
-abstract mixin class QueryMixin implements Query {
+abstract mixin class QueryNodeMixin implements Query {
   node.DocumentQuery get nativeInstance;
 
   @override
@@ -251,6 +254,16 @@ abstract mixin class QueryMixin implements Query {
       sink.add(_wrapQuerySnapshot(firestore, nativeQuerySnapshot));
     });
     return nativeInstance.snapshots.transform(transformer);
+  }
+
+  @override
+  Future<int> count() {
+    return nativeInstance.count();
+  }
+
+  @override
+  AggregateQuery aggregate(List<AggregateField> aggregateFields) {
+    return AggregateQueryNode(this, aggregateFields);
   }
 }
 
@@ -668,3 +681,75 @@ QuerySnapshotNode _wrapQuerySnapshot(
 
 node.SetOptions? _unwrapSetOptions(SetOptions? options) =>
     options != null ? node.SetOptions(merge: options.merge == true) : null;
+
+String indexAlias(int index) => 'field_$index';
+int aliasIndex(String alias) => int.parse(alias.substring('field_'.length));
+
+class AggregateQueryNode implements AggregateQuery {
+  final QueryNodeMixin queryNode;
+  final List<AggregateField> aggregateFields;
+
+  AggregateQueryNode(this.queryNode, this.aggregateFields);
+
+  node.AggregateField toNodeAggregateField(
+      int index, AggregateField aggregateField) {
+    if (aggregateField is AggregateFieldCount) {
+      return node.AggregateFieldCount();
+    } else if (aggregateField is AggregateFieldAverage) {
+      return node.AggregateFieldAverage(
+          indexAlias(index), aggregateField.field);
+    } else if (aggregateField is AggregateFieldSum) {
+      return node.AggregateFieldSum(indexAlias(index), aggregateField.field);
+    } else {
+      throw ArgumentError('Unsupported aggregateField $aggregateField');
+    }
+  }
+
+  @override
+  Future<AggregateQuerySnapshot> get() async {
+    var nativeAggregateQuery = queryNode.nativeInstance.aggregate(
+        aggregateFields.indexed
+            .map((e) => toNodeAggregateField(e.$1, e.$2))
+            .toList(growable: false));
+    var nativeQuerySnapshot = await nativeAggregateQuery.get();
+    return AggregateQuerySnapshotNode(this, nativeQuerySnapshot);
+  }
+}
+
+class AggregateQuerySnapshotNode implements AggregateQuerySnapshot {
+  final AggregateQueryNode aggregateQueryNode;
+  final node.AggregateQuerySnapshot nativeInstance;
+
+  AggregateQuerySnapshotNode(this.aggregateQueryNode, this.nativeInstance);
+  @override
+  int? get count => nativeInstance.count;
+
+  @override
+  double? getAverage(String fieldPath) {
+    for (var e in aggregateQueryNode.aggregateFields.indexed) {
+      var aggregateField = e.$2;
+      if (aggregateField is AggregateFieldAverage &&
+          aggregateField.field == fieldPath) {
+        var index = e.$1;
+        return nativeInstance.getAlias(indexAlias(index))?.toDouble();
+      }
+    }
+    return null;
+  }
+
+  @override
+  double? getSum(String fieldPath) {
+    for (var e in aggregateQueryNode.aggregateFields.indexed) {
+      var aggregateField = e.$2;
+      if (aggregateField is AggregateFieldSum &&
+          aggregateField.field == fieldPath) {
+        var index = e.$1;
+        return nativeInstance.getAlias(indexAlias(index))?.toDouble();
+      }
+    }
+    return null;
+  }
+
+  @override
+  Query get query => aggregateQueryNode.queryNode;
+}
