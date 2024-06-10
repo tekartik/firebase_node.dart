@@ -1,6 +1,7 @@
 library;
 
 import 'dart:js_interop' as js;
+import 'dart:js_interop_unsafe' as js;
 
 import 'package:tekartik_core_node/require.dart' as node;
 // ignore: implementation_imports
@@ -74,9 +75,11 @@ extension TimestampProtoExt on TimestampProto {
   external Timestamp fromMillis(int milliseconds);
 }
 
-extension type Timestamp._(js.JSObject _) implements js.JSObject {}
+extension type Timestamp._(js.JSObject _) implements js.JSObject {
+  external Timestamp(int seconds, int nanoseconds);
+}
 
-extension TimestampExt on TimestampProto {
+extension TimestampExt on Timestamp {
   external int get seconds;
 
   external int get nanoseconds;
@@ -394,7 +397,7 @@ extension DocumentReferenceExt on DocumentReference {
   external CollectionReference collection(String collectionPath);
 
   /// Fetches the subcollections that are direct children of this document.
-  external js.JSPromise listCollections();
+  external js.JSPromise<js.JSArray<CollectionReference>> listCollections();
 
   /// Creates a document referred to by this `DocumentReference` with the
   /// provided object values. The write fails if the document already exists
@@ -430,7 +433,7 @@ extension DocumentReferenceExt on DocumentReference {
 
   /// Reads the document referred to by this `DocumentReference`.
   /// current document contents.
-  external js.JSPromise get();
+  external js.JSPromise<DocumentSnapshot> get();
 
   /// Attaches a listener for DocumentSnapshot events.
   /// is available.
@@ -542,15 +545,15 @@ extension DocumentQueryExt on DocumentQuery {
   /// relation constraint provided.
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the filter.
-  external DocumentQuery where(dynamic /*String|FieldPath*/ fieldPath,
-      String /*'<'|'<='|'=='|'>='|'>'*/ opStr, dynamic value);
+  external DocumentQuery where(String fieldPath,
+      String /*'<'|'<='|'=='|'>='|'>'*/ opStr, js.JSAny? value);
 
   /// Creates and returns a new Query that's additionally sorted by the
   /// specified field, optionally in descending order instead of ascending.
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the order.
   /// not specified, order will be ascending.
-  external DocumentQuery orderBy(dynamic /*String|FieldPath*/ fieldPath,
+  external DocumentQuery orderBy(String fieldPath,
       [String? /*'desc'|'asc'*/ directionStr]);
 
   /// Creates and returns a new Query that's additionally limited to only
@@ -593,33 +596,32 @@ extension DocumentQueryExt on DocumentQuery {
     dynamic fieldValues3,
     dynamic fieldValues4,
     dynamic fieldValues5]);*/
-  external DocumentQuery startAt(
-      dynamic /*DocumentSnapshot|List<dynamic>*/ snapshotFieldValues);
+  DocumentQuery startAt(List<js.JSAny?> values) =>
+      callMethodVarArgs('startAt'.toJS, values);
+
+  @js.JS('startAt')
+  external DocumentQuery startAtDocumentSnapshot(DocumentSnapshot snapshot);
 
   /// Creates and returns a new Query that starts after the provided document
   /// (exclusive). The starting position is relative to the order of the query.
   /// The document must contain all of the fields provided in the orderBy of
   /// this query.
-  /*external Query startAfter(DocumentSnapshot snapshot);*/
+  DocumentQuery startAfter(List<js.JSAny?> values) =>
+      callMethodVarArgs('startAfter'.toJS, values);
 
   /// Creates and returns a new Query that starts after the provided fields
   /// relative to the order of the query. The order of the field values
   /// must match the order of the order by clauses of the query.
   /// of the query's order by.
-  /*external Query startAfter(
-    [dynamic fieldValues1,
-    dynamic fieldValues2,
-    dynamic fieldValues3,
-    dynamic fieldValues4,
-    dynamic fieldValues5]);*/
-  external DocumentQuery startAfter(
-      dynamic /*DocumentSnapshot|List<dynamic>*/ snapshotFieldValues);
+  @js.JS('startAfter')
+  external DocumentQuery startAfterDocumentSnapshot(DocumentSnapshot snapshot);
 
   /// Creates and returns a new Query that ends before the provided document
   /// (exclusive). The end position is relative to the order of the query. The
   /// document must contain all of the fields provided in the orderBy of this
   /// query.
-  /*external Query endBefore(DocumentSnapshot snapshot);*/
+  DocumentQuery endBefore(List<js.JSAny?> values) =>
+      callMethodVarArgs('endBefore'.toJS, values);
 
   /// Creates and returns a new Query that ends before the provided fields
   /// relative to the order of the query. The order of the field values
@@ -631,8 +633,8 @@ extension DocumentQueryExt on DocumentQuery {
     dynamic fieldValues3,
     dynamic fieldValues4,
     dynamic fieldValues5]);*/
-  external DocumentQuery endBefore(
-      dynamic /*DocumentSnapshot|List<dynamic>*/ snapshotFieldValues);
+  @js.JS('endBefore')
+  external DocumentQuery endBeforeDocumentSnapshot(DocumentSnapshot snapshot);
 
   /// Creates and returns a new Query that ends at the provided document
   /// (inclusive). The end position is relative to the order of the query. The
@@ -644,17 +646,14 @@ extension DocumentQueryExt on DocumentQuery {
   /// relative to the order of the query. The order of the field values
   /// must match the order of the order by clauses of the query.
   /// of the query's order by.
-  /*external Query endAt(
-    [dynamic fieldValues1,
-    dynamic fieldValues2,
-    dynamic fieldValues3,
-    dynamic fieldValues4,
-    dynamic fieldValues5]);*/
-  external DocumentQuery endAt(
-      dynamic /*DocumentSnapshot|List<dynamic>*/ snapshotFieldValues);
+  DocumentQuery endAt(List<js.JSAny?> values) =>
+      callMethodVarArgs('endAt'.toJS, values);
+
+  @js.JS('endAt')
+  external DocumentQuery endAtDocumentSnapshot(DocumentSnapshot snapshot);
 
   /// Executes the query and returns the results as a `QuerySnapshot`.
-  external js.JSPromise get();
+  external js.JSPromise<QuerySnapshot> get();
 
   /// Executes the query and returns the results as Node Stream.
   //external Readable stream();
@@ -663,8 +662,11 @@ extension DocumentQueryExt on DocumentQuery {
   /// is available.
   /// cancelled. No further callbacks will occur.
   /// the snapshot listener.
-  external Function onSnapshot(void Function(QuerySnapshot snapshot) onNext,
-      [void Function(Error error)? onError]);
+  //external Function onSnapshot(void Function(QuerySnapshot snapshot) onNext,
+  //    [void Function(Error error)? onError]);
+  external js.JSFunction onSnapshot(
+      js.JSFunction onNext, js.JSFunction onError);
+  //    [void Function(Error error)? onError]);
 
   /// Returns a query that counts the documents in the result set of this query.
   external AggregateQuery count();
@@ -790,7 +792,7 @@ extension CollectionReferenceExt on CollectionReference {
   /// Add a new document to this collection with the specified data, assigning
   /// it a document ID automatically.
   /// newly created document after it has been written to the backend.
-  external js.JSPromise add(DocumentData? data);
+  external js.JSPromise<DocumentReference> add(DocumentData? data);
 }
 
 /// Sentinel values that can be used when writing document fields with set()

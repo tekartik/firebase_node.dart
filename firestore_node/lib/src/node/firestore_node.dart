@@ -3,7 +3,9 @@ library wip;
 /*
 import 'dart:async';
 import 'dart:js_interop' as js;
-
+import 'dart:js_interop_unsafe';
+import 'package:tekartik_js_utils_interop/js_date.dart' as js;
+import 'package:tekartik_js_utils_interop/js_number.dart' as js;
 import 'package:tekartik_firebase_firestore/firestore.dart';
 import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
 import 'package:tekartik_firebase/firebase.dart';
@@ -11,6 +13,7 @@ import 'firestore_node_js_interop.dart' as js;
 import 'firestore_node_js_interop.dart' as node;
 import 'package:tekartik_firebase_node/src/node/firebase_node.dart'
     show AppNode, FirebaseNode;
+
 node.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
   var nativeSettings = node.FirestoreSettings(
       // ignore: deprecated_member_use
@@ -26,7 +29,8 @@ class FirestoreServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return FirestoreNode(this, node.firestoreModule.getFirestore(appNode.nativeInstance!);
+      return FirestoreNode(
+          this, node.firestoreModule.getFirestore(appNode.nativeInstance!));
     });
   }
 
@@ -81,14 +85,14 @@ class FirestoreNode with FirestoreDefaultMixin implements Firestore {
 
   @override
   DocumentReference doc(String path) =>
-      _wrapDocumentReference(this, nativeInstance.document(path))!;
+      _wrapDocumentReference(this, nativeInstance.doc(path));
 
   @override
   WriteBatch batch() => WriteBatchNode(nativeInstance.batch());
 
   @override
   Future<T> runTransaction<T>(
-          FutureOr<T> Function(Transaction transaction) updateFunction) async {
+      FutureOr<T> Function(Transaction transaction) updateFunction) async {
     late T result;
     await nativeInstance.runTransaction((nativeTransaction) {
       return () async {
@@ -99,8 +103,8 @@ class FirestoreNode with FirestoreDefaultMixin implements Firestore {
         } else {
           result = resultOrFuture;
         }
-      } ().toJS;
-
+      }()
+          .toJS;
     }).toDart;
     return result;
   }
@@ -115,32 +119,27 @@ class FirestoreNode with FirestoreDefaultMixin implements Firestore {
     var jsRefs = _unwrapDocumentReferences(refs);
     late js.JSPromise<js.JSArray<node.DocumentSnapshot>> result;
     if (jsRefs.length == 1) {
-      result = nativeInstance
-          .getAll(jsRefs[0]);
+      result = nativeInstance.getAll(jsRefs[0]);
     } else if (jsRefs.length == 2) {
-      result = nativeInstance
-          .getAll(jsRefs[0], jsRefs[1]);
+      result = nativeInstance.getAll(jsRefs[0], jsRefs[1]);
     } else if (jsRefs.length == 3) {
-      result = nativeInstance
-          .getAll(jsRefs[0], jsRefs[1], jsRefs[2]);
+      result = nativeInstance.getAll(jsRefs[0], jsRefs[1], jsRefs[2]);
     } else if (jsRefs.length == 4) {
-      result = nativeInstance
-          .getAll(jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3]);
+      result =
+          nativeInstance.getAll(jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3]);
     } else if (jsRefs.length == 5) {
-      result = nativeInstance
-          .getAll(jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3], jsRefs[4]);
+      result = nativeInstance.getAll(
+          jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3], jsRefs[4]);
     } else {
       throw ArgumentError('Unsupported getAll with ${jsRefs.length} refs');
-
     }
-    return _wrapDocumentSnapshots(
-        this, (await result
-        .toDart).toDart);
+    return _wrapDocumentSnapshots(this, (await result.toDart).toDart);
   }
 
   @override
   Future<List<CollectionReference>> listCollections() async {
-    return (await (nativeInstance.listCollections().toDart)).toDart
+    return (await (nativeInstance.listCollections().toDart))
+        .toDart
         .map((e) => _collectionReference(this, e))
         .toList();
   }
@@ -155,9 +154,13 @@ CollectionReferenceNode _collectionReference(
         Firestore firestore, node.CollectionReference impl) =>
     CollectionReferenceNode._(firestore, impl);
 
-DocumentReferenceNode? _wrapDocumentReference(
+DocumentReferenceNode _wrapDocumentReference(
+        Firestore firestore, node.DocumentReference impl) =>
+    DocumentReferenceNode._(firestore, impl);
+
+DocumentReferenceNode? _wrapDocumentReferenceOrNull(
         Firestore firestore, node.DocumentReference? impl) =>
-    impl != null ? DocumentReferenceNode._(firestore, impl) : null;
+    impl == null ? null : _wrapDocumentReference(firestore, impl);
 
 node.DocumentReference _unwrapDocumentReference(DocumentReference docRef) =>
     (docRef as DocumentReferenceNode).nativeInstance;
@@ -175,14 +178,14 @@ class WriteBatchNode implements WriteBatch {
   Future commit() => nativeInstance.commit().toDart;
 
   @override
-  void delete(DocumentReference? ref) =>
-      nativeInstance.delete(_unwrapDocumentReference(ref)!);
+  void delete(DocumentReference ref) =>
+      nativeInstance.delete(_unwrapDocumentReference(ref));
 
   @override
   void set(DocumentReference ref, Map<String, dynamic> data,
-          [SetOptions? options]) {
-    final docData =  documentDataToNativeDocumentData(DocumentData(data));
-    final nativeRef =  _unwrapDocumentReference(ref);
+      [SetOptions? options]) {
+    final docData = documentDataToNativeDocumentData(DocumentData(data));
+    final nativeRef = _unwrapDocumentReference(ref);
     if (options != null) {
       nativeInstance.set(nativeRef, docData, _unwrapSetOptions(options));
     } else {
@@ -190,11 +193,10 @@ class WriteBatchNode implements WriteBatch {
     }
   }
 
-
   @override
   void update(DocumentReference ref, Map<String, dynamic> data) =>
       nativeInstance.update(_unwrapDocumentReference(ref),
-          documentDataToNativeUpdateData(DocumentData(data))!);
+          documentDataToNativeUpdateData(DocumentData(data)));
 }
 
 class QueryNode extends Object
@@ -207,12 +209,15 @@ class QueryNode extends Object
   QueryNode(this.firestore, this.nativeInstance);
 }
 
+const orderByDirectionAsc = 'asc';
+const orderByDirectionDesc = 'desc';
+
 abstract mixin class QueryNodeMixin implements Query {
   node.DocumentQuery get nativeInstance;
 
   @override
   Future<QuerySnapshot> get() async =>
-      _wrapQuerySnapshot(firestore, await nativeInstance.get());
+      _wrapQuerySnapshot(firestore, await nativeInstance.get().toDart);
 
   @override
   Query select(List<String> fieldPaths) =>
@@ -223,84 +228,146 @@ abstract mixin class QueryNodeMixin implements Query {
 
   @override
   Query orderBy(String key, {bool? descending}) {
-    if (key == firestoreNameFieldPath) {
-      return _wrapQuery(
-          firestore, nativeInstance.orderByKey(descending: descending == true));
-    }
+    // if (key == firestoreNameFieldPath) {
     return _wrapQuery(
-        firestore, nativeInstance.orderBy(key, descending: descending == true));
+        firestore,
+        nativeInstance.orderBy(key,
+            (descending ?? false) ? orderByDescending : orderByDirectionAsc));
   }
 
   @override
-  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
-      firestore,
-      nativeInstance.startAt(
-          snapshot: _unwrapDocumentSnapshot(snapshot),
-          values: _unwrapValues(values)));
+  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) {
+    node.DocumentQuery result;
+    if (values != null) {
+      assert(snapshot == null);
+      result = nativeInstance.startAt(unwrapValues(values));
+    } else {
+      result = nativeInstance
+          .startAtDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+    }
+    return _wrapQuery(firestore, result);
+  }
 
   @override
-  Query startAfter({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
-      firestore,
-      nativeInstance.startAfter(
-          snapshot: _unwrapDocumentSnapshot(snapshot),
-          values: _unwrapValues(values)));
+  Query startAfter({DocumentSnapshot? snapshot, List? values}) {
+    node.DocumentQuery result;
+    if (values != null) {
+      assert(snapshot == null);
+      result = nativeInstance.startAfter(unwrapValues(values));
+    } else {
+      result = nativeInstance
+          .startAfterDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+    }
+    return _wrapQuery(firestore, result);
+  }
 
   @override
-  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
-      firestore,
-      nativeInstance.endAt(
-          snapshot: _unwrapDocumentSnapshot(snapshot),
-          values: _unwrapValues(values)));
+  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) {
+    node.DocumentQuery result;
+    if (values != null) {
+      assert(snapshot == null);
+      result = nativeInstance.endAt(unwrapValues(values));
+    } else {
+      result = nativeInstance
+          .endAtDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+    }
+    return _wrapQuery(firestore, result);
+  }
 
   @override
-  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) => _wrapQuery(
-      firestore,
-      nativeInstance.endBefore(
-          snapshot: _unwrapDocumentSnapshot(snapshot),
-          values: _unwrapValues(values)));
+  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) {
+    node.DocumentQuery result;
+    if (values != null) {
+      assert(snapshot == null);
+      result = nativeInstance.endBefore(unwrapValues(values));
+    } else {
+      result = nativeInstance
+          .endBeforeDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+    }
+    return _wrapQuery(firestore, result);
+  }
 
   @override
   QueryNode where(
-    String fieldPath, {
-    dynamic isEqualTo,
-    dynamic isLessThan,
-    dynamic isLessThanOrEqualTo,
-    dynamic isGreaterThan,
-    dynamic isGreaterThanOrEqualTo,
-    dynamic arrayContains,
-    List<dynamic>? arrayContainsAny,
-    List<dynamic>? whereIn,
+    String field, {
+    Object? isEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    List<Object>? arrayContainsAny,
+    List<Object>? whereIn,
+    List<Object>? notIn,
     bool? isNull,
   }) {
-    if (arrayContainsAny != null) {
-      throw UnsupportedError('arrayContainsAny');
+    var query = nativeInstance;
+
+    void addCondition(String field, String opStr, Object value) {
+      query = query.where(field, opStr, unwrapValue(value));
     }
-    return _wrapQuery(
-        firestore,
-        nativeInstance.where(fieldPath,
-            isEqualTo: _unwrapValue(isEqualTo),
-            isLessThan: _unwrapValue(isLessThan),
-            isLessThanOrEqualTo: _unwrapValue(isLessThanOrEqualTo),
-            isGreaterThan: _unwrapValue(isGreaterThan),
-            isGreaterThanOrEqualTo: _unwrapValue(isGreaterThanOrEqualTo),
-            arrayContains: _unwrapValue(arrayContains),
-            whereIn: _unwrapValues(whereIn),
-            isNull: isNull));
+
+    if (isEqualTo != null) addCondition(field, '==', isEqualTo);
+    if (isLessThan != null) addCondition(field, '<', isLessThan);
+    if (isLessThanOrEqualTo != null) {
+      addCondition(field, '<=', isLessThanOrEqualTo);
+    }
+    if (isGreaterThan != null) addCondition(field, '>', isGreaterThan);
+    if (isGreaterThanOrEqualTo != null) {
+      addCondition(field, '>=', isGreaterThanOrEqualTo);
+    }
+    if (arrayContains != null) {
+      addCondition(field, 'array-contains', arrayContains);
+    }
+    if (whereIn != null) {
+      addCondition(field, 'in', whereIn);
+    }
+    if (notIn != null) {
+      addCondition(field, 'not-in', notIn);
+    }
+    if (arrayContainsAny != null) {
+      addCondition(field, 'array-contains-any', arrayContainsAny);
+    }
+
+    if (isNull != null) {
+      assert(
+          isNull,
+          'isNull can only be set to true. '
+          'Use isEqualTo to filter on non-null values.');
+      query = query.where(field, '==', null);
+    }
+    return _wrapQuery(firestore, query);
   }
 
   @override
   Stream<QuerySnapshot> onSnapshot({bool includeMetadataChanges = false}) {
-    var transformer = StreamTransformer.fromHandlers(handleData:
-        (node.QuerySnapshot nativeQuerySnapshot,
-            EventSink<QuerySnapshot> sink) {
-      sink.add(_wrapQuerySnapshot(firestore, nativeQuerySnapshot));
-    });
-    return nativeInstance.snapshots.transform(transformer);
+    late StreamController<QuerySnapshot> streamController;
+    void onNext(node.QuerySnapshot nativeQuerySnapshot) {
+      streamController.add(_wrapQuerySnapshot(firestore, nativeQuerySnapshot));
+    }
+
+    void onError(js.JSAny error) {
+      streamController.addError(FirestoreErrorNode(error));
+    }
+
+    late js.JSFunction? unsubscribe;
+    streamController = StreamController<QuerySnapshot>(
+        sync: true,
+        onListen: () {
+          unsubscribe = nativeInstance.onSnapshot(onNext.toJS, onError.toJS);
+        },
+        onCancel: () {
+          unsubscribe?.callAsFunction();
+        });
+
+    //return nativeInstance.onSnapshot(onNext.toJS).transform(transformer);
+    return streamController.stream;
   }
 
   @override
-  Future<int> count() {
-    return nativeInstance.count();
+  Future<int> count() async {
+    return ((await nativeInstance.count().get().toDart) as js.JSNumber)
+        .toDartInt;
   }
 
   @override
@@ -319,26 +386,27 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 
   @override
   DocumentReference doc([String? path]) =>
-      _wrapDocumentReference(firestore, nativeInstance.document(path))!;
+      _wrapDocumentReference(firestore, nativeInstance.doc(path));
 
   @override
   Future<DocumentReference> add(Map<String, dynamic> data) async =>
       _wrapDocumentReference(
           firestore,
-          await nativeInstance
-              .add(documentDataToNativeDocumentData(DocumentData(data))))!;
+          (await nativeInstance
+              .add(documentDataToNativeDocumentData(DocumentData(data)))
+              .toDart));
 
   @override
   // ignore: invalid_use_of_protected_member
-  String get id => nativeInstance.nativeInstance!.id;
+  String get id => nativeInstance.id;
 
   @override
   DocumentReference? get parent =>
-      _wrapDocumentReference(firestore, nativeInstance.parent);
+      _wrapDocumentReferenceOrNull(firestore, nativeInstance.parent);
 
   @override
   // ignore: invalid_use_of_protected_member
-  String get path => nativeInstance.nativeInstance!.path;
+  String get path => nativeInstance.path;
 
   @override
   String toString() {
@@ -360,23 +428,37 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 }
 
 /// Unwrap list for startAt, endAt...
-List? _unwrapValues(List? values) =>
-    values?.map(_unwrapValue).toList(growable: false);
+List<js.JSAny?> unwrapValues(List values) =>
+    values.map(unwrapValueOrNull).toList(growable: false);
 
-dynamic _unwrapValue(Object? value) {
-  if (value == null || value is num || value is bool || value is String) {
-    return value;
+js.JSAny unwrapValue(Object value) {
+  if (value is num) {
+    return value.toJS;
+  } else if (value is bool) {
+    return value.toJS;
   } else if (value is DateTime) {
-    return value;
+    return value.toJS;
   } else if (value is Timestamp) {
     return node.Timestamp(value.seconds, value.nanoseconds);
   } else if (value is Map) {
-    return value.map((key, value) => MapEntry(key, _unwrapValue(value)));
+    var object = js.JSObject();
+    value.forEach((key, value) {
+      object.setProperty((key as String).toJS, unwrapValueOrNull(value));
+    });
+    return object;
   } else if (value is List) {
-    return value.map(_unwrapValue).toList(growable: false);
+    return value.map(unwrapValueOrNull).toList().toJS;
   } else {
     throw ArgumentError.value(
         value, '${value.runtimeType}', 'Unsupported value for _unwrapValue');
+  }
+}
+
+js.JSAny? unwrapValueOrNull(Object? value) {
+  if (value == null) {
+    return null;
+  } else {
+    return unwrapValue(value);
   }
 }
 
@@ -388,20 +470,19 @@ js.Timestamp _createJsTimestamp(Timestamp ts) {
 */
 
 List listToNative(Iterable list) {
-  return list.map((value) => documentValueToNativeValue(value)).toList();
+  return list.map((value) => documentValueToNativeValueOrNull(value)).toList();
 }
 
-dynamic documentValueToNativeValue(dynamic value) {
-  if (value == null ||
-      value is num ||
-      value is bool ||
-      value is String ||
-      value is DateTime) {
-    return value;
-  } else if (value is Timestamp) {
-    var nodeTimestamp = node.Timestamp(value.seconds, value.nanoseconds);
-    return nodeTimestamp;
-  } else if (value is FieldValue) {
+class FirestoreErrorNode implements Exception {
+  final js.JSAny error;
+
+  FirestoreErrorNode(this.error);
+
+  String get message => error.toString();
+}
+
+js.JSAny documentValueToNativeValue(Object value) {
+  if (value is FieldValue) {
     if (value == FieldValue.delete) {
       return node.Firestore.fieldValues.delete();
     } else if (value == FieldValue.serverTimestamp) {
@@ -413,24 +494,61 @@ dynamic documentValueToNativeValue(dynamic value) {
         return node.Firestore.fieldValues.arrayRemove(listToNative(value.data));
       }
     }
-  } else if (value is Iterable) {
-    return listToNative(value);
-  } else if (value is Map) {
-    return value.map<String, dynamic>((key, value) =>
-        MapEntry(key as String, documentValueToNativeValue(value)));
+    throw ArgumentError('Unsupported FieldValue $value');
   } else if (value is DocumentReferenceNode) {
     return value.nativeInstance;
+    /*
   } else if (value is GeoPoint) {
     return node.GeoPoint(value.latitude.toDouble(), value.longitude.toDouble());
   } else if (value is Blob) {
-    return node.Blob.fromUint8List(value.data);
+    return node.Blob.fromUint8List(value.data);*/
   } else {
-    throw ArgumentError.value(value, '${value.runtimeType}',
-        'Unsupported value for documentValueToNativeValue');
+    return unwrapValue(value);
   }
 }
 
-Object? documentValueFromNativeValue(Firestore firestore, Object? value) {
+js.JSAny? documentValueToNativeValueOrNull(js.JSAny? value) {
+  if (value == null) {
+    return null;
+  }
+  return documentValueToNativeValue(value);
+}
+
+Object documentValueFromNativeValue(Firestore firestore, js.JSAny value) {
+  if (value is js.JSNumber) {
+    return value.toDartNum;
+  } else if (value is js.JSBoolean) {
+    return value.toDart;
+  } else if (value is js.JSString) {
+    return value.toDart;
+  } else if (value is js.JSDate) {
+    return value.toDart;
+  } else if (value is node.Timestamp) {
+    return Timestamp(value.seconds, value.nanoseconds);
+  } else if (value == node.Firestore.fieldValues.delete()) {
+    return FieldValue.delete;
+  } else if (value == node.Firestore.fieldValues.serverTimestamp()) {
+    return FieldValue.serverTimestamp;
+  } else if (value is List) {
+    return value
+        .map((value) => documentValueFromNativeValueOrNull(firestore, value))
+        .toList();
+  } else if (value is Map) {
+    return value.map<String, dynamic>((key, value) => MapEntry(
+        key as String, documentValueFromNativeValueOrNull(firestore, value)));
+  } else if (value is node.GeoPoint) {
+    return GeoPoint(value.latitude, value.longitude);
+  } else if (value is node.Blob) {
+    return Blob(value.asUint8List());
+  } else if (value is node.DocumentReference) {
+    return DocumentReferenceNode._(firestore, value);
+  } else {
+    throw ArgumentError.value(value, '${value.runtimeType}',
+        'Unsupported value for documentValueFromNativeValue');
+  }
+}
+
+Object? documentValueFromNativeValueOrNull(Firestore firestore, Object? value) {
   if (value == null ||
       value is num ||
       value is bool ||
@@ -445,11 +563,11 @@ Object? documentValueFromNativeValue(Firestore firestore, Object? value) {
     return FieldValue.serverTimestamp;
   } else if (value is List) {
     return value
-        .map((value) => documentValueFromNativeValue(firestore, value))
+        .map((value) => documentValueFromNativeValueOrNull(firestore, value))
         .toList();
   } else if (value is Map) {
     return value.map<String, dynamic>((key, value) => MapEntry(
-        key as String, documentValueFromNativeValue(firestore, value)));
+        key as String, documentValueFromNativeValueOrNull(firestore, value)));
   } else if (value is node.GeoPoint) {
     return GeoPoint(value.latitude, value.longitude);
   } else if (value is node.Blob) {
@@ -464,7 +582,7 @@ Object? documentValueFromNativeValue(Firestore firestore, Object? value) {
 
 node.DocumentData documentDataToNativeDocumentData(DocumentData documentData) {
   var map = (documentData as DocumentDataMap).map;
-  var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
+  var nativeMap = documentValueToNativeValueOrNull(map) as Map<String, dynamic>;
   final nativeInstance = node.DocumentData.fromMap(nativeMap);
   return nativeInstance;
 }
@@ -472,7 +590,7 @@ node.DocumentData documentDataToNativeDocumentData(DocumentData documentData) {
 DocumentData documentDataFromNativeDocumentData(
     Firestore firestore, node.DocumentData nativeInstance) {
   var nativeMap = nativeInstance.toMap();
-  var map = documentValueFromNativeValue(firestore, nativeMap)
+  var map = documentValueFromNativeValueOrNull(firestore, nativeMap)
       as Map<String, dynamic>;
   var documentData = DocumentData(map);
   return documentData;
@@ -480,7 +598,7 @@ DocumentData documentDataFromNativeDocumentData(
 
 node.UpdateData documentDataToNativeUpdateData(DocumentData documentData) {
   var map = (documentData as DocumentDataMap).map;
-  var nativeMap = documentValueToNativeValue(map) as Map<String, dynamic>;
+  var nativeMap = documentValueToNativeValueOrNull(map) as Map<String, dynamic>;
   final nativeInstance = node.UpdateData.fromMap(nativeMap);
   return nativeInstance;
 }
@@ -507,29 +625,26 @@ class DocumentReferenceNode
 
   @override
   Future<DocumentSnapshot> get() async =>
-      _wrapDocumentSnapshot(firestore, await nativeInstance.get());
+      _wrapDocumentSnapshot(firestore, await nativeInstance.get().toDart);
 
   @override
   Future delete() async {
-    await nativeInstance.delete();
+    await nativeInstance.delete().toDart;
   }
 
   @override
   Future update(Map<String, dynamic> data) async {
     await nativeInstance
-        .updateData(documentDataToNativeUpdateData(DocumentData(data))!);
+        .update(documentDataToNativeUpdateData(DocumentData(data)))
+        .toDart;
   }
 
   @override
-  String get id => nativeInstance.documentID;
+  String get id => nativeInstance.id;
 
   @override
-  CollectionReference get parent => _collectionReference(
-      firestore,
-      node.CollectionReference(
-          // ignore: invalid_use_of_protected_member
-          nativeInstance.nativeInstance.parent,
-          nativeInstance.firestore));
+  CollectionReference get parent =>
+      _collectionReference(firestore, nativeInstance.parent);
 
   @override
   String get path => nativeInstance.path;
@@ -564,7 +679,8 @@ class DocumentReferenceNode
 
   @override
   Future<List<CollectionReference>> listCollections() async {
-    return (await nativeInstance.listCollections())
+    return (await nativeInstance.listCollections().toDart)
+        .toDart
         .map((e) => _collectionReference(firestore, e))
         .toList();
   }
@@ -580,13 +696,13 @@ class DocumentSnapshotNode
 
   @override
   Map<String, dynamic> get data => (exists
-      ? documentDataFromNativeDocumentData(firestore, nativeInstance.data)
+      ? documentDataFromNativeDocumentData(firestore, nativeInstance.data()!)
           .asMap()
       : null)!;
 
   @override
   DocumentReference get ref =>
-      _wrapDocumentReference(firestore, nativeInstance.reference)!;
+      _wrapDocumentReference(firestore, nativeInstance.ref);
 
   @override
   bool get exists => nativeInstance.exists;
@@ -714,8 +830,12 @@ List<DocumentSnapshotNode> _wrapDocumentSnapshots(
         .map((e) => _wrapDocumentSnapshot(firestore, e))
         .toList(growable: false);
 
-node.DocumentSnapshot? _unwrapDocumentSnapshot(DocumentSnapshot? snapshot) =>
-    snapshot != null ? (snapshot as DocumentSnapshotNode).nativeInstance : null;
+node.DocumentSnapshot _unwrapDocumentSnapshot(DocumentSnapshot snapshot) =>
+    (snapshot as DocumentSnapshotNode).nativeInstance;
+
+node.DocumentSnapshot? _unwrapDocumentSnapshotOrNull(
+        DocumentSnapshot? snapshot) =>
+    snapshot != null ? _unwrapDocumentSnapshot(snapshot) : null;
 
 QuerySnapshotNode _wrapQuerySnapshot(
         Firestore firestore, node.QuerySnapshot nativeInstance) =>
