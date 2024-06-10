@@ -1,3 +1,13 @@
+## Setup
+
+```yaml
+  tekartik_firebase_firebase_node:
+    git:
+      url: https://github.com/tekartik/firebase_node.dart
+      path: firebase_node
+      ref: dart3a
+    version: '>=0.8.1'
+```
 ## Test setup
 
  Use dart2 and set env variable

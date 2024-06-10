@@ -6,7 +6,7 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.0-0 <4.0.0'
 
 dependencies:
   collection: '>=1.14.10'
@@ -36,15 +36,20 @@ dependencies:
       url: https://github.com/tekartikdev/firebase-admin-interop
       ref: dart3a
     version: '>=2.3.0'
+  tekartik_core_node:
+    git:
+      url: https://github.com/tekartik/common_node.dart
+      path: core_node
+      ref: dart3a
   node_interop:
-
+  tekartik_js_utils_interop:
+    git:
+      url: https://github.com/tekartik/js_utils.dart
+      path: js_utils_interop
+      ref: dart3a
+    version: '>=0.1.0'
 dev_dependencies:
   test: ">=1.2.0"
-  grinder: any
-  tekartik_build_utils:
-    git:
-      url: https://github.com/tekartik/build_utils.dart
-      ref: dart3a
   tekartik_firebase_test:
     git:
       url: https://github.com/tekartik/firebase.dart
@@ -52,6 +57,12 @@ dev_dependencies:
       ref: dart3a
       version: '>=0.7.3'
   process_run:
+  tekartik_app_node_build:
+    git:
+      url: https://github.com/tekartik/app_node_utils.dart
+      path: app_build
+      ref: dart3a
+    version: '>=0.1.0'
   # needed node dependencies
   build_runner:
   tekartik_build_node:

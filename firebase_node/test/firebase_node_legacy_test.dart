@@ -1,9 +1,7 @@
 @TestOn('node')
-library;
+library tekartik_firebase_server_node.node_test;
 
-import 'package:tekartik_firebase_node/firebase_node_interop.dart';
-import 'package:tekartik_firebase_node/src/node/firebase_node.dart'
-    show AppNode, FirebaseNode;
+import 'package:tekartik_firebase_node/firebase_node.dart';
 import 'package:tekartik_platform_node/context_node.dart';
 import 'package:test/test.dart';
 
@@ -25,16 +23,11 @@ void main() {
           'GOOGLE_APPLICATION_CREDENTIALS: ${_env['GOOGLE_APPLICATION_CREDENTIALS']}');
     });*/
     test('access token', () async {
-      var firebase = firebaseNode as FirebaseNode;
-      // print(jsObjectKeys(firebase.nativeInstance));
-      // [initializeApp, getApp, getApps, deleteApp, applicationDefault, cert, refreshToken, FirebaseAppError, AppErrorCodes, SDK_VERSION]
-      var app = firebaseNode.initializeApp(name: 'admin') as AppNode;
-      // print(jsObjectKeys(app.nativeInstance!));
-      // print(jsObjectGetOwnPropertyNames(app.nativeInstance!));
-      // [appStore, services_, isDeleted_, name_, options_, INTERNAL]
-      // print(firebase.credential.applicationDefault());
-      print((await firebase.credential.applicationDefault()!.getAccessToken())
-          .data);
+      var app = await firebaseNode.initializeAppAsync(name: 'admin');
+
+      print(
+          (await firebaseNode.credential.applicationDefault()!.getAccessToken())
+              .data);
       print(app.options);
       print(app.options.projectId);
       await app.delete();
