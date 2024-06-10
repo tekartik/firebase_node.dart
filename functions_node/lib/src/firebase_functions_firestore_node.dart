@@ -3,7 +3,7 @@ import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
 import 'package:tekartik_firebase_firestore/firestore.dart'
     as firebase_firestore;
-import 'package:tekartik_firebase_firestore_node/src/firestore_node.dart' // ignore: implementation_imports
+import 'package:tekartik_firebase_firestore_node/src/node_legacy/firestore_node.dart' // ignore: implementation_imports
     as firestore_node;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 

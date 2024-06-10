@@ -1,7 +1,7 @@
 @TestOn('node')
 library tekartik_firebase_server_node.node_test;
 
-import 'package:tekartik_firebase_node/firebase_node.dart';
+import 'package:tekartik_firebase_node/firebase_node_legacy.dart';
 import 'package:tekartik_platform_node/context_node.dart';
 import 'package:test/test.dart';
 

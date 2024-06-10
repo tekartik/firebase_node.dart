@@ -10,7 +10,8 @@ import 'firebase_node_js_interop.dart' as native;
 
 FirebaseNode? _firebaseNode;
 
-Firebase get firebaseNode => _firebaseNode ??= FirebaseNode._(native.admin);
+FirebaseAdmin get firebaseNode =>
+    _firebaseNode ??= FirebaseNode._(native.admin);
 
 class FirebaseAdminCredentialServiceNode
     implements FirebaseAdminCredentialService {

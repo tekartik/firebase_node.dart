@@ -1,8 +1,7 @@
 import 'package:tekartik_firebase_firestore/firestore.dart'; // ignore: unnecessary_import
-
-import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
 import 'package:tekartik_firebase_node/src/firebase_node.dart'; // ignore: implementation_imports
 
+import '../import_firestore.dart';
 import 'binding_import.dart' // ignore: implementation_imports
     as js;
 import 'common_import.dart';
@@ -683,6 +682,7 @@ node.SetOptions? _unwrapSetOptions(SetOptions? options) =>
     options != null ? node.SetOptions(merge: options.merge == true) : null;
 
 String indexAlias(int index) => 'field_$index';
+
 int aliasIndex(String alias) => int.parse(alias.substring('field_'.length));
 
 class AggregateQueryNode implements AggregateQuery {
@@ -721,6 +721,7 @@ class AggregateQuerySnapshotNode implements AggregateQuerySnapshot {
   final node.AggregateQuerySnapshot nativeInstance;
 
   AggregateQuerySnapshotNode(this.aggregateQueryNode, this.nativeInstance);
+
   @override
   int? get count => nativeInstance.count;
 

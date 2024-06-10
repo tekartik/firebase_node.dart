@@ -1,5 +1,4 @@
-import 'package:tekartik_firebase/firebase_admin.dart';
-import 'package:tekartik_firebase_node/src/firebase_node.dart' as firebase_node;
+/// Tmp legacy implementation
+library;
 
-/// Node firebase admin
-FirebaseAdmin get firebaseNode => firebase_node.firebaseNode;
+export 'firebase_node_legacy.dart' show firebaseNode;
