@@ -13,38 +13,54 @@ const defaultAppName = '[DEFAULT]';
 
 /// Singleton instance of [FirebaseAdmin] module.
 //final admin = node.require<FirestoreService>('firebase-admin/firestore');
-final firestoreModule =
-    node.require<FirestoreModule>('firebase-admin/firestore');
+final firebaseAdminFirestoreModule = () {
+  return firestoreModule =
+      node.require<FirestoreModule>('firebase-admin/firestore');
+}();
 
+final cloudFirestoreModule = () {
+  return firestoreModule =
+      node.require<FirestoreModule>('@google-cloud/firestore');
+}();
+
+/// First loaded wins
+late FirestoreModule firestoreModule;
 extension type FirestoreModule._(js.JSObject _) implements js.JSObject {
   /// Sets the log function for all active Firestore instances.
-  external void setLogFunction(void Function(String msg) logger);
-
-  external Firestore getFirestore(node.App app);
+//  external void setLogFunction(void Function(String msg) logger);
 
   // ignore: non_constant_identifier_names
   //external Function get Firestore;
-
-  // ignore: non_constant_identifier_names
-  external GeoPointUtil get GeoPoint;
-
-  // ignore: non_constant_identifier_names
-  external FieldValues get FieldValue;
-
-  /// Reference to constructor function of [FieldPath].
-  ///
-  /// See also:
-  /// - [FieldPathPrototype] which exposes static members of this class.
-  /// - [documentId] which is a convenience function to create sentinel
-  ///   [FieldPath] to refer to the ID of a document.
-  // ignore: non_constant_identifier_names
-  external dynamic get FieldPath;
-
-  // ignore: non_constant_identifier_names
-  external TimestampProto get Timestamp;
 }
 
-extension FirestoreModuleExt on FirestoreModule {}
+extension type FirestoreType._(js.JSObject _) implements js.JSObject {}
+
+extension FirestoreTypeExt on FirestoreType {
+  /// Initializes the Firestore service with the provided [app].
+  external Firestore getFirestore(node.App app);
+}
+
+extension FirestoreModuleExt on FirestoreModule {
+  // ignore: non_constant_identifier_names
+  @js.JS('FieldValue')
+  external FieldValues get fieldValue;
+
+  // ignore: non_constant_identifier_names
+  @js.JS('Timestamp')
+  external TimestampProto get timestampProto;
+
+  @js.JS('GeoPoint')
+  external GeoPointProto get geoPointProto;
+  // ignore: non_constant_identifier_names
+  @js.JS('AggregateField')
+  external AggregateFields get aggregateFields;
+
+  /// Sets the log function for all active Firestore instances.
+  external void setLogFunction(js.JSFunction logger);
+  //void Function(String msg) logger);
+
+  external Firestore getFirestore(node.App app);
+}
 
 extension type FirestoreService._(js.JSObject _) implements js.JSObject {}
 
@@ -56,7 +72,7 @@ extension FirestoreServiceExt on FirestoreService {
   external FieldValues get FieldValue;
 
   // ignore: non_constant_identifier_names
-  external Object get Timestamp;
+  external TimestampProto get Timestamp;
 
   // ignore: non_constant_identifier_names
   external FieldPathPrototype get FieldPath;
@@ -65,7 +81,7 @@ extension FirestoreServiceExt on FirestoreService {
   external AggregateFields get AggregateField;
 }
 
-extension type TimestampProto._(js.JSObject _) implements js.JSObject {}
+extension type TimestampProto._(js.JSFunction _) implements js.JSFunction {}
 
 extension TimestampProtoExt on TimestampProto {
   external Timestamp now();
@@ -73,10 +89,15 @@ extension TimestampProtoExt on TimestampProto {
   external Timestamp fromDate(js.JSDate date);
 
   external Timestamp fromMillis(int milliseconds);
+
+  Timestamp fromSecondsAndNanoseconds(int seconds, int nanoseconds) {
+    return (this as js.JSFunction)
+        .callAsConstructorVarArgs([seconds.toJS, nanoseconds.toJS]);
+  }
 }
 
 extension type Timestamp._(js.JSObject _) implements js.JSObject {
-  external Timestamp(int seconds, int nanoseconds);
+  //external Timestamp(int seconds, int nanoseconds);
 }
 
 extension TimestampExt on Timestamp {
@@ -89,18 +110,31 @@ extension TimestampExt on Timestamp {
   external int toMillis();
 }
 
-extension type GeoPointUtil._(js.JSObject _) implements js.JSObject {
-  external GeoPoint fromProto(Object? proto);
+extension type BytesProto._(js.JSObject _) implements js.JSObject {}
+
+/// An immutable object representing an array of bytes.
+extension type Bytes._(js.JSObject _) implements js.JSObject {
+  external Bytes fromUint8Array(js.JSUint8Array array);
 }
 
-extension type GeoPointProto._(js.JSObject _) implements js.JSObject {
-  external factory GeoPointProto({num? latitude, num? longitude});
+extension BytesExt on Bytes {
+  // Creates a new Bytes object from the given Uint8Array.
 }
+
+extension type GeoPointUtil._(js.JSObject _) implements js.JSObject {
+  external GeoPoint fromProto(GeoPointUtil? proto);
+}
+
+extension type GeoPointProto._(js.JSFunction _) implements js.JSFunction {}
 
 extension GeoPointProtoExt on GeoPointProto {
   external num get latitude;
 
   external num get longitude;
+
+  GeoPoint fromLatitudeAndLongitude(num latitude, num longitude) {
+    return callAsConstructorVarArgs([latitude.toJS, longitude.toJS]);
+  }
 }
 
 /// Document data (for use with `DocumentReference.set()`) consists of fields
@@ -160,8 +194,8 @@ extension FirestoreExt on Firestore {
   /// returned by the updateFunction will be returned here. Else if the
   /// transaction failed, a rejected Future with the corresponding failure error
   /// will be returned.
-  external js.JSPromise runTransaction(
-      js.JSPromise Function(Transaction transaction) updateFunction);
+  external js.JSPromise runTransaction(js.JSFunction updateFunction);
+  //js.JSPromise Function(Transaction transaction) updateFunction);
 
   /// Creates a write batch, used for performing multiple writes as a single
   /// atomic operation.
@@ -238,8 +272,13 @@ extension TransactionExt on Transaction {
   /// Retrieves a query result. Holds a pessimistic lock on the returned
   /// documents.
   /*external js.JSPromise<QuerySnapshot> get(Query query);*/
-  external js.JSPromise /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
-      get(dynamic /*DocumentReference|Query*/ documentRefQuery);
+  external js.JSPromise<
+          DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
+      get(DocumentReference documentRef);
+  @js.JS('get')
+  external js.JSPromise<
+          DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
+      queryGet(DocumentQuery documentRefQuery);
 
   /// Create the document referred to by the provided `DocumentReference`.
   /// The operation will fail the transaction if a document exists at the
@@ -259,8 +298,8 @@ extension TransactionExt on Transaction {
   /// Nested fields can be updated by providing dot-separated field path
   /// strings.
   /// update the document.
-  /*external Transaction update(DocumentReference documentRef, UpdateData data,
-    [Precondition precondition]);*/
+  external Transaction update(DocumentReference documentRef, UpdateData data,
+      [Precondition precondition]);
 
   /// Updates fields in the document referred to by the provided
   /// `DocumentReference`. The update will fail if applied to a document that
@@ -271,11 +310,13 @@ extension TransactionExt on Transaction {
   /// argument.
   /// to update, optionally followed by a `Precondition` to enforce on this
   /// update.
-  /*external Transaction update(DocumentReference documentRef, String|FieldPath field, dynamic value, [dynamic fieldsOrPrecondition1, dynamic fieldsOrPrecondition2, dynamic fieldsOrPrecondition3, dynamic fieldsOrPrecondition4, dynamic fieldsOrPrecondition5]);*/
+  /*external Transaction update(DocumentReference documentRef, String|FieldPath field, dynamic value, [dynamic fieldsOrPrecondition1, dynamic fieldsOrPrecondition2, dynamic fieldsOrPrecondition3, dynamic fieldsOrPrecondition4, dynamic fieldsOrPrecondition5]);
   external Transaction update(
-      DocumentReference documentRef, dynamic /*String|FieldPath*/ dataField,
-      [dynamic /*Precondition|dynamic*/ preconditionValue,
-      List<dynamic>? fieldsOrPrecondition]);
+    DocumentReference documentRef,
+    //String /*String|FieldPath*/ dataField,
+    //[dynamic /*Precondition|dynamic*/ preconditionValue,
+    //List<dynamic>? fieldsOrPrecondition]
+  );*/
 
   /// Deletes the document referred to by the provided `DocumentReference`.
   external Transaction delete(DocumentReference documentRef,
@@ -439,8 +480,10 @@ extension DocumentReferenceExt on DocumentReference {
   /// is available.
   /// cancelled. No further callbacks will occur.
   /// the snapshot listener.
-  external Function onSnapshot(void Function(DocumentSnapshot snapshot) onNext,
-      [void Function(Error error)? onError]);
+  external js.JSFunction onSnapshot(
+      js.JSFunction onNext, js.JSFunction onError);
+  //void Function(DocumentSnapshot snapshot) onNext,
+  //[void Function(Error error)? onError]);
 }
 
 /// A `DocumentSnapshot` contains data read from a document in your Firestore
@@ -490,7 +533,8 @@ extension DocumentSnapshotExt on DocumentSnapshot {
 
   /// Retrieves the field specified by `fieldPath`.
   /// field exists in the document.
-  external dynamic get(dynamic /*String|FieldPath*/ fieldPath);
+  external js.JSAny? get(String fieldPath);
+  // dynamic /*String|FieldPath*/ fieldPath);
 }
 
 /// A `QueryDocumentSnapshot` contains data read from a document in your
@@ -574,11 +618,13 @@ extension DocumentQueryExt on DocumentQuery {
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the field mask.
   external DocumentQuery select(
-      [dynamic /*String|FieldPath*/ field1,
-      dynamic /*String|FieldPath*/ field2,
-      dynamic /*String|FieldPath*/ field3,
-      dynamic /*String|FieldPath*/ field4,
-      dynamic /*String|FieldPath*/ field5]);
+      [String /*String|FieldPath*/ field1,
+      String /*String|FieldPath*/ field2,
+      String /*String|FieldPath*/ field3,
+      String /*String|FieldPath*/ field4,
+      String /*String|FieldPath*/ field5]);
+  DocumentQuery selectAll(List<String> fields) => callMethodVarArgs(
+      'select'.toJS, fields.map((field) => field.toJS).toList());
 
   /// Creates and returns a new Query that starts at the provided document
   /// (inclusive). The starting position is relative to the order of the query.
@@ -673,7 +719,7 @@ extension DocumentQueryExt on DocumentQuery {
 
   // https://cloud.google.com/nodejs/docs/reference/firestore/latest/firestore/query
   /// Returns a query that can perform the given aggregations.
-  external AggregateQuery aggregate(dynamic aggregateSpecs);
+  external AggregateQuery aggregate(AggregateSpecs aggregateSpecs);
 }
 
 /// A `QuerySnapshot` contains zero or more `QueryDocumentSnapshot` objects
@@ -693,12 +739,12 @@ extension QuerySnapshotExt on QuerySnapshot {
   /// An array of the documents that changed since the last snapshot. If this
   /// is the first snapshot, all documents will be in the list as added
   /// changes.
-  external List<DocumentChange>? docChanges();
+  external js.JSArray<DocumentChange>? docChanges();
 
   /// An array of all the documents in the QuerySnapshot.
-  external List<QueryDocumentSnapshot> get docs;
+  external js.JSArray<QueryDocumentSnapshot>? get docs;
 
-  external set docs(List<QueryDocumentSnapshot> v);
+  //external set docs(js.JSArray<QueryDocumentSnapshot> v);
 
   /// The number of documents in the QuerySnapshot.
   external num get size;
@@ -717,12 +763,17 @@ extension QuerySnapshotExt on QuerySnapshot {
 
   /// Enumerates all of the documents in the QuerySnapshot.
   /// each document in the snapshot.
-  external void forEach(void Function(QueryDocumentSnapshot result) callback,
-      [dynamic thisArg]);
+  external void forEach(
+    js.JSFunction callback,
+    //void Function(QueryDocumentSnapshot result) callback,
+    //[dynamic thisArg]
+  );
 }
 
 /// The type of of a `DocumentChange` may be 'added', 'removed', or 'modified'.
-/*export type DocumentChangeType = 'added' | 'removed' | 'modified';*/
+const documentChangeTypeAdded = 'added';
+const documentChangeTypeRemoved = 'removed';
+const documentChangeTypeModified = 'modified';
 
 /// A `DocumentChange` represents a change to the documents matching a query.
 /// It contains the document affected and the type of change that occurred.
@@ -748,17 +799,17 @@ extension DocumentChangeExt on DocumentChange {
   /// The index of the changed document in the result set immediately prior to
   /// this DocumentChange (i.e. supposing that all prior DocumentChange objects
   /// have been applied). Is -1 for 'added' events.
-  external num get oldIndex;
+  external int get oldIndex;
 
-  external set oldIndex(num v);
+  external set oldIndex(int v);
 
   /// The index of the changed document in the result set immediately after
   /// this DocumentChange (i.e. supposing that all prior DocumentChange
   /// objects and the current DocumentChange object have been applied).
   /// Is -1 for 'removed' events.
-  external num get newIndex;
+  external int get newIndex;
 
-  external set newIndex(num v);
+  external set newIndex(int v);
 }
 
 /// A `CollectionReference` object can be used for adding documents, getting
@@ -816,7 +867,8 @@ extension FieldValuesExt on FieldValues {
   /// added to the end. If the field being modified is not already an array it
   /// will be overwritten with an array containing exactly the specified
   /// elements.
-  external FieldValue arrayUnion(List elements);
+  FieldValue arrayUnion(List<js.JSAny?> elements) =>
+      callMethodVarArgs('arrayUnion'.toJS, elements);
 
   /// Returns a special value that tells the server to remove the given elements
   /// from any array value that already exists on the server.
@@ -826,7 +878,9 @@ extension FieldValuesExt on FieldValues {
   /// All instances of each element specified will be removed from the array.
   /// If the field being modified is not already an array it will be overwritten
   /// with an empty array.
-  external FieldValue arrayRemove(List elements);
+  FieldValue arrayRemove(List<js.JSAny?> elements) =>
+      callMethodVarArgs('arrayRemove'.toJS, elements);
+  // external FieldValue arrayRemove(js.JSArray elements);
 }
 
 extension type FieldValue._(js.JSObject _) implements js.JSObject {}
@@ -863,6 +917,10 @@ extension AggregateFieldsExt on AggregateFields {
   external AggregateField average(String fieldPath);
 }
 
+extension type AggregateSpecs._(js.JSObject _) implements js.JSObject {
+  factory AggregateSpecs() => js.JSObject() as AggregateSpecs;
+}
+
 extension type AggregateSpec._(js.JSObject _) implements js.JSObject {
   external factory AggregateSpec();
 }
@@ -889,7 +947,7 @@ extension type AggregateQuery._(js.JSObject _) implements js.JSObject {}
 /// Aggregation query.
 extension AggregateQueryExt on AggregateQuery {
   /// Executes the query and returns the results as a `AggregateQuerySnapshot`.
-  external js.JSPromise get();
+  external js.JSPromise<AggregateQuerySnapshot> get();
 }
 
 /// The results of executing an aggregation query.
@@ -899,4 +957,14 @@ extension type AggregateQuerySnapshot._(js.JSObject _) implements js.JSObject {}
 extension AggregateQuerySnapshotExt on AggregateQuerySnapshot {
   /// Executes the query and returns the results as a `AggregateQuerySnapshot`.
   external js.JSObject data();
+}
+
+extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
+  bool isJSTimestamp() => has('_seconds') && has('_nanoseconds');
+  // this.instanceof(firestoreModule.timestampProto as js.JSFunction);
+  bool isJSGeoPoint() => has('_latitude') && has('_longitude');
+  // instanceof(firestoreModule.geoPointProto as js.JSFunction);
+  bool isJSDocumentReference() => has('_firestore') && has('_path');
+// [_firestore, _path, _converter]
+  // has('_latitude') && has('_longitude');
 }
