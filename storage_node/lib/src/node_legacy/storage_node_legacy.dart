@@ -102,7 +102,7 @@ class FileNode with FileMixin implements File {
   }
 }
 
-class BucketNode implements Bucket {
+class BucketNode with BucketMixin implements Bucket {
   final native.Bucket nativeInstance;
 
   BucketNode(this.nativeInstance);
