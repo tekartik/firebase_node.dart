@@ -5,8 +5,8 @@ import 'package:tekartik_firebase_auth/src/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
 import 'package:tekartik_firebase_node/impl/firebase_node_legacy.dart';
 
-import 'common_import.dart';
-import 'node_import.dart' as node;
+import 'common_import_legacy.dart';
+import 'node_import_legacy.dart' as node;
 // ignore_for_file: implementation_imports
 
 class AuthServiceNode with AuthServiceMixin implements AuthService {
