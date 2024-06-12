@@ -39,7 +39,7 @@ Future<void> main() async {
   if (options != null) {
     group('node', () {
       setUpAll(() async {});
-      runApp(app,
+      runStorageAppTests(app,
           storageService: storageServiceNode,
           storageOptions: storageOptionsFromEnv!);
       tearDownAll(() {
