@@ -6,8 +6,7 @@ import 'dart:js_interop_unsafe';
 import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
 
 // ignore: implementation_imports
-import 'package:tekartik_firebase_node/src/node/firebase_node.dart'
-    show AppNode;
+import 'package:tekartik_firebase_node/impl/firebase_node.dart' show AppNode;
 import 'package:tekartik_js_utils_interop/js_date.dart' as js;
 import 'package:tekartik_js_utils_interop/js_number.dart' as js;
 import 'package:tekartik_js_utils_interop/object_keys.dart' as js;
@@ -34,7 +33,7 @@ class FirestoreServiceNode
       return FirestoreNode(
           this,
           node.firebaseAdminFirestoreModule
-              .getFirestore(appNode.nativeInstance!));
+              .getFirestore(appNode.nativeInstance));
     });
   }
 

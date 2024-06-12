@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:node_interop/util.dart' as node_util;
-import 'package:tekartik_firebase_node/impl/firebase_node.dart';
+import 'package:tekartik_firebase_node/impl/firebase_node_legacy.dart';
 import 'package:tekartik_firebase_storage/storage.dart';
-import 'package:tekartik_firebase_storage_node/src/storage_bindings.dart'
-    as native;
 
-import 'common_import.dart';
+import 'common_import_legacy.dart';
+import 'storage_bindings_legacy.dart' as native;
 
 class StorageServiceNode implements StorageService {
   final _storages = <AppNode, StorageNode>{};

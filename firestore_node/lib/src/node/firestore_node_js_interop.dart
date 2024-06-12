@@ -9,10 +9,7 @@ import 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart'
     as node;
 import 'package:tekartik_js_utils_interop/js_date.dart' as js;
 
-const defaultAppName = '[DEFAULT]';
-
 /// Singleton instance of [FirebaseAdmin] module.
-//final admin = node.require<FirestoreService>('firebase-admin/firestore');
 final firebaseAdminFirestoreModule = () {
   return firestoreModule =
       node.require<FirestoreModule>('firebase-admin/firestore');
@@ -25,20 +22,7 @@ final cloudFirestoreModule = () {
 
 /// First loaded wins
 late FirestoreModule firestoreModule;
-extension type FirestoreModule._(js.JSObject _) implements js.JSObject {
-  /// Sets the log function for all active Firestore instances.
-//  external void setLogFunction(void Function(String msg) logger);
-
-  // ignore: non_constant_identifier_names
-  //external Function get Firestore;
-}
-
-extension type FirestoreType._(js.JSObject _) implements js.JSObject {}
-
-extension FirestoreTypeExt on FirestoreType {
-  /// Initializes the Firestore service with the provided [app].
-  external Firestore getFirestore(node.App app);
-}
+extension type FirestoreModule._(js.JSObject _) implements js.JSObject {}
 
 extension FirestoreModuleExt on FirestoreModule {
   // ignore: non_constant_identifier_names
@@ -60,25 +44,6 @@ extension FirestoreModuleExt on FirestoreModule {
   //void Function(String msg) logger);
 
   external Firestore getFirestore(node.App app);
-}
-
-extension type FirestoreService._(js.JSObject _) implements js.JSObject {}
-
-extension FirestoreServiceExt on FirestoreService {
-  // ignore: non_constant_identifier_names
-  external GeoPointUtil get GeoPoint;
-
-  // ignore: non_constant_identifier_names
-  external FieldValues get FieldValue;
-
-  // ignore: non_constant_identifier_names
-  external TimestampProto get Timestamp;
-
-  // ignore: non_constant_identifier_names
-  external FieldPathPrototype get FieldPath;
-
-  // ignore: non_constant_identifier_names
-  external AggregateFields get AggregateField;
 }
 
 extension type TimestampProto._(js.JSFunction _) implements js.JSFunction {}

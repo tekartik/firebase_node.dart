@@ -1,5 +1,5 @@
 import 'package:tekartik_firebase_firestore/firestore.dart'; // ignore: unnecessary_import
-import 'package:tekartik_firebase_node/src/firebase_node.dart'; // ignore: implementation_imports
+import 'package:tekartik_firebase_node/impl/firebase_node_legacy.dart'; // ignore: implementation_imports
 
 import '../import_firestore.dart';
 import 'binding_import.dart' // ignore: implementation_imports

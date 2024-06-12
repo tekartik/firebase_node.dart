@@ -4,8 +4,8 @@ library tekartik_firebase_node.storage_binding;
 import 'package:js/js.dart';
 import 'package:node_interop/util.dart' as node_util;
 
-import 'common_import.dart';
-import 'node_import.dart';
+import 'common_import_legacy.dart';
+import 'node_import_legacy.dart';
 
 @JS()
 @anonymous

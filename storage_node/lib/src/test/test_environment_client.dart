@@ -1,6 +1,7 @@
 import 'package:tekartik_app_node_utils/node_utils.dart';
 
-import 'package:tekartik_firebase_storage_node/src/common_import.dart';
+import 'package:tekartik_firebase_storage_node/src/node_legacy/common_import_legacy.dart';
+// ignore: depend_on_referenced_packages
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
 
 var _env = platform.environment;

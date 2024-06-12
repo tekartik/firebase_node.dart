@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
-import 'package:tekartik_firebase_node/src/firebase_node.dart';
+import 'package:tekartik_firebase_node/impl/firebase_node_legacy.dart';
 
 import 'common_import.dart';
 import 'node_import.dart' as node;

@@ -1,27 +1,24 @@
 @TestOn('node')
 library tekartik_firebase_storage_node.storage_node_test;
 
-import 'dart:js_interop' as js;
-import 'dart:js_interop_unsafe' as js;
-
-import 'package:tekartik_firebase_node/firebase_node_interop.dart'
+import 'package:node_interop/util.dart' as node_util;
+import 'package:tekartik_firebase_node/firebase_node_legacy.dart'
     show firebaseNode;
-import 'package:tekartik_firebase_storage_node/src/node/common_import.dart';
-import 'package:tekartik_firebase_storage_node/src/node/storage_node.dart'
-    show StorageNode, BucketNode;
+import 'package:tekartik_firebase_storage/storage.dart';
+import 'package:tekartik_firebase_storage_node/src/node_legacy/common_import_legacy.dart';
+import 'package:tekartik_firebase_storage_node/src/node_legacy/node_import_legacy.dart'
+    as interop;
 import 'package:tekartik_firebase_storage_node/src/test/test_environment_client.dart';
-// import 'package:tekartik_firebase_storage_node/src/node/node_import.dart'    as interop;
-import 'package:tekartik_firebase_storage_node/storage_node_interop.dart';
+import 'package:tekartik_firebase_storage_node/storage_node.dart';
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
-import 'package:tekartik_js_utils_interop/object_keys.dart' as js;
 import 'package:test/test.dart';
 
-Map errorToMap(js.JSObject e) {
+Map errorToMap(Object e) {
   var map = <String, dynamic>{};
-  for (var key in js.jsObjectKeys(e)) {
+  for (var key in interop.objectKeys(e)) {
     //print('$key ${e[key]}');
     print(key);
-    print(e.getProperty(key.toJS));
+    print(node_util.getProperty(e, key));
     //map[key] = e[key];
   }
   return map;
@@ -82,13 +79,15 @@ Future<void> main() async {
         String? lastFirstFileName;
         while (true) {
           var response = await bucketNode.getFiles(query);
-          // devPrint(response.files);
           var firstFileName = response.files.firstOrNull?.name;
           if (firstFileName != null) {
             expect(firstFileName, isNot(lastFirstFileName));
           }
           lastFirstFileName = firstFileName;
+
+          // devPrint(response.files);
           query = response.nextQuery;
+
           if (query == null) {
             break;
           }

@@ -6,3 +6,4 @@
 # Local
 .local
 /pubsub_node/package-lock.json
+/storage_node/pubspec_overrides.yaml

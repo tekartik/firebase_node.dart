@@ -115,19 +115,19 @@ AppOptions _wrapAppOptions(native.AppOptions nativeInstance) {
 }
 
 class AppNode with FirebaseAppMixin {
-  final native.App? nativeInstance;
+  final native.App nativeInstance;
 
   AppNode(this.nativeInstance);
 
   @override
-  String get name => nativeInstance!.name;
+  String get name => nativeInstance.name;
 
   @override
   Future delete() async {
-    await nativeInstance!.delete().toDart;
+    await nativeInstance.delete().toDart;
     await closeServices();
   }
 
   @override
-  AppOptions get options => _wrapAppOptions(nativeInstance!.options);
+  AppOptions get options => _wrapAppOptions(nativeInstance.options);
 }
