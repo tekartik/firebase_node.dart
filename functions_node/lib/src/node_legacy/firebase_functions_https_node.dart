@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:firebase_functions_interop/firebase_functions_interop.dart'
     as impl;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
-import 'package:tekartik_firebase_functions_node/src/express_http_request_node.dart';
-import 'package:tekartik_firebase_functions_node/src/import.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/express_http_request_node.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/import.dart';
 
 import 'call_request_node.dart';
 import 'firebase_functions_node.dart';

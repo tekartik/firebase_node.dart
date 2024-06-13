@@ -1,12 +1,12 @@
 @TestOn('vm')
-library tekartik_firebase_functions_node.test.firebase_functions_test;
+library;
 
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
 import 'package:tekartik_app_node_build/gcf_build.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
-import 'package:tekartik_firebase_functions_node/src/import.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/import.dart';
 import 'package:test/test.dart';
 
 var defaultRegion = regionUsCentral1;

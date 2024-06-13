@@ -4,9 +4,9 @@ import 'package:firebase_functions_interop/firebase_functions_interop_gen2.dart'
     as impl_gen2;
 import 'package:tekartik_firebase_functions/ff_server.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
-import 'package:tekartik_firebase_functions_node/src/ff_universal_common.dart';
-import 'package:tekartik_firebase_functions_node/src/firebase_functions_node.dart';
-import 'package:tekartik_firebase_functions_node/src/firebase_functions_node_gen2.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/ff_universal_common.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/firebase_functions_node.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/firebase_functions_node_gen2.dart';
 
 class FfServerNode implements FfServer {
   @override

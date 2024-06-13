@@ -3,7 +3,7 @@ import 'package:firebase_functions_interop/firebase_functions_interop_gen2.dart'
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
 import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
-import 'package:tekartik_firebase_functions_node/src/firebase_functions_https_node_gen2.dart';
+import 'package:tekartik_firebase_functions_node/src/node_legacy/firebase_functions_https_node_gen2.dart';
 
 import 'firebase_functions_firestore_node_gen2.dart';
 import 'firebase_functions_node.dart';
