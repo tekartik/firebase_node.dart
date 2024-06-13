@@ -1,8 +1,8 @@
 @TestOn('node')
 library tekartik_firebase_auth_node.test.auth_node_test;
 
-import 'package:tekartik_firebase_auth_node/auth_node.dart';
-import 'package:tekartik_firebase_auth_node/src/node_legacy/node_import_legacy.dart';
+import 'package:tekartik_firebase_auth_node/auth_node_interop.dart';
+import 'package:tekartik_firebase_auth_node/src/node/node_import.dart';
 import 'package:tekartik_firebase_auth_test/auth_test.dart';
 import 'package:tekartik_firebase_node/firebase_node.dart';
 
@@ -21,7 +21,7 @@ void main() {
   });
   if (_env['FIREBASE_CONFIG'] != null) {
     group('auth_node', () {
-      run(firebase: firebase, authService: authService);
+      runAuthTests(firebase: firebase, authService: authService);
     });
   }
 }

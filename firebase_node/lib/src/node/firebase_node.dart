@@ -11,11 +11,62 @@ import 'firebase_node_js_interop.dart' as native;
 FirebaseNode? _firebaseNode;
 
 FirebaseAdmin get firebaseNode =>
-    _firebaseNode ??= FirebaseNode._(native.admin);
+    _firebaseNode ??= FirebaseNode._(native.firebaseAdminModule);
+
+extension FirebaseNodeAppOptionsExt on FirebaseAppOptions {
+  FirebaseAppOptions withServiceAccountMap(
+      Map<String, Object?> serviceAccountMap) {
+    return FirebaseAppOptionsNode(serviceAccountMap,
+        storageBucket: storageBucket);
+  }
+}
+
+class FirebaseAppOptionsNode
+    with FirebaseAppOptionsMixin
+    implements FirebaseAppOptions {
+  // {
+  //   "type": "service_account",
+  //   "project_id": "xxxx-free-dev",
+  //   "private_key_id": "xxx",
+  //   "private_key": "-----BEGIN PRIVATE KEY-----\nMI=\n-----END PRIVATE KEY-----\n",
+  //   "client_email": "xxx@xxx.iam.gserviceaccount.com",
+  //   "client_id": "xxx",
+  //   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  //   "token_uri": "https://accounts.google.com/o/oauth2/token",
+  //   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  //   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/x%40x.iam.gserviceaccount.com"
+  // }
+  final Map<String, Object?> serviceAccountMap;
+
+  FirebaseAppOptionsNode(this.serviceAccountMap, {String? storageBucket})
+      : _storageBucket = storageBucket;
+
+  String get clientEmail {
+    return serviceAccountMap['client_email'] as String;
+  }
+
+  String get privateKey {
+    return serviceAccountMap['private_key'] as String;
+  }
+
+  @override
+  String get projectId {
+    return serviceAccountMap['project_id'] as String;
+  }
+
+  @override
+  String get storageBucket => _storageBucket ??= '$projectId.appspot.com';
+  String? _storageBucket;
+}
+
+AppOptions firebaseNodeAppOptionsFromServiceAccountMap(
+    Map<String, Object?> serviceAccountMap) {
+  return FirebaseAppOptionsNode(serviceAccountMap);
+}
 
 class FirebaseAdminCredentialServiceNode
     implements FirebaseAdminCredentialService {
-  final native.FirebaseAdmin nativeInstance;
+  final native.FirebaseAdminModule nativeInstance;
 
   FirebaseAdminCredentialServiceNode(this.nativeInstance);
 
@@ -60,7 +111,7 @@ class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
 class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseNode._(this.nativeInstance);
 
-  final native.FirebaseAdmin nativeInstance;
+  final native.FirebaseAdminModule nativeInstance;
 
   @override
   App initializeApp({AppOptions? options, String? name}) {
@@ -70,14 +121,14 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     if (options == null) {
       name = null;
     }
+    var nativeOptions = _unwrapAppOptions(this, options);
     AppNode app;
-    if (options == null) {
+    if (nativeOptions == null) {
       app = AppNode(nativeInstance.initializeApp());
     } else if (name == null) {
-      app = AppNode(nativeInstance.initializeApp(_unwrapAppOptions(options)));
+      app = AppNode(nativeInstance.initializeApp(nativeOptions));
     } else {
-      app = AppNode(
-          nativeInstance.initializeApp(_unwrapAppOptions(options), name));
+      app = AppNode(nativeInstance.initializeApp(nativeOptions, name));
     }
     _apps[name] = app;
     return app;
@@ -93,11 +144,27 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseAdminCredentialServiceNode? _credentialService;
 
   @override
-  FirebaseAdminCredentialService get credential =>
-      _credentialService ??= FirebaseAdminCredentialServiceNode(native.admin);
+  FirebaseAdminCredentialService get credential => _credentialService ??=
+      FirebaseAdminCredentialServiceNode(native.firebaseAdminModule);
 }
 
-native.AppOptions? _unwrapAppOptions(AppOptions? appOptions) {
+native.AppOptions? _unwrapAppOptions(
+    FirebaseNode firebaseNode, FirebaseAppOptions? appOptions) {
+  if (appOptions is FirebaseAppOptionsNode) {
+    var projectId = appOptions.projectId;
+    var storageBucket = appOptions.storageBucket;
+    return native.AppOptions(
+      credential: firebaseNode.nativeInstance.serviceAccountCredential(
+          native.ServiceAccount(
+              projectId: projectId,
+              clientEmail: appOptions.clientEmail,
+              privateKey: appOptions.privateKey)),
+      //databaseURL: appOptions.databaseURL,
+      projectId: projectId,
+      storageBucket: storageBucket,
+      //    storageBucket: appOptions.storageBucket
+    );
+  }
   if (appOptions != null) {
     return native.AppOptions(
         databaseURL: appOptions.databaseURL,

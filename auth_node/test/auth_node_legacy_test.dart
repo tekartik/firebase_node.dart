@@ -21,7 +21,7 @@ void main() {
   });
   if (_env['FIREBASE_CONFIG'] != null) {
     group('auth_node', () {
-      run(firebase: firebase, authService: authService);
+      runAuthTests(firebase: firebase, authService: authService);
     });
   }
 }

@@ -1,1 +1,2 @@
-export 'src/node/firebase_node.dart' show firebaseNode;
+export 'src/node/firebase_node.dart'
+    show firebaseNode, FirebaseNodeAppOptionsExt;

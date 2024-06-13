@@ -9,12 +9,13 @@ import 'package:tekartik_core_node/require.dart' as node;
 
 const defaultAppName = '[DEFAULT]';
 
-/// Singleton instance of [FirebaseAdmin] module.
-final admin = node.require<FirebaseAdmin>('firebase-admin/app');
+/// Singleton instance of [FirebaseAdminModule] module.
+final firebaseAdminModule =
+    node.require<FirebaseAdminModule>('firebase-admin/app');
 
-extension type FirebaseAdmin._(js.JSObject _) implements js.JSObject {}
+extension type FirebaseAdminModule._(js.JSObject _) implements js.JSObject {}
 
-extension FirebaseAdminExt on FirebaseAdmin {
+extension FirebaseAdminExt on FirebaseAdminModule {
   /// Creates and initializes a Firebase app instance.
   external App initializeApp([AppOptions? options, String? name]);
 
@@ -39,6 +40,12 @@ extension FirebaseAdminExt on FirebaseAdmin {
   ///
   /// This credential can be used in the call to [initializeApp].
   external Credential applicationDefault();
+
+  /// cert(serviceAccountPathOrObject, httpAgent)
+  /// Returns a credential created from the provided service account that grants admin access to Firebase services. This credential can be used in the call to initializeApp().
+  /// export declare function cert(serviceAccountPathOrObject: string | ServiceAccount, httpAgent?: Agent): Credential;
+  @js.JS('cert')
+  external Credential serviceAccountCredential(ServiceAccount serviceAccount);
 }
 
 // admin.credential ============================================================
@@ -61,25 +68,25 @@ extension CredentialsExt on Credentials {
   external Credential refreshToken(String refreshTokenPath);
 }
 
-extension type ServiceAccountConfig._(js.JSObject _) implements js.JSObject {
-  external factory ServiceAccountConfig(
+extension type ServiceAccount._(js.JSObject _) implements js.JSObject {
+  external factory ServiceAccount(
       // ignore: non_constant_identifier_names
-      {String? project_id,
+      {String? projectId,
       // ignore: non_constant_identifier_names
-      String? client_email,
+      String? clientEmail,
       // ignore: non_constant_identifier_names
-      String? private_key});
+      String? privateKey});
 }
 
-extension ServiceAccountConfigExt on ServiceAccountConfig {
+extension ServiceAccountExt on ServiceAccount {
   // ignore: non_constant_identifier_names
-  external String get project_id;
+  external String get projectId;
 
   // ignore: non_constant_identifier_names
-  external String get client_email;
+  external String get clientEmail;
 
   // ignore: non_constant_identifier_names
-  external String get private_key;
+  external String get privateKey;
 }
 
 /// Interface which provides Google OAuth2 access tokens used to authenticate

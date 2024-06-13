@@ -561,8 +561,8 @@ Object fromNativeValue(js.JSAny value,
   if (dartValue != null) {
     return dartValue;
   }
-  if (value is js.JSObject) {
-    return fromNativeMap(value, nestedFromNativeValueOrNull);
+  if (value.isA<js.JSObject>()) {
+    return fromNativeMap(value as js.JSObject, nestedFromNativeValueOrNull);
   }
 
   throw ArgumentError.value(
