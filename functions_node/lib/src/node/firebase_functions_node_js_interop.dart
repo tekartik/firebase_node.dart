@@ -61,6 +61,7 @@ extension HttpsFunctionsExt on HttpsFunctions {
 extension type HttpsRequest._(js.JSObject _) implements js.JSObject {}
 
 extension HttpsRequestExt on HttpsRequest {
+  external String get uri;
   external js.JSUint8Array get rawBody;
 }
 
