@@ -3,6 +3,8 @@ import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
     as node;
 
+final firebaseFunctionsNode = FirebaseFunctionsNode();
+
 class FirebaseFunctionsNode extends FirebaseFunctionsHttp {
   final nativeInstance = node.firebaseFunctionsModule;
   @override

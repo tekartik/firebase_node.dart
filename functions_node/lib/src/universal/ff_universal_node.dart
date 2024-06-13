@@ -26,7 +26,7 @@ mixin FirebaseFunctionsNodeUniversalMixin
 }
 
 /// V1 by default
-FirebaseFunctionsUniversal firebaseFunctionsUniversal =
+final FirebaseFunctionsUniversal firebaseFunctionsUniversal =
     FirebaseFunctionsNodeUniversal();
 
 FirebaseFunctions get firebaseFunctions => firebaseFunctionsUniversal;
