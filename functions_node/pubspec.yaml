@@ -123,8 +123,10 @@ dependency_overrides:
   # temp
   # tekartik_http_node:
   #  path: ../../../tekartik/common_node.dart/http_node
-#  tekartik_firebase_functions:
-#    path: ../../../tekartik/firebase_functions.dart/firebase_functions
+  # tekartik_firebase_functions:
+  #  path: ../../../tekartik/firebase_functions.dart/firebase_functions
+  # tekartik_firebase_functions_http:
+  #  path: ../../../tekartik/firebase_functions.dart/firebase_functions_http
   # tekartik_app_node_build:
   #  path: ../../../tekartik/app_node_utils.dart/app_build
   # Temp

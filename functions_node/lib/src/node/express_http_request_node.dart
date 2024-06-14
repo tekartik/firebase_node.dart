@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
-import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
+import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_https_node_js_interop.dart'
     as node;
 import 'package:tekartik_http/http.dart' as http;
 
