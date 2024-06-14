@@ -5,41 +5,43 @@ import 'dart:async';
 import 'dart:js_interop' as js;
 import 'dart:js_interop_unsafe';
 
+import 'package:tekartik_firebase_functions_node/src/import_common.dart';
+
 import 'import_node.dart';
 
 /// The Firebase Auth service interface.
 final firebaseFunctionsModule =
-    require<FirebaseFonctionsModule>('firebase-functions/v2');
+    require<JSFirebaseFonctionsModule>('firebase-functions/v2');
 final firebaseFunctions = firebaseFunctionsModule;
-extension type FirebaseFonctionsModule._(js.JSObject _)
+extension type JSFirebaseFonctionsModule._(js.JSObject _)
     implements js.JSObject {}
 
-extension FirebaseFonctionsExt on FirebaseFonctionsModule {
-  void operator []=(String key, FirebaseFunction function) {
+extension JSFirebaseFonctionsExt on JSFirebaseFonctionsModule {
+  void operator []=(String key, JSFirebaseFunction function) {
     exports.setProperty(key.toJS, function);
   }
 
-  external HttpsFunctions get https;
+  external JSHttpsFunctions get https;
 }
 
-extension type HttpsFunctions._(js.JSObject _) implements js.JSObject {}
+extension type JSHttpsFunctions._(js.JSObject _) implements js.JSObject {}
 
-extension HttpsFunctionsExt on HttpsFunctions {
+extension JSHttpsFunctionsExt on JSHttpsFunctions {
   // Handles HTTPS requests.
   //
   // Signature:
   // export declare function onRequest(opts: HttpsOptions, handler: (request: Request, response: express.Response) => void | Promise<void>): HttpsFunction;
 
   @js.JS('onRequest')
-  external HttpsFunction _onRequest(
-      HttpsOptions options, _HttpsHandler handler);
+  external JSHttpsFunction _onRequest(
+      JSHttpsOptions options, _JSHttpsHandler handler);
 
   @js.JS('onRequest')
-  external HttpsFunction _onRequestNoOptions(_HttpsHandler handler);
+  external JSHttpsFunction _onRequestNoOptions(_JSHttpsHandler handler);
 
-  HttpsFunction onRequest(
-      {HttpsOptions? options, required HttpsHandler handler}) {
-    js.JSAny? jsHandler(HttpsRequest request, HttpsResponse response) {
+  JSHttpsFunction onRequest(
+      {JSHttpsOptions? options, required HttpsHandler handler}) {
+    js.JSAny? jsHandler(JSHttpsRequest request, JSHttpsResponse response) {
       var result = handler(request, response);
       if (result is Future) {
         return result.toJS;
@@ -49,8 +51,10 @@ extension HttpsFunctionsExt on HttpsFunctions {
     }
 
     if (options == null) {
+      //devPrint('Setting handler no options');
       return _onRequestNoOptions(jsHandler.toJS);
     } else {
+      // devPrint('Setting handler');
       return _onRequest(options, jsHandler.toJS);
     }
   }
@@ -58,35 +62,94 @@ extension HttpsFunctionsExt on HttpsFunctions {
 
 // An express request with the wire format representation of the request body.
 //
-extension type HttpsRequest._(js.JSObject _) implements js.JSObject {}
+extension type JSHttpsRequest._(js.JSObject _) implements js.JSObject {}
 
-extension HttpsRequestExt on HttpsRequest {
-  external String get uri;
-  external js.JSUint8Array get rawBody;
+extension JSHttpsRequestExt on JSHttpsRequest {
+  /// From node IncomingMessage
+  /// Request URL string. This contains only the URL that is present in the actual HTTP request.
+  /// For example: '/status?name=ryan'
+  external String get url;
+
+  /// Firebase function extension
+  ///
+  /// Buffer	The wire format representation of the request body.
+  /// Buffer is not only and extends Uint8Array
+  external js.JSUint8Array? get rawBody;
+
+  /// The request method as a string. Read only. Examples: 'GET', 'DELETE'.
+  external String get method;
+
+  /// The request/response headers object.
+  ///
+  /// Key-value pairs of header names and values. Header names are lower-cased.
+  ///
+  /// Prints something like:
+  ///
+  ///  { 'user-agent': 'curl/7.22.0',
+  ///   host: '127.0.0.1:8000',
+  ///   accept: '*/*' }
+  /// console.log(request.headers); COPY
+  /// Duplicates in raw headers are handled in the following ways, depending on the header name:
+  ///
+  /// Duplicates of age, authorization, content-length, content-type, etag, expires, from, host, if-modified-since, if-unmodified-since, last-modified, location, max-forwards, proxy-authorization, referer, retry-after, server, or user-agent are discarded. To allow duplicate values of the headers listed above to be joined, use the option joinDuplicateHeaders in http.request() and http.createServer(). See RFC 9110 Section 5.3 for more information.
+  /// set-cookie is always an array. Duplicates are added to the array.
+  /// For duplicate cookie headers, the values are joined together with ; .
+  /// For all other headers, the values are joined together with ,
+  external js.JSAny? get headers;
 }
 
-extension type HttpsResponse._(js.JSObject _) implements js.JSObject {}
+extension type JSHttpsResponse._(js.JSObject _) implements js.JSObject {
+  /// https://expressjs.com/en/4x/api.html#res.send
+  /// Sends the HTTP response.
+  /// The body parameter can be a Buffer object, a String, an object, Boolean, or an Array. For example:
+  external void send([js.JSAny? body]);
 
-extension HttpsResponseExt on HttpsResponse {}
+  /// Ends the response process. This method actually comes from Node core,
+  /// specifically the response.end() method of http.ServerResponse.
+  external void end();
 
-typedef HttpsFunction = js.JSFunction;
-typedef _HttpsHandler = js.JSFunction;
+  /// Sets the HTTP status for the response.
+  /// It is a chainable alias of Node’s response.statusCode.
+  external JSHttpsResponse status(int statusCode);
+
+  /// Appends the specified value to the HTTP response header field.
+  /// If the header is not already set, it creates the header with the
+  /// specified value. The value parameter can be a string or an array.
+  ///
+  /// Note: calling res.set() after res.append() will reset the previously-set header value.
+  ///
+  /// res.append('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
+  /// res.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly')
+  /// res.append('Warning', '199 Miscellaneous warning')
+  @js.JS('append')
+  external JSHttpsResponse _setHeader(String field, js.JSAny value);
+
+  JSHttpsResponse setHeader(String field, String value) =>
+      _setHeader(field, value.toJS);
+  JSHttpsResponse setHeaderList(String field, List<String> values) =>
+      _setHeader(field, values.map((e) => e.toJS).toList().toJS);
+}
+
+extension JSHttpsResponseExt on JSHttpsResponse {}
+
+typedef JSHttpsFunction = js.JSFunction;
+typedef _JSHttpsHandler = js.JSFunction;
 
 typedef HttpsHandler = FutureOr<void> Function(
-    HttpsRequest request, HttpsResponse response);
+    JSHttpsRequest request, JSHttpsResponse response);
 
 @js.JS('exports')
-external Exports get exports;
+external JSExports get exports;
 
-extension type Exports._(js.JSObject _) implements js.JSObject {}
+extension type JSExports._(js.JSObject _) implements js.JSObject {}
 
-extension ExportsExt on Exports {}
+extension JSExportsExt on JSExports {}
 
-typedef FirebaseFunction = js.JSFunction;
+typedef JSFirebaseFunction = js.JSFunction;
 
-extension type HttpsOptions._(js.JSObject _) implements js.JSObject {
+extension type JSHttpsOptions._(js.JSObject _) implements js.JSObject {
   /// Options
-  external factory HttpsOptions(
+  external factory JSHttpsOptions(
       {String? region,
       String? memory,
       int? concurrency,
@@ -94,7 +157,7 @@ extension type HttpsOptions._(js.JSObject _) implements js.JSObject {
       int? timeoutSeconds});
 }
 
-extension HttpsOptionsExt on HttpsOptions {
+extension JSHttpsOptionsExt on JSHttpsOptions {
   /// String or array string
   external String? get region;
 

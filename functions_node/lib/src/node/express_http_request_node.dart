@@ -1,142 +1,143 @@
-import 'dart:async';
+import 'dart:js_interop' as js;
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
+import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
     as node;
 import 'package:tekartik_http/http.dart' as http;
 
-class HttpResponseNode implements StreamSink<Uint8List>, http.HttpResponse {
-  final ExpressHttpResponse expressHttpResponse;
+import 'import_http.dart';
+import 'import_node.dart' as js;
 
-  HttpResponseNode(this.expressHttpResponse);
-
-  @override
-  late int contentLength;
-
-  @override
-  late int statusCode;
+class ExpressHttpRequestNode implements ExpressHttpRequest {
+  final node.JSHttpsRequest nativeHttpRequest;
+  final node.JSHttpsResponse nativeHttpResponse;
+  ExpressHttpRequestNode(this.nativeHttpRequest, this.nativeHttpResponse);
 
   @override
-  void add(Uint8List event) {
-    // TODO: implement add
+  Uint8List get body {
+    var rawBody = nativeHttpRequest.rawBody;
+    if (rawBody == null) {
+      return Uint8List.fromList([]);
+    }
+    return rawBody.toDart;
   }
 
   @override
-  void addError(Object error, [StackTrace? stackTrace]) {
-    // TODO: implement addError
-  }
+  late final ExpressHttpResponse response =
+      ExpressHttpResponseNode(nativeHttpResponse);
 
   @override
-  Future addStream(Stream<Uint8List> stream) {
-    // TODO: implement addStream
-    throw UnimplementedError();
-  }
+  late final headers = () {
+    var headers = HttpHeadersMemory();
+    var rawHeaders = nativeHttpRequest.headers;
+    if (rawHeaders.isA<js.JSObject>()) {
+      var jsHeaders = rawHeaders as js.JSObject;
+      for (var key in js.jsObjectKeys(jsHeaders)) {
+        var value = jsHeaders.getProperty(key.toJS);
+        if (value.isA<js.JSArray>()) {
+          var values = (value as js.JSArray)
+              .toDart
+              .map((e) => (e as js.JSString).toDart);
+          for (var value in values) {
+            headers.add(key.toString(), value);
+          }
+        } else if (value.isA<js.JSString>()) {
+          headers.add(key.toString(), (value as js.JSString).toDart);
+        }
+      }
+    }
+    return headers;
+  }();
 
   @override
-  Future close() {
-    // TODO: implement close
-    throw UnimplementedError();
-  }
+  String get method => nativeHttpRequest.method;
 
   @override
-  // TODO: implement done
-  Future get done => throw UnimplementedError();
+  Uri get requestedUri => uri;
 
   @override
-  Future flush() {
-    // TODO: implement flush
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement headers
-  HttpHeaders get headers => throw UnimplementedError();
-
-  @override
-  Future redirect(Uri location,
-      {int status = http.httpStatusMovedTemporarily}) {
-    // TODO: implement redirect
-    throw UnimplementedError();
-  }
-
-  @override
-  void write(Object? obj) {
-    // TODO: implement write
-  }
-
-  @override
-  void writeAll(Iterable objects, [String separator = '']) {
-    // TODO: implement writeAll
-  }
-
-  @override
-  void writeCharCode(int charCode) {
-    // TODO: implement writeCharCode
-  }
-
-  @override
-  void writeln([Object? object = '']) {
-    // TODO: implement writeln
-  }
+  Uri get uri => Uri.parse(nativeHttpRequest.url);
 }
 
-class HttpRequestNode extends Stream<Uint8List> implements http.HttpRequest {
-  final node.HttpsRequest nativeRequest;
-  final node.HttpsResponse nativeResponse;
+class ExpressHttpResponseNode implements ExpressHttpResponse {
+  node.JSHttpsResponse nativeHttpResponse;
 
-  HttpRequestNode(this.nativeRequest, this.nativeResponse);
-  @override
-  // TODO: implement contentLength
-  int? get contentLength => throw UnimplementedError();
+  var _closed = false;
+
+  ExpressHttpResponseNode(this.nativeHttpResponse);
 
   @override
-  // TODO: implement headers
-  HttpHeaders get headers => throw UnimplementedError();
+  int statusCode = http.httpStatusCodeOk;
 
   @override
-  StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    // TODO: implement listen
-    throw UnimplementedError();
+  late final HttpHeaders headers = HttpHeadersMemory();
+
+  void _sendHeaderAndStatus() {
+    nativeHttpResponse = nativeHttpResponse.status(statusCode);
+    headers.forEach((name, values) {
+      if (values.length > 1) {
+        nativeHttpResponse = nativeHttpResponse.setHeaderList(name, values);
+      } else {
+        nativeHttpResponse =
+            nativeHttpResponse.setHeader(name, values.firstOrNull ?? '');
+      }
+    });
   }
 
   @override
-  // TODO: implement method
-  String get method => throw UnimplementedError();
+  Future<void> send([Object? body]) async {
+    _sendHeaderAndStatus();
+    js.JSAny? jsBody;
+    // Do everything here!
+    if (body is Uint8List) {
+      jsBody = body.toJS;
+    } else if (body is String) {
+      jsBody = body.toJS;
+    } else if (body is List<int>) {
+      jsBody = asUint8List(body).toJS;
+    } else if (body is Map || body is List) {
+      jsBody = jsonEncode(body).toJS;
+    } else {
+      throw 'body ${body?.runtimeType} not supported';
+    }
+    nativeHttpResponse.send(jsBody);
+
+    _closed = true;
+  }
 
   @override
-  // TODO: implement requestedUri
-  Uri get requestedUri => throw UnimplementedError();
+  void add(Uint8List bytes) {
+    throw UnimplementedError('ExpressHttpResponseNode.add');
+  }
 
   @override
-  // TODO: implement response
-  HttpResponse get response => throw UnimplementedError();
+  Future close() async {
+    if (!_closed) {
+      _closed = true;
+      try {
+        _sendHeaderAndStatus();
+        nativeHttpResponse.end();
+      } catch (e) {
+        print('error closing response $e');
+      }
+    }
+  }
 
   @override
-  // TODO: implement uri
-  Uri get uri => throw UnimplementedError();
-}
-
-class ExpressHttpRequestNode extends ExpressHttpRequestWrapperBase
-    implements ExpressHttpRequest {
-  ExpressHttpRequestNode(
-      node.HttpsRequest httpRequest, node.HttpsResponse httpResponse)
-      : super(HttpRequestNode(httpRequest, httpResponse),
-            Uri.parse(httpRequest.uri));
+  Future redirect(Uri location, {int? status}) {
+    throw UnimplementedError('ExpressHttpResponseNode.redirect');
+  }
 
   @override
-  dynamic get body => throw UnsupportedError('body');
-
-  ExpressHttpResponse? _response;
+  void write(String content) {
+    throw UnimplementedError('ExpressHttpResponseNode.write');
+  }
 
   @override
-  ExpressHttpResponse get response => _response ??=
-      // ExpressHttpResponseNode(nativeInstance.response as NodeHttpResponse);
-      throw UnsupportedError('response');
-}
-
-class ExpressHttpResponseNode extends ExpressHttpResponseWrapperBase
-    implements ExpressHttpResponse {
-  ExpressHttpResponseNode(super.implHttpResponse);
+  void writeln(String content) {
+    throw UnimplementedError('ExpressHttpResponseNode.writeln');
+  }
 }

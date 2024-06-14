@@ -19,13 +19,13 @@ class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext {
   @override
   Future<FfServer> serve() {
     // TODO: implement serve
-    throw UnimplementedError();
+    throw UnimplementedError('FirebaseFunctionsTestContextNode.serve');
   }
 
   @override
   String url(String path) {
     // TODO: implement url
-    throw UnimplementedError();
+    throw UnimplementedError('FirebaseFunctionsTestContextNode.url');
   }
 }
 

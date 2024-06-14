@@ -22,7 +22,7 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp {
 
 class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
   final FirebaseFunctionsNode functions;
-  final node.HttpsFunctions nativeInstance;
+  final node.JSHttpsFunctions nativeInstance;
   HttpsFunctionsNode(this.functions, this.nativeInstance);
 
   @override
@@ -32,7 +32,8 @@ class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
 
   @override
   HttpsFunction onRequestV2(HttpsOptions httpsOptions, RequestHandler handler) {
-    void handleRequest(node.HttpsRequest request, node.HttpsResponse response) {
+    void handleRequest(
+        node.JSHttpsRequest request, node.JSHttpsResponse response) {
       var expressRequest = ExpressHttpRequestNode(request, response);
       handler(expressRequest);
     }
@@ -72,7 +73,7 @@ class ExpressHttpResponseNode extends ExpressHttpResponseWrapperBase
 
 class HttpsFunctionNode extends FirebaseFunctionNode implements HttpsFunction {
   @override
-  final node.HttpsFunction nativeInstance;
+  final node.JSHttpsFunction nativeInstance;
 
   HttpsFunctionNode(super.firebaseFunctionsNode, this.nativeInstance);
 }
@@ -81,10 +82,10 @@ abstract class FirebaseFunctionNode implements FirebaseFunction {
   final FirebaseFunctionsNode firebaseFunctionsNode;
 
   FirebaseFunctionNode(this.firebaseFunctionsNode);
-  node.FirebaseFunction get nativeInstance;
+  node.JSFirebaseFunction get nativeInstance;
 }
 
-node.HttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
-  return node.HttpsOptions(
+node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
+  return node.JSHttpsOptions(
       region: httpsOptions.region, cors: httpsOptions.cors?.toJS);
 }
