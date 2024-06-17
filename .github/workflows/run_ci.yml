@@ -37,3 +37,7 @@ jobs:
       - run: dart --version
       - run: dart pub get
       - run: dart run tool/run_ci.dart
+        env:
+          TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT: ${{ secrets.TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT }}
+          TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH: ${{ secrets.TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH }}
+          TEKARTIK_FIREBASE_STORAGE_NODE_TEST_ROOT_PATH: ${{ secrets.TEKARTIK_FIREBASE_STORAGE_NODE_TEST_ROOT_PATH }}

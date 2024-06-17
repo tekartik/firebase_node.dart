@@ -2,33 +2,36 @@
 library;
 
 import 'package:tekartik_firebase_node/firebase_node_interop.dart';
+import 'package:tekartik_firebase_node/src/import_common.dart';
 import 'package:tekartik_firebase_node/src/node/firebase_node.dart'
     show AppNode, FirebaseNode;
-import 'package:tekartik_platform_node/context_node.dart';
+import 'package:tekartik_firebase_node/test/setup.dart';
+import 'package:tekartik_firebase_test/firebase_test.dart';
 import 'package:test/test.dart';
 
-var _env = platformContextNode.node!.environment;
-// GOOGLE_APPLICATION_CREDENTIALS must be defined in an environment variable
+// TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT must be defined in an environment variable
 // pointing to the relevant json path
-void main() {
-  /*
+Future<void> main() async {
+  var context = await setupOrNull(useEnv: true);
+
+  if (context == null) {
+    test('no env set', () {
+      // no op
+    });
+    return;
+  }
   group('node', () {
     // there is no name on node
-    runApp(firebaseNode, options: null);
+    runFirebaseTests(firebaseNode, options: context.appOptions);
   });
-   */
+
   group('firebase admin', () {
-    /*
-    test('app', () {
-      print('FIREBASE_CONFIG: ${_env['FIREBASE_CONFIG']}');
-      print(
-          'GOOGLE_APPLICATION_CREDENTIALS: ${_env['GOOGLE_APPLICATION_CREDENTIALS']}');
-    });*/
     test('access token', () async {
       var firebase = firebaseNode as FirebaseNode;
       // print(jsObjectKeys(firebase.nativeInstance));
       // [initializeApp, getApp, getApps, deleteApp, applicationDefault, cert, refreshToken, FirebaseAppError, AppErrorCodes, SDK_VERSION]
-      var app = firebaseNode.initializeApp(name: 'admin') as AppNode;
+      var app = firebaseNode.initializeApp(
+          options: context.appOptions, name: 'admin') as AppNode;
       // print(jsObjectKeys(app.nativeInstance!));
       // print(jsObjectGetOwnPropertyNames(app.nativeInstance!));
       // [appStore, services_, isDeleted_, name_, options_, INTERNAL]
@@ -39,5 +42,5 @@ void main() {
       print(app.options.projectId);
       await app.delete();
     });
-  }, skip: _env['FIREBASE_CONFIG'] == null ? 'no FIREBASE_CONFIG' : null);
+  });
 }

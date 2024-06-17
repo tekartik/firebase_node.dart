@@ -66,6 +66,9 @@ class BucketNode with BucketMixin implements Bucket {
         await nativeInstance.getFiles(_unwrapGetFilesOptions(options));
     return GetFilesResponseNode(this, nativeResponse);
   }
+
+  @override
+  String toString() => 'BucketNode($name)';
 }
 
 class FileNode with FileMixin implements File {

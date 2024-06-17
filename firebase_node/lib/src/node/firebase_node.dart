@@ -107,6 +107,8 @@ class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
   int get expiresIn => nativeInstance.expires_in.toInt();
 }
 
+const _nameDefault = '[DEFAULT]';
+
 //import 'package:firebase_functions_interop/
 class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseNode._(this.nativeInstance);
@@ -130,7 +132,7 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     } else {
       app = AppNode(nativeInstance.initializeApp(nativeOptions, name));
     }
-    _apps[name] = app;
+    _apps[name ?? _nameDefault] = app;
     return app;
   }
 
@@ -138,7 +140,7 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
 
   @override
   App app({String? name}) {
-    return _apps[name]!;
+    return _apps[name ?? _nameDefault]!;
   }
 
   FirebaseAdminCredentialServiceNode? _credentialService;

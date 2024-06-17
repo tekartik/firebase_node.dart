@@ -46,6 +46,9 @@ extension FirebaseAdminExt on FirebaseAdminModule {
   /// export declare function cert(serviceAccountPathOrObject: string | ServiceAccount, httpAgent?: Agent): Credential;
   @js.JS('cert')
   external Credential serviceAccountCredential(ServiceAccount serviceAccount);
+
+  /// export declare namespace credential
+  external Credentials get credential;
 }
 
 // admin.credential ============================================================
@@ -53,6 +56,12 @@ extension FirebaseAdminExt on FirebaseAdminModule {
 extension type Credentials._(js.JSObject _) implements js.JSObject {}
 
 extension CredentialsExt on Credentials {
+  /// Returns a [Credential] created from the Google Application Default
+  /// Credentials (ADC) that grants admin access to Firebase services.
+  ///
+  /// This credential can be used in the call to [initializeApp].
+  external Credential applicationDefault();
+
   /// Returns [Credential] created from the provided service account that grants
   /// admin access to Firebase services.
   ///

@@ -124,6 +124,9 @@ class BucketNode with BucketMixin implements Bucket {
         nativeInstance, _unwrapGetFilesOptions(options));
     return GetFilesResponseNode(nativeResponse);
   }
+
+  @override
+  String toString() => 'BucketNode($name)';
 }
 
 class GetFilesResponseNode implements GetFilesResponse {
