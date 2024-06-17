@@ -1,7 +1,7 @@
 ## Setup
 
 ```yaml
-  tekartik_firebase_firebase_node:
+  tekartik_firebase_node:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: firebase_node
