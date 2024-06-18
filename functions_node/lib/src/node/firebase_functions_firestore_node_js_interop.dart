@@ -40,17 +40,19 @@ typedef JSFirestoreFunction = js.JSFunction;
 typedef _JSDocumentWrittenHandler = js.JSFunction;
 
 /// A CloudEvent that contains a DocumentSnapshot or a Change
-extension type JSFirestoreEvent<T>._(js.JSObject _) implements JSCloudEvent {}
+extension type JSFirestoreEvent<T extends js.JSAny?>._(js.JSObject _)
+    implements JSCloudEvent<T> {}
 
-extension JSFirestoreEventExt<T> on JSFirestoreEvent<T> {
+extension JSFirestoreEventExt<T extends js.JSAny?> on JSFirestoreEvent<T> {
   /// The document path
   external String get document;
 }
 
 /// A CloudEventBase is the base of a cross-platform format for encoding a serverless event. For more information, see https://github.com/cloudevents/spec.
-extension type JSCloudEvent<T>._(js.JSObject _) implements js.JSObject {}
+extension type JSCloudEvent<T extends js.JSAny?>._(js.JSObject _)
+    implements js.JSObject {}
 
-extension JSCloudEventExt<T> on JSCloudEvent<T> {
+extension JSCloudEventExt<T extends js.JSAny?> on JSCloudEvent<T> {
   /// Information about this specific event.
   external T get data;
 }
@@ -82,9 +84,10 @@ extension type JSDocumentOptions._(js.JSObject _)
 /// Change class
 /// The Cloud Functions interface for events that change state, such as Realtime Database or Cloud Firestore onWrite and onUpdate events.
 /// export declare class Change<T>
-extension type JSChange<T>._(js.JSObject _) implements js.JSObject {}
+extension type JSChange<T extends js.JSAny?>._(js.JSObject _)
+    implements js.JSObject {}
 
-extension JSChangeExt<T> on JSChange<T> {
+extension JSChangeExt<T extends js.JSAny?> on JSChange<T> {
   /// The state after the event.
   external T get after;
 

@@ -3,7 +3,7 @@ import 'package:firebase_functions_interop/firebase_functions_interop.dart'
 import 'package:tekartik_firebase_firestore_node/firestore_node.dart'
     as firestore_node;
 import 'package:tekartik_firebase_functions/firebase_functions.dart' as common;
-import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
+import 'package:tekartik_firebase_functions_node/firebase_functions_universal.dart';
 import 'package:tekartik_firebase_functions_node/src/node_legacy/firebase_functions_firestore_node.dart';
 import 'package:tekartik_firebase_functions_node/src/node_legacy/firebase_functions_pubsub_node.dart';
 import 'package:tekartik_firebase_node/firebase_node.dart' as firebase_node;
@@ -13,15 +13,16 @@ import 'import_node.dart';
 
 FirebaseFunctionsNode? _firebaseFunctionsNode;
 
-FirebaseFunctionsHttp get firebaseFunctionsNode =>
+FirebaseFunctions get firebaseFunctionsNode =>
     _firebaseFunctionsNode ??= FirebaseFunctionsNode(impl.functions);
 
 /// V2 node functions.
-FirebaseFunctionsHttp get firebaseFunctionsNodeV2 =>
+FirebaseFunctions get firebaseFunctionsNodeV2 =>
     _firebaseFunctionsNode ??= FirebaseFunctionsNode(impl.functionsV2);
 
 //import 'package:firebase_functions_interop/
-class FirebaseFunctionsNode extends FirebaseFunctionsHttp
+class FirebaseFunctionsNode
+    with FirebaseFunctionsDefaultMixin
     implements common.FirebaseFunctions {
   final impl.FirebaseFunctions implFunctions;
 
