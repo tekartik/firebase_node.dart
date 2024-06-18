@@ -75,7 +75,7 @@ extension type JSScheduleOptions._(js.JSObject _) implements JSGlobalOptions {
       int? timeoutSeconds});
 }
 
-extension JSHttpsOptionsExt on JSScheduleOptions {
+extension JSScheduleOptionsExt on JSScheduleOptions {
   /// The schedule, in Unix Crontab or AppEngine syntax.
   ///
   /// schedule: string

@@ -2,15 +2,14 @@ import 'dart:js_interop';
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_http/firebase_functions_http.dart';
-import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_https_node_js_interop.dart'
     as node;
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
     as node;
-import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_scheduler_node_js_interop.dart'
-    as node;
 
 import 'express_http_request_node.dart';
+import 'firebase_functions_firestore_node.dart';
+import 'firebase_functions_scheduler_node.dart';
 
 final firebaseFunctionsNode = FirebaseFunctionsNode();
 
@@ -28,6 +27,10 @@ class FirebaseFunctionsNode extends FirebaseFunctionsHttp {
   @override
   SchedulerFunctions get scheduler =>
       SchedulerFunctionsNode(this, nativeInstance.scheduler);
+
+  @override
+  FirestoreFunctions get firestore =>
+      FirestoreFunctionsNode(this, nativeInstance.firestore);
 }
 
 class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
@@ -76,59 +79,4 @@ class HttpsFunctionNode extends FirebaseFunctionNode implements HttpsFunction {
 node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
   return node.JSHttpsOptions(
       region: httpsOptions.region, cors: httpsOptions.cors?.toJS);
-}
-
-class SchedulerFunctionNode extends FirebaseFunctionNode
-    implements ScheduleFunction {
-  @override
-  final node.JSScheduleFunction nativeInstance;
-
-  SchedulerFunctionNode(super.firebaseFunctionsNode, this.nativeInstance);
-}
-
-node.JSScheduleOptions toNodeScheduleOptions(ScheduleOptions options) {
-  return node.JSScheduleOptions(
-      region: options.region,
-      schedule: options.schedule,
-      timeZone: options.timeZone,
-      memory: options.memory,
-      timeoutSeconds: options.timeoutSeconds);
-}
-
-class SchedulerFunctionsNode
-    with SchedulerFunctionsDefaultMixin
-    implements SchedulerFunctions {
-  final FirebaseFunctionsNode functions;
-  final node.JSSchedulerFunctions nativeInstance;
-
-  SchedulerFunctionsNode(this.functions, this.nativeInstance);
-
-  @override
-  ScheduleFunction onSchedule(
-      ScheduleOptions scheduleOptions, ScheduleHandler handler) {
-    FutureOr<void> handleRequest(node.JSScheduledEvent data) {
-      var scheduleEvent = ScheduleEventNode(data);
-      return handler(scheduleEvent);
-    }
-
-    return SchedulerFunctionNode(
-        functions,
-        nativeInstance.onSchedule(
-            options: toNodeScheduleOptions(scheduleOptions),
-            handler: handleRequest));
-  }
-}
-
-class ScheduleEventNode
-    with SchedulerEventDefaultMixin
-    implements ScheduleEvent {
-  final node.JSScheduledEvent nativeInstance;
-
-  ScheduleEventNode(this.nativeInstance);
-
-  @override
-  String? get jobName => nativeInstance.jobName;
-
-  @override
-  String? get scheduleTime => nativeInstance.scheduleTime;
 }

@@ -20,6 +20,12 @@ Future<void> main() async {
     });
     return;
   }
+  if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
+    test('Skip on github for other than ubuntu and dart stable', () {
+      print('githubActionsPrefix: $githubActionsPrefix');
+    });
+    return;
+  }
   group('node', () {
     // there is no name on node
     runFirebaseTests(firebaseNode, options: context.appOptions);

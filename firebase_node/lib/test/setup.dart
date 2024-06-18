@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase_node/src/node/firebase_node.dart';
 import 'package:tekartik_fs_node/fs_node_universal.dart';
+import 'package:tekartik_platform/util/github_util.dart';
 import 'package:tekartik_platform_node/context_universal.dart';
 
 /// Json (if starting with { or path
@@ -72,3 +73,17 @@ class FirebaseNodeTestContext {
 
   FirebaseNodeTestContext({required this.serviceAccount});
 }
+
+bool get runningOnGithub => platform.runningOnGithub;
+
+/// stable
+/// ubuntu-latest
+bool isGithubActionsUbuntuAndDartStable() {
+  return platform.environment['TEKARTIK_GITHUB_ACTIONS_DART'] == 'stable' &&
+      (platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']
+              ?.startsWith('ubuntu') ??
+          false);
+}
+
+final githubActionsPrefix =
+    'ga_${platform.environment['TEKARTIK_GITHUB_ACTIONS_DART']}_${platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']?.split('-').first}';

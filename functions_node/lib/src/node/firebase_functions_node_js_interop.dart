@@ -1,8 +1,11 @@
 // Copyright (c) 2018, Anatoly Pulyaevskiy. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:js_interop' as js;
 import 'dart:js_interop_unsafe';
+
+import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_firestore_node_js_interop.dart';
 
 import 'firebase_functions_https_node_js_interop.dart';
 import 'firebase_functions_scheduler_node_js_interop.dart';
@@ -23,6 +26,11 @@ extension JSFirebaseFonctionsExt on JSFirebaseFonctionsModule {
   external JSHttpsFunctions get https;
 
   external JSSchedulerFunctions get scheduler;
+
+  external JSFirestoreFunctions get firestore;
+
+  /// Sets default options for all functions written using the 2nd gen SDK.
+  external void setGlobalOptions(JSGlobalOptions options);
 }
 
 @js.JS('exports')
@@ -54,4 +62,14 @@ extension JSGlobalOptionsExt on JSGlobalOptions {
 
   /// Timeout for the function in sections, possible values are 0 to 540. HTTPS functions can specify a higher timeout.
   external int? get timeoutSeconds;
+}
+
+extension FutureOrToJS on FutureOr<void> {
+  js.JSAny? get toJSOrNull {
+    if (this is Future) {
+      return (this as Future).toJS;
+    } else {
+      return null;
+    }
+  }
 }

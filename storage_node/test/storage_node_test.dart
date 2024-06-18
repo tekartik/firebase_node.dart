@@ -25,7 +25,12 @@ Future<void> main() async {
     });
     return;
   }
-
+  if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
+    test('Skip on github for other than ubuntu and dart stable', () {
+      print('githubActionsPrefix: $githubActionsPrefix');
+    });
+    return;
+  }
   var testRootPath = _env['TEKARTIK_FIREBASE_STORAGE_NODE_TEST_ROOT_PATH'];
 
   test('env', () {

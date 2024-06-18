@@ -20,6 +20,12 @@ Future<void> main() async {
     });
     return;
   }
+  if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
+    test('Skip on github for other than ubuntu and dart stable', () {
+      print('githubActionsPrefix: $githubActionsPrefix');
+    });
+    return;
+  }
   var rootCollectionPath =
       _env['TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH'];
   test('app', () {

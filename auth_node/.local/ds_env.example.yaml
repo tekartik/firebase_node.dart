@@ -4,7 +4,5 @@
 #
 var:
   # Google credentials
-  GOOGLE_APPLICATION_CREDENTIALS: /path/to/credentials
-  # Firebase config
-  FIREBASE_CONFIG: /path/to/service_account
+  TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT: /path/to/service_account
 

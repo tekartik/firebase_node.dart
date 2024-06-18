@@ -2,26 +2,34 @@
 library tekartik_firebase_auth_node.test.auth_node_test;
 
 import 'package:tekartik_firebase_auth_node/auth_node_interop.dart';
-import 'package:tekartik_firebase_auth_node/src/node/node_import.dart';
 import 'package:tekartik_firebase_auth_test/auth_test.dart';
-import 'package:tekartik_firebase_node/firebase_node.dart';
+import 'package:tekartik_firebase_node/firebase_node_interop.dart';
+import 'package:tekartik_firebase_node/test/setup.dart';
 
 import 'package:test/test.dart';
 
-var _env = platform.environment;
+Future<void> main() async {
+  var context = await setupOrNull(useEnv: true);
 
-void main() {
+  if (context == null) {
+    test('no env set', () {
+      // no op
+    });
+    return;
+  }
+  if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
+    test('Skip on github for other than ubuntu and dart stable', () {
+      print('githubActionsPrefix: $githubActionsPrefix');
+    });
+    return;
+  }
   var firebase = firebaseNode;
   var authService = authServiceNode;
 
-  test('app', () {
-    print('FIREBASE_CONFIG: ${_env['FIREBASE_CONFIG']}');
-    print(
-        'GOOGLE_APPLICATION_CREDENTIALS: ${_env['GOOGLE_APPLICATION_CREDENTIALS']}');
+  group('auth_node', () {
+    runAuthTests(
+        firebase: firebase,
+        authService: authService,
+        options: context.appOptions);
   });
-  if (_env['FIREBASE_CONFIG'] != null) {
-    group('auth_node', () {
-      runAuthTests(firebase: firebase, authService: authService);
-    });
-  }
 }
