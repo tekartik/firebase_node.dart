@@ -1,3 +1,1 @@
-export 'package:tekartik_firebase_auth/auth.dart';
-
-export 'src/universal/auth_universal.dart';
+export 'auth_universal_legacy.dart';
