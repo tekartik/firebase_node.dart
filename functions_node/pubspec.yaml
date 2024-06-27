@@ -77,10 +77,6 @@ dev_dependencies:
     version: '>=0.3.0'
   test: '>=1.2.0'
   dev_build: '>=0.13.3+12'
-  tekartik_build_utils:
-    git:
-      url: https://github.com/tekartik/build_utils.dart
-      ref: dart3a
   tekartik_firebase_functions_test:
     git:
       url: https://github.com/tekartik/firebase_functions.dart

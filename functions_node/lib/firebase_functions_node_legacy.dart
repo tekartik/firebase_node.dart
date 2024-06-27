@@ -1,8 +1,4 @@
-import 'package:tekartik_firebase_functions/firebase_functions.dart';
+@Deprecated('Use firebase_functions_node instead')
+library;
 
-import 'src/node_legacy/firebase_functions_node.dart' as node;
-
-export 'src/node_legacy/firebase_functions_node.dart'
-    show firebaseProjectId, firebaseStorageBucketName;
-
-FirebaseFunctions get firebaseFunctionsNode => node.firebaseFunctionsNode;
+export 'firebase_functions_node.dart';

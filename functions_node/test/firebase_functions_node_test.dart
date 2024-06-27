@@ -1,12 +1,14 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
+
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
 import 'package:tekartik_app_node_build/gcf_build.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
-import 'package:tekartik_firebase_functions_node/src/node_legacy/import.dart';
+import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:test/test.dart';
 
 var defaultRegion = regionUsCentral1;
@@ -36,7 +38,7 @@ Future main() async {
         }
       });
 
-      () async {
+      unawaited(() async {
         try {
           await shell.run('firebase serve --only functions');
         } on ShellException catch (e) {
@@ -45,8 +47,7 @@ Future main() async {
             completer.completeError(e);
           }
         }
-      }()
-          .unawait();
+      }());
       return completer.future;
     }
 

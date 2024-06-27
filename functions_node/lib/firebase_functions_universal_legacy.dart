@@ -1,4 +1,4 @@
-export 'package:tekartik_firebase_functions/firebase_functions.dart';
+@Deprecated('User firebase_functions_universal instead')
+library;
 
-export 'src/ff_universal_common.dart' show FirebaseFunctionsHttpUniversal;
-export 'src/universal_legacy/ff_universal.dart';
+export 'firebase_functions_universal.dart';
