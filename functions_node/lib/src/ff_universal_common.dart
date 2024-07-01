@@ -24,7 +24,7 @@ abstract class FirebaseFunctionsUniversal extends FirebaseFunctions {
   FirebaseFunctionsUniversal() : super();
 
   /// No effect on node
-  Future<FfServer?> serve({int? port});
+  Future<FfServer> serve({int? port});
 }
 
 abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase
@@ -50,3 +50,9 @@ class FirebaseFunctionsHttpUniversal extends FirebaseFunctionsUniversalBase
 final FirebaseFunctionsUniversal firebaseFunctionsUniversalMemory =
     FirebaseFunctionsHttpUniversal(
         newFirebaseAppLocal(), httpServerFactoryMemory);
+
+/// Extension to expose the serve method.
+extension FirebaseFunctionsUniversalExt on FirebaseFunctions {
+  Future<FfServer> serveUniversal({int? port}) =>
+      (this as FirebaseFunctionsUniversal).serve(port: port);
+}

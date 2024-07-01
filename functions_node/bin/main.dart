@@ -12,7 +12,7 @@ Future main() async {
   firebaseFunctionsUniversal['thelloworldcorsv2'] = firebaseFunctionsUniversal
       .https
       .onRequestV2(HttpsOptions(region: regionBelgium, cors: true), helloWorld);
-  await firebaseFunctionsUniversal.serve();
+  await firebaseFunctionsUniversal.serveUniversal();
   print('serving...');
 }
 
