@@ -30,8 +30,10 @@ class FirebaseFunctionsNode
       SchedulerFunctionsNode(this, nativeInstance.scheduler);
 
   @override
-  FirestoreFunctions get firestore =>
-      FirestoreFunctionsNode(this, nativeInstance.firestore);
+  late final firestore = FirestoreFunctionsNode(this, nativeInstance.firestore);
+
+  @override
+  late final params = _ParamsNode(this, nativeInstance.params);
 
   @override
   set globalOptions(GlobalOptions options) {
@@ -46,12 +48,8 @@ class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
   HttpsFunctionsNode(this.functions, this.nativeInstance);
 
   @override
-  HttpsFunction onRequest(RequestHandler handler) {
-    return onRequestV2(HttpsOptions(), handler);
-  }
-
-  @override
-  HttpsFunction onRequestV2(HttpsOptions httpsOptions, RequestHandler handler) {
+  HttpsFunction onRequest(RequestHandler handler,
+      {HttpsOptions? httpsOptions}) {
     void handleRequest(
         node.JSHttpsRequest request, node.JSHttpsResponse response) {
       var expressRequest = ExpressHttpRequestNode(request, response);
@@ -61,9 +59,8 @@ class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
     return HttpsFunctionNode(
         functions,
         nativeInstance.onRequest(
-            options: toNodeHttpsOptions(httpsOptions), handler: handleRequest));
-
-    //throw UnimplementedError('onRequestV2');
+            options: toNodeHttpsOptionsOrNull(httpsOptions),
+            handler: handleRequest));
   }
 }
 
@@ -82,9 +79,26 @@ class HttpsFunctionNode extends FirebaseFunctionNode implements HttpsFunction {
   HttpsFunctionNode(super.firebaseFunctionsNode, this.nativeInstance);
 }
 
+node.JSHttpsOptions? toNodeHttpsOptionsOrNull(HttpsOptions? httpsOptions) {
+  if (httpsOptions == null) {
+    return null;
+  }
+  return toNodeHttpsOptions(httpsOptions);
+}
+
 node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
   return node.JSHttpsOptions(
       region: httpsOptions.region, cors: httpsOptions.cors?.toJS);
+}
+
+class _ParamsNode implements Params {
+  final FirebaseFunctionsNode functions;
+  final node.JSParams _params;
+
+  _ParamsNode(this.functions, this._params);
+
+  @override
+  String get projectId => _params.projectID.value().toDart;
 }
 
 extension on GlobalOptions {

@@ -29,6 +29,8 @@ extension JSFirebaseFonctionsExt on JSFirebaseFonctionsModule {
 
   external JSFirestoreFunctions get firestore;
 
+  external JSParams get params;
+
   /// Sets default options for all functions written using the 2nd gen SDK.
   external void setGlobalOptions(JSGlobalOptions options);
 }
@@ -62,6 +64,26 @@ extension JSGlobalOptionsExt on JSGlobalOptions {
 
   /// Timeout for the function in sections, possible values are 0 to 540. HTTPS functions can specify a higher timeout.
   external int? get timeoutSeconds;
+}
+
+extension type JSParams._(js.JSObject _) implements js.JSObject {}
+
+extension JSParamsExt on JSParams {
+  /// projectID	A built-in parameter that resolves to the Cloud project ID
+  /// associated with the project, without prompting the deployer.
+  external JSParam<js.JSString> get projectID;
+
+  /// storageBucket	A builtin parameter that resolves to the Cloud storage
+  /// bucket associated with the function, without prompting the deployer. Empty string if not defined.
+  external String get storageBucket;
+}
+
+extension type JSParam<T extends js.JSAny>._(js.JSObject _)
+    implements js.JSObject {}
+
+extension JSParamExt<T extends js.JSAny> on JSParam<T> {
+  /// Returns the expression's runtime value, based on the CLI's resolution of parameters.
+  external T value();
 }
 
 extension FutureOrToJS on FutureOr<void> {

@@ -13,3 +13,10 @@ FirebaseFunctionsUniversal get firebaseFunctionsUniversalV1 =>
 @Deprecated('Use firebaseFunctionsUniversal')
 FirebaseFunctionsUniversal get firebaseFunctionsUniversalV2 =>
     firebaseFunctionsUniversal;
+
+/// Shortcut.
+FirebaseFunctionsServiceUniversal get firebaseFunctionsService =>
+    firebaseFunctionsServiceUniversal;
+
+/// Shortcut.
+FirebaseFunctionsUniversal get firebaseFunctions => firebaseFunctionsUniversal;

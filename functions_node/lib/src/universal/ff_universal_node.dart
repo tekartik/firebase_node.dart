@@ -1,6 +1,5 @@
 import 'package:tekartik_firebase_functions/ff_server.dart';
-import 'package:tekartik_firebase_functions/firebase_functions.dart';
-import 'package:tekartik_firebase_functions_node/src/ff_universal_common.dart';
+import 'package:tekartik_firebase_functions_node/firebase_functions_universal.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node.dart';
 
 class FfServerNode implements FfServer {
@@ -9,6 +8,20 @@ class FfServerNode implements FfServer {
 
   @override
   Uri get uri => throw UnsupportedError('TODO?');
+}
+
+class FirebaseFunctionsServiceUniversalNode
+    with FirebaseProductServiceMixin, FirebaseFunctionsServiceDefaultMixin
+    implements FirebaseFunctionsServiceUniversal {
+  /// App unused here on nocde
+  @override
+  FirebaseFunctionsNodeUniversal functions(FirebaseApp app) =>
+      defaultFunctions();
+
+  @override
+  FirebaseFunctionsNodeUniversal defaultFunctions() {
+    return FirebaseFunctionsNodeUniversal();
+  }
 }
 
 /// Node implementation
@@ -27,6 +40,8 @@ mixin FirebaseFunctionsNodeUniversalMixin
 
 /// V1 by default
 final FirebaseFunctionsUniversal firebaseFunctionsUniversal =
-    FirebaseFunctionsNodeUniversal();
+    firebaseFunctionsServiceUniversal.defaultFunctions();
 
-FirebaseFunctions get firebaseFunctions => firebaseFunctionsUniversal;
+/// V1 by default
+final FirebaseFunctionsServiceUniversal firebaseFunctionsServiceUniversal =
+    FirebaseFunctionsServiceUniversalNode();
