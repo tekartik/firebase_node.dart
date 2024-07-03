@@ -6,8 +6,8 @@ import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_htt
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
     as node;
 
-import 'express_http_request_node.dart';
 import 'firebase_functions_firestore_node.dart';
+import 'firebase_functions_https_node.dart';
 import 'firebase_functions_scheduler_node.dart';
 
 final firebaseFunctionsNode = FirebaseFunctionsNode();
@@ -41,54 +41,12 @@ class FirebaseFunctionsNode
   }
 }
 
-class HttpsFunctionsNode with HttpsFunctionsMixin implements HttpsFunctions {
-  final FirebaseFunctionsNode functions;
-  final node.JSHttpsFunctions nativeInstance;
-
-  HttpsFunctionsNode(this.functions, this.nativeInstance);
-
-  @override
-  HttpsFunction onRequest(RequestHandler handler,
-      {HttpsOptions? httpsOptions}) {
-    void handleRequest(
-        node.JSHttpsRequest request, node.JSHttpsResponse response) {
-      var expressRequest = ExpressHttpRequestNode(request, response);
-      handler(expressRequest);
-    }
-
-    return HttpsFunctionNode(
-        functions,
-        nativeInstance.onRequest(
-            options: toNodeHttpsOptionsOrNull(httpsOptions),
-            handler: handleRequest));
-  }
-}
-
 abstract class FirebaseFunctionNode implements FirebaseFunction {
   final FirebaseFunctionsNode firebaseFunctionsNode;
 
   FirebaseFunctionNode(this.firebaseFunctionsNode);
 
   node.JSFirebaseFunction get nativeInstance;
-}
-
-class HttpsFunctionNode extends FirebaseFunctionNode implements HttpsFunction {
-  @override
-  final node.JSHttpsFunction nativeInstance;
-
-  HttpsFunctionNode(super.firebaseFunctionsNode, this.nativeInstance);
-}
-
-node.JSHttpsOptions? toNodeHttpsOptionsOrNull(HttpsOptions? httpsOptions) {
-  if (httpsOptions == null) {
-    return null;
-  }
-  return toNodeHttpsOptions(httpsOptions);
-}
-
-node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
-  return node.JSHttpsOptions(
-      region: httpsOptions.region, cors: httpsOptions.cors?.toJS);
 }
 
 class _ParamsNode implements Params {

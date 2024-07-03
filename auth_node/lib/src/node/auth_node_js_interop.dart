@@ -127,10 +127,10 @@ extension AuthExt on Auth {
   /// Verifies a Firebase ID token (JWT).
   ///
   /// If the token is valid, the returned js.JSPromise is fulfilled with an instance of
-  /// [DecodedIdToken]; otherwise, the js.JSPromise is rejected. An optional flag can
+  /// [JSDecodedIdToken]; otherwise, the js.JSPromise is rejected. An optional flag can
   /// be passed to additionally check whether the ID token was revoked.
   @js.JS('jsVerifyIdToken')
-  external js.JSPromise<DecodedIdToken> jsVerifyIdToken(String idToken,
+  external js.JSPromise<JSDecodedIdToken> jsVerifyIdToken(String idToken,
       [bool? checkRevoked]);
 }
 
@@ -319,9 +319,9 @@ extension ListUsersResultExt on ListUsersResult {
 
 /// Interface representing a decoded Firebase ID token, returned from the
 /// [AuthModule.verifyIdToken] method.
-extension type DecodedIdToken._(js.JSObject _) implements js.JSObject {}
+extension type JSDecodedIdToken._(js.JSObject _) implements js.JSObject {}
 
-extension DecodedIdTokenExt on DecodedIdToken {
+extension JSDecodedIdTokenExt on JSDecodedIdToken {
   /// The audience for which this token is intended.
   ///
   /// This value is a string equal to your Firebase project ID, the unique
@@ -353,7 +353,7 @@ extension DecodedIdTokenExt on DecodedIdToken {
   ///
   /// This data is provided by the Firebase Authentication service and is a
   /// reserved claim in the ID token.
-  external FirebaseSignInInfo get firebase;
+  external JSFirebaseSignInInfo get firebase;
 
   /// The ID token's issued-at time, in seconds since the Unix epoch.
   ///
@@ -385,9 +385,9 @@ extension DecodedIdTokenExt on DecodedIdToken {
   external String get uid;
 }
 
-extension type FirebaseSignInInfo._(js.JSObject _) implements js.JSObject {}
+extension type JSFirebaseSignInInfo._(js.JSObject _) implements js.JSObject {}
 
-extension FirebaseSignInInfoExt on FirebaseSignInInfo {
+extension FirebaseSignInInfoExt on JSFirebaseSignInInfo {
   /// Provider-specific identity details corresponding to the provider used to
   /// sign in the user.
   external js.JSObject? get identities;
@@ -486,10 +486,10 @@ extension AuthExt2 on Auth {
   /// Verifies a Firebase ID token (JWT).
   ///
   /// If the token is valid, the returned [Future] is completed with an instance
-  /// of [DecodedIdToken]; otherwise, the future is completed with an error.
+  /// of [JSDecodedIdToken]; otherwise, the future is completed with an error.
   /// An optional flag can be passed to additionally check whether the ID token
   /// was revoked.
-  Future<DecodedIdToken> verifyIdToken(String idToken, [bool? checkRevoked]) {
+  Future<JSDecodedIdToken> verifyIdToken(String idToken, [bool? checkRevoked]) {
     if (checkRevoked != null) {
       return jsVerifyIdToken(idToken, checkRevoked).toDart;
     } else {

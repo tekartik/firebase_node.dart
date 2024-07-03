@@ -1,10 +1,13 @@
 // Copyright (c) 2018, Anatoly Pulyaevskiy. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
-import 'dart:async';
 import 'dart:js_interop' as js;
 
+// ignore: implementation_imports
+import 'package:tekartik_firebase_auth_node/src/node/auth_node_js_interop.dart'
+    as js;
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
+
 import 'firebase_functions_node_js_interop.dart';
 
 extension type JSHttpsFunctions._(js.JSObject _) implements js.JSObject {}
@@ -21,6 +24,13 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
 
   @js.JS('onRequest')
   external JSHttpsFunction _onRequestNoOptions(_JSHttpsHandler handler);
+
+  @js.JS('onCall')
+  external JSCallableFunction _onCall(
+      JSCallableOptions options, _JSCallableHandler handler);
+
+  @js.JS('onCall')
+  external JSHttpsFunction _onCallNoOptions(_JSCallableHandler handler);
 
   JSHttpsFunction onRequest(
       {JSHttpsOptions? options, required HttpsHandler handler}) {
@@ -41,10 +51,27 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
       return _onRequest(options, jsHandler.toJS);
     }
   }
+
+  JSCallableFunction onCall(
+      {JSCallableOptions? options, required CallableHandler handler}) {
+    js.JSAny jsHandler(JSCallableRequest request) {
+      var result = handler(request);
+      if (result is Future) {
+        return result.then((value) => (value as Object?)?.jsify()).toJS;
+      } else {
+        return result.jsify()!;
+      }
+    }
+
+    if (options == null) {
+      return _onCallNoOptions(jsHandler.toJS);
+    } else {
+      return _onCall(options, jsHandler.toJS);
+    }
+  }
 }
 
-// An express request with the wire format representation of the request body.
-//
+/// An express request with the wire format representation of the request body.
 extension type JSHttpsRequest._(js.JSObject _) implements js.JSObject {}
 
 extension JSHttpsRequestExt on JSHttpsRequest {
@@ -116,11 +143,13 @@ extension type JSHttpsResponse._(js.JSObject _) implements js.JSObject {
 extension JSHttpsResponseExt on JSHttpsResponse {}
 
 typedef JSHttpsFunction = js.JSFunction;
+typedef JSCallableFunction = js.JSFunction;
 typedef _JSHttpsHandler = js.JSFunction;
+typedef _JSCallableHandler = js.JSFunction;
 
 typedef HttpsHandler = FutureOr<void> Function(
     JSHttpsRequest request, JSHttpsResponse response);
-
+typedef CallableHandler = FutureOr<Object?> Function(JSCallableRequest request);
 typedef JSFirebaseFunction = js.JSFunction;
 
 /// Options that can be set on an onRequest HTTPS function.
@@ -136,6 +165,26 @@ extension type JSHttpsOptions._(js.JSObject _) implements JSGlobalOptions {
       int? timeoutSeconds});
 }
 
+/// Options that can be set on an onRequest HTTPS function.
+///
+/// export interface HttpsOptions extends Omit<GlobalOptions, "region">
+extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
+  /// Options
+  external factory JSCallableOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    js.JSAny? cors,
+    int? timeoutSeconds,
+
+    /// Determines whether Firebase App Check token is consumed on request. Defaults to false.
+    bool? consumeAppCheckToken,
+
+    /// Determines whether Firebase AppCheck is enforced. When true, requests with invalid tokens autorespond with a 401 (Unauthorized) error. When false, requests with invalid tokens set event.app to undefiend.
+    bool? enforceAppCheck,
+  });
+}
+
 extension JSHttpsOptionsExt on JSHttpsOptions {
   /// string | boolean | RegExp | Array<string | RegExp>
   ///
@@ -145,4 +194,23 @@ extension JSHttpsOptionsExt on JSHttpsOptions {
   /// of the array. Defaults to true for https.CallableFunction and false
   /// otherwise.
   external js.JSAny? get cors;
+}
+
+/// Metadata about the authorization used to invoke a function.
+extension type JSAuthData._(js.JSObject _) implements js.JSObject {}
+
+extension JSAuthDataExt on JSAuthData {
+  external js.JSDecodedIdToken get token;
+  external String get uid;
+}
+
+/// An express request with the wire format representation of the request body.
+extension type JSCallableRequest._(js.JSObject _) implements js.JSObject {}
+
+extension JSCallableRequestExt on JSCallableRequest {
+  /// The result of decoding and verifying a Firebase Auth ID token.
+  external JSAuthData get auth;
+
+  /// The parameters used by a client when calling this function.
+  external js.JSAny? get data;
 }

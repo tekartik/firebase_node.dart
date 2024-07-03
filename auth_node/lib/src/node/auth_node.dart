@@ -153,7 +153,7 @@ class UserRecordNode implements UserRecord {
 
 /// Node implementation
 class DecodedIdTokenNode implements DecodedIdToken {
-  final node.DecodedIdToken nativeInstance;
+  final node.JSDecodedIdToken nativeInstance;
 
   DecodedIdTokenNode(this.nativeInstance);
 
