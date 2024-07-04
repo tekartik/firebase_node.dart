@@ -54,7 +54,7 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
 
   JSCallableFunction onCall(
       {JSCallableOptions? options, required CallableHandler handler}) {
-    js.JSAny jsHandler(JSCallableRequest request) {
+    js.JSAny? jsHandler(JSCallableRequest request) {
       var result = handler(request);
       if (result is Future) {
         return result.then((value) => (value as Object?)?.jsify()).toJS;
@@ -209,7 +209,7 @@ extension type JSCallableRequest._(js.JSObject _) implements js.JSObject {}
 
 extension JSCallableRequestExt on JSCallableRequest {
   /// The result of decoding and verifying a Firebase Auth ID token.
-  external JSAuthData get auth;
+  external JSAuthData? get auth;
 
   /// The parameters used by a client when calling this function.
   external js.JSAny? get data;

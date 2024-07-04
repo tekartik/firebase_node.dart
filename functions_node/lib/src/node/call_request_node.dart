@@ -34,10 +34,14 @@ class CallContextAuthNode with CallContextAuthMixin implements CallContextAuth {
   CallContextAuthNode(this.nativeInstance);
 
   @override
-  String? get uid => nativeInstance.auth.uid;
+  String? get uid => nativeInstance.auth?.uid;
 
   @override
   DecodedIdToken? get token {
-    return impl.DecodedIdTokenNode(nativeInstance.auth.token);
+    var nativeToken = nativeInstance.auth?.token;
+    if (nativeToken == null) {
+      return null;
+    }
+    return impl.DecodedIdTokenNode(nativeToken);
   }
 }
