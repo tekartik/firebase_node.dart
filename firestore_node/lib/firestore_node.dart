@@ -1,1 +1,1 @@
-export 'firestore_node_legacy.dart';
+export 'firestore_node_interop.dart';

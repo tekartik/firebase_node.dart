@@ -1,3 +1,4 @@
-export 'package:tekartik_firebase_firestore/firestore.dart';
+@Deprecated('Use firestore_universal')
+library;
 
-export 'src/universal_legacy/firestore_universal.dart';
+export 'firestore_universal.dart';

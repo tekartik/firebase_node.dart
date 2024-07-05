@@ -1,8 +1,4 @@
-import 'package:tekartik_firebase/firebase.dart';
+@Deprecated('Use firebase_universal instead')
+library;
 
-import 'src/universal_legacy/firebase_universal.dart';
-
-export 'src/universal_legacy/firebase_universal.dart';
-
-/// Work on node and io
-Firebase get firebaseUniversal => firebase;
+export 'firebase_universal.dart';

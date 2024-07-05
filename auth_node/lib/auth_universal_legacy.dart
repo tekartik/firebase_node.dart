@@ -1,3 +1,4 @@
-export 'package:tekartik_firebase_auth/auth.dart';
+@Deprecated('Use auth_universal')
+library;
 
-export 'src/universal_legacy/auth_universal.dart';
+export 'auth_universal.dart';

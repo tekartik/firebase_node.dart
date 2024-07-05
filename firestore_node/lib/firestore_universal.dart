@@ -1,1 +1,1 @@
-export 'firestore_universal_legacy.dart';
+export 'firestore_universal_interop.dart';

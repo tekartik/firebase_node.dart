@@ -1,1 +1,1 @@
-export 'auth_universal_legacy.dart';
+export 'auth_universal_interop.dart';

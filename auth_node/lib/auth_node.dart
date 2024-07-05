@@ -1,1 +1,1 @@
-export 'auth_node_legacy.dart' show authServiceNode, authService;
+export 'auth_node_interop.dart' show authServiceNode, authService;

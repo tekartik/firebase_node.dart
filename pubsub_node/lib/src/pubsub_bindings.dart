@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:node_interop/node.dart';
-import 'package:node_interop/node_interop.dart';
+import 'package:tekartik_core_node/require.dart';
 
 @visibleForTesting
 final pubsubJs = require('@google-cloud/pubsub');

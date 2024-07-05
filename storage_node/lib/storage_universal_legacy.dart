@@ -1,3 +1,4 @@
-export 'package:tekartik_firebase_storage/storage.dart';
+@Deprecated('Use storage_universal')
+library;
 
-export 'src/universal_legacy/storage_universal.dart';
+export 'storage_universal.dart';

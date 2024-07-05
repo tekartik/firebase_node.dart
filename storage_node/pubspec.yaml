@@ -38,7 +38,6 @@ dependencies:
       path: node_utils
       ref: dart3a
     version: '>=0.1.0'
-  node_interop:
   tekartik_js_utils_interop:
     git:
       url: https://github.com/tekartik/js_utils.dart

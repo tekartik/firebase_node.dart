@@ -1,6 +1,4 @@
-import 'package:tekartik_firebase/firebase_admin.dart';
-import 'package:tekartik_firebase_node/src/node_legacy/firebase_node_legacy.dart'
-    as firebase_node;
+@Deprecated('Use firebase_node instead')
+library;
 
-/// Node firebase admin
-FirebaseAdmin get firebaseNode => firebase_node.firebaseNode;
+export 'firebase_node.dart';

@@ -9,19 +9,22 @@ environment:
 dependencies:
   js: '>=0.6.1+1'
   meta: '>=1.1.8'
-  node_interop:
-  tekartik_js_utils:
-    git:
-      url: https://github.com/tekartik/js_utils.dart
-      path: js_utils
-      ref: dart3a
-    version: '>=0.1.0'
   tekartik_app_node_utils:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
       ref: dart3a
     version: '>=0.1.0'
+  tekartik_core_node:
+    git:
+      url: https://github.com/tekartik/common_node.dart
+      ref: dart3a
+      path: core_node
+  tekartik_js_utils_interop:
+    git:
+      url: https://github.com/tekartik/js_utils.dart
+      ref: dart3a
+      path: js_utils_interop
 dev_dependencies:
   process_run:
   test: '>=1.14.4'

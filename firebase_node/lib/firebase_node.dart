@@ -1,4 +1,3 @@
-/// Tmp legacy implementation
 library;
 
-export 'firebase_node_legacy.dart' show firebaseNode;
+export 'firebase_node_interop.dart' show firebaseNode;
