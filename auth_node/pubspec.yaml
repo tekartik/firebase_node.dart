@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   collection: '>=1.14.10'
-  js: '>=0.6.7'
   uuid: '>=1.0.0'
   tekartik_firebase_auth:
     git:

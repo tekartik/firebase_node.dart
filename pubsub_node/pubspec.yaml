@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.4.0-0 <4.0.0'
 
 dependencies:
-  js: '>=0.6.1+1'
   meta: '>=1.1.8'
   tekartik_app_node_utils:
     git:
