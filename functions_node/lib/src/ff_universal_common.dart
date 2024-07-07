@@ -22,9 +22,6 @@ abstract class FirebaseFunctionsServiceUniversal
 /// Allow running a main as a node or io app
 abstract class FirebaseFunctionsUniversal extends FirebaseFunctions {
   FirebaseFunctionsUniversal() : super();
-
-  /// No effect on node
-  Future<FfServer> serve({int? port});
 }
 
 abstract class FirebaseFunctionsUniversalBase extends FirebaseFunctionsHttpBase

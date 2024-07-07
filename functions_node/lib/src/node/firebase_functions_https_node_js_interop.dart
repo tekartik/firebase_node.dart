@@ -134,6 +134,21 @@ extension type JSHttpsResponse._(js.JSObject _) implements js.JSObject {
   @js.JS('append')
   external JSHttpsResponse _setHeader(String field, js.JSAny value);
 
+  /// res.redirect([status,] path)
+  /// Redirects to the URL derived from the specified path, with specified status, a positive integer that corresponds to an HTTP status code . If not specified, status defaults to “302 “Found”.
+  @js.JS('redirect')
+  external void _redirect(String path);
+  @js.JS('redirect')
+  external void _statusRedirect(int status, String path);
+
+  void redirect(String path, {int? status}) {
+    if (status == null) {
+      _redirect(path);
+    } else {
+      _statusRedirect(status, path);
+    }
+  }
+
   JSHttpsResponse setHeader(String field, String value) =>
       _setHeader(field, value.toJS);
   JSHttpsResponse setHeaderList(String field, List<String> values) =>

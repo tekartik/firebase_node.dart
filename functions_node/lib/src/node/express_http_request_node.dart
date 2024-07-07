@@ -127,8 +127,9 @@ class ExpressHttpResponseNode implements ExpressHttpResponse {
   }
 
   @override
-  Future redirect(Uri location, {int? status}) {
-    throw UnimplementedError('ExpressHttpResponseNode.redirect');
+  Future<void> redirect(Uri location, {int? status}) async {
+    nativeHttpResponse.redirect(location.toString(), status: status);
+    _closed = true;
   }
 
   @override
