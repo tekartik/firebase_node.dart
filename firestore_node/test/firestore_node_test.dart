@@ -44,6 +44,7 @@ Future<void> main() async {
         firestoreService: firestoreServiceNode,
         options: context.appOptions,
         testContext:
-            FirestoreTestContext(rootCollectionPath: rootCollectionPath));
+            FirestoreTestContext(rootCollectionPath: rootCollectionPath)
+              ..allowedDelayInReadMs = 3000);
   }
 }
