@@ -29,7 +29,9 @@ Future<void> main() async {
     return;
   }
   group('node', () {
-    // there is no name on node
+    test('isLocal', () {
+      expect(firebaseNode.isLocal, isFalse);
+    });
     runFirebaseTests(firebaseNode, options: context.appOptions);
   });
 
