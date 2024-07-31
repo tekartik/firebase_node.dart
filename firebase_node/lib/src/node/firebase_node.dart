@@ -10,10 +10,13 @@ import 'firebase_node_js_interop.dart' as native;
 
 FirebaseNode? _firebaseNode;
 
+/// The firebase node implementation
 FirebaseAdmin get firebaseNode =>
     _firebaseNode ??= FirebaseNode._(native.firebaseAdminModule);
 
+/// Extension to create a FirebaseAppOptions from a service account map
 extension FirebaseNodeAppOptionsExt on FirebaseAppOptions {
+  /// Create a FirebaseAppOptions from a service account map
   FirebaseAppOptions withServiceAccountMap(
       Map<String, Object?> serviceAccountMap) {
     return FirebaseAppOptionsNode(serviceAccountMap,
@@ -21,6 +24,7 @@ extension FirebaseNodeAppOptionsExt on FirebaseAppOptions {
   }
 }
 
+/// Firebase node options
 class FirebaseAppOptionsNode
     with FirebaseAppOptionsMixin
     implements FirebaseAppOptions {
@@ -36,15 +40,19 @@ class FirebaseAppOptionsNode
   //   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   //   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/x%40x.iam.gserviceaccount.com"
   // }
+  /// The service account map
   final Map<String, Object?> serviceAccountMap;
 
+  /// Constructor
   FirebaseAppOptionsNode(this.serviceAccountMap, {String? storageBucket})
       : _storageBucket = storageBucket;
 
+  /// The client email
   String get clientEmail {
     return serviceAccountMap['client_email'] as String;
   }
 
+  /// The private key
   String get privateKey {
     return serviceAccountMap['private_key'] as String;
   }
@@ -59,15 +67,19 @@ class FirebaseAppOptionsNode
   String? _storageBucket;
 }
 
-AppOptions firebaseNodeAppOptionsFromServiceAccountMap(
+/// Create a FirebaseAppOptions from a service account map
+FirebaseAppOptions firebaseNodeAppOptionsFromServiceAccountMap(
     Map<String, Object?> serviceAccountMap) {
   return FirebaseAppOptionsNode(serviceAccountMap);
 }
 
+/// Firebase node credential service
 class FirebaseAdminCredentialServiceNode
     implements FirebaseAdminCredentialService {
+  /// Native instance
   final native.FirebaseAdminModule nativeInstance;
 
+  /// Constructor
   FirebaseAdminCredentialServiceNode(this.nativeInstance);
 
   @override
@@ -82,9 +94,12 @@ class FirebaseAdminCredentialServiceNode
   }
 }
 
+/// Firebase node credential
 class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
+  /// Native instance
   final native.Credential nativeInstance;
 
+  /// Constructor
   FirebaseAdminCredentialNode(this.nativeInstance);
 
   @override
@@ -95,9 +110,12 @@ class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
   }
 }
 
+/// Firebase node access token
 class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
+  /// Native instance
   final native.AccessToken nativeInstance;
 
+  /// Constructor
   FirebaseAdminAccessTokenNode(this.nativeInstance);
 
   @override
@@ -109,14 +127,15 @@ class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
 
 const _nameDefault = '[DEFAULT]';
 
-//import 'package:firebase_functions_interop/
+/// Firebase node implementation
 class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseNode._(this.nativeInstance);
 
+  /// Native instance
   final native.FirebaseAdminModule nativeInstance;
 
   @override
-  App initializeApp({AppOptions? options, String? name}) {
+  FirebaseApp initializeApp({AppOptions? options, String? name}) {
     // Invalid Firebase app options passed as the first argument to initializeApp() for the app named "test". Options must be a non-null object.
     // if options is null, it means we are using it in a server
     // hence no name...
@@ -126,11 +145,11 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     var nativeOptions = _unwrapAppOptions(this, options);
     AppNode app;
     if (nativeOptions == null) {
-      app = AppNode(nativeInstance.initializeApp());
+      app = AppNode(this, nativeInstance.initializeApp());
     } else if (name == null) {
-      app = AppNode(nativeInstance.initializeApp(nativeOptions));
+      app = AppNode(this, nativeInstance.initializeApp(nativeOptions));
     } else {
-      app = AppNode(nativeInstance.initializeApp(nativeOptions, name));
+      app = AppNode(this, nativeInstance.initializeApp(nativeOptions, name));
     }
     _apps[name ?? _nameDefault] = app;
     return app;
@@ -183,11 +202,22 @@ AppOptions _wrapAppOptions(native.AppOptions nativeInstance) {
       storageBucket: nativeInstance.storageBucket);
 }
 
-class AppNode with FirebaseAppMixin {
+/// Compat
+typedef AppNode = FirebaseAppNode;
+
+/// Firebase node app
+class FirebaseAppNode with FirebaseAppMixin {
+  /// Firebase node
+  final FirebaseNode firebaseNode;
+
+  /// Native instance
   final native.App nativeInstance;
 
-  AppNode(this.nativeInstance);
+  /// Constructor
+  FirebaseAppNode(this.firebaseNode, this.nativeInstance);
 
+  @override
+  Firebase get firebase => firebaseNode;
   @override
   String get name => nativeInstance.name;
 

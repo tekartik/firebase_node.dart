@@ -3,42 +3,36 @@
 version: 2
 
 enable-beta-ecosystems: true
+
 updates:
   - package-ecosystem: "pub"
     directory: "auth_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "firebase_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "firestore_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "functions_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "pubsub_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "repo_support"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "pub"
     directory: "storage_node"
     schedule:
       interval: "monthly"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

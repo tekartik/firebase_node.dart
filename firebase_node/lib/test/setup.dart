@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:tekartik_firebase/firebase.dart';
@@ -13,6 +15,7 @@ String? _envGetServiceAccountJsonOrPath() {
   return platform.environment[_envServiceAccount];
 }
 
+/// Setup
 Future<FirebaseNodeTestContext?> setupOrNull({
   bool? useEnv,
   Map<String, Object?>? serviceAccountMap,
@@ -25,6 +28,7 @@ Future<FirebaseNodeTestContext?> setupOrNull({
   }
 }
 
+/// Setup
 Future<FirebaseNodeTestContext> setup({
   bool? useEnv,
   Map<String, Object?>? serviceAccountMap,
@@ -66,14 +70,20 @@ Future<FirebaseNodeTestContext> setup({
   return FirebaseNodeTestContext(serviceAccount: jsonData);
 }
 
+/// Test context
 class FirebaseNodeTestContext {
+  /// Service account
   final Map<String, Object?> serviceAccount;
-  AppOptions get appOptions =>
+
+  /// App options
+  FirebaseAppOptions get appOptions =>
       firebaseNodeAppOptionsFromServiceAccountMap(serviceAccount);
 
+  /// Constructor
   FirebaseNodeTestContext({required this.serviceAccount});
 }
 
+/// True if running on github
 bool get runningOnGithub => platform.runningOnGithub;
 
 /// stable
@@ -85,5 +95,6 @@ bool isGithubActionsUbuntuAndDartStable() {
           false);
 }
 
+/// Github actions prefix
 final githubActionsPrefix =
     'ga_${platform.environment['TEKARTIK_GITHUB_ACTIONS_DART']}_${platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']?.split('-').first}';

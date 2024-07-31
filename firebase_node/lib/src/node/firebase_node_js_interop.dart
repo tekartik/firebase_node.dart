@@ -7,14 +7,17 @@ import 'dart:js_interop' as js;
 import 'package:tekartik_core_node/require.dart' as node;
 // admin =========================================================================
 
+/// The default app name.
 const defaultAppName = '[DEFAULT]';
 
 /// Singleton instance of [FirebaseAdminModule] module.
 final firebaseAdminModule =
     node.require<FirebaseAdminModule>('firebase-admin/app');
 
+/// Firebase Admin SDK.
 extension type FirebaseAdminModule._(js.JSObject _) implements js.JSObject {}
 
+/// Firebase Admin SDK.
 extension FirebaseAdminExt on FirebaseAdminModule {
   /// Creates and initializes a Firebase app instance.
   external App initializeApp([AppOptions? options, String? name]);
@@ -51,10 +54,10 @@ extension FirebaseAdminExt on FirebaseAdminModule {
   external Credentials get credential;
 }
 
-// admin.credential ============================================================
-
+/// Credentions ext
 extension type Credentials._(js.JSObject _) implements js.JSObject {}
 
+/// Credentials ext
 extension CredentialsExt on Credentials {
   /// Returns a [Credential] created from the Google Application Default
   /// Credentials (ADC) that grants admin access to Firebase services.
@@ -77,7 +80,9 @@ extension CredentialsExt on Credentials {
   external Credential refreshToken(String refreshTokenPath);
 }
 
+/// Service account.
 extension type ServiceAccount._(js.JSObject _) implements js.JSObject {
+  /// Creates a new instance of [ServiceAccount].
   external factory ServiceAccount(
       // ignore: non_constant_identifier_names
       {String? projectId,
@@ -87,14 +92,15 @@ extension type ServiceAccount._(js.JSObject _) implements js.JSObject {
       String? privateKey});
 }
 
+/// Service account.
 extension ServiceAccountExt on ServiceAccount {
-  // ignore: non_constant_identifier_names
+  /// The ID of the Google Cloud project associated with the service account.
   external String get projectId;
 
-  // ignore: non_constant_identifier_names
+  /// client email
   external String get clientEmail;
 
-  // ignore: non_constant_identifier_names
+  /// private key
   external String get privateKey;
 }
 
@@ -102,6 +108,7 @@ extension ServiceAccountExt on ServiceAccount {
 /// with Firebase services.
 extension type Credential._(js.JSObject _) implements js.JSObject {}
 
+/// Credential ext
 extension CredentialExt on Credential {
   /// Returns a Google OAuth2 [AccessToken] object used to authenticate with
   /// Firebase services.
@@ -114,6 +121,7 @@ extension CredentialExt on Credential {
 /// services.
 extension type AccessToken._(js.JSObject _) implements js.JSObject {}
 
+/// Access token ext
 extension AccessTokenExt on AccessToken {
   /// The actual Google OAuth2 access token.
   // ignore: non_constant_identifier_names
@@ -130,6 +138,7 @@ extension AccessTokenExt on AccessToken {
 /// services.
 extension type App._(js.JSObject _) implements js.JSObject {}
 
+/// Firebase app.
 extension AppExt on App {
   /// The name for this app.
   ///
@@ -156,6 +165,7 @@ extension type AppOptions._(js.JSObject _) implements js.JSObject {
   });
 }
 
+/// App options ext
 extension AppOptionsExt on AppOptions {
   /// A [Credential] object used to authenticate the Admin SDK.
   ///
