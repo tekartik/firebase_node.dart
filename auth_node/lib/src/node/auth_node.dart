@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 
+import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
@@ -12,7 +13,9 @@ import 'common_import.dart';
 import 'js_import.dart' as js;
 // ignore_for_file: implementation_imports
 
-class AuthServiceNode with AuthServiceMixin implements AuthService {
+class AuthServiceNode
+    with FirebaseProductServiceMixin<FirebaseAuth>, AuthServiceMixin
+    implements AuthService {
   @override
   bool get supportsListUsers => true;
 
@@ -176,7 +179,7 @@ UserRecord? wrapUserRecord(node.UserRecord? nativeUserRecord) =>
 UserMetadata? wrapUserMetadata(node.UserMetadata? nativeUserMetadata) =>
     nativeUserMetadata != null ? UserMetadataNode(nativeUserMetadata) : null;
 
-class AuthNode with AuthMixin {
+class AuthNode with FirebaseAppProductMixin, AuthMixin {
   final AuthServiceNode authService;
   final node.Auth nativeInstance;
 

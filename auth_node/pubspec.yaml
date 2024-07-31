@@ -27,6 +27,11 @@ dependencies:
       path: firebase_node
       ref: dart3a
     version: '>=0.4.0+0'
+  tekartik_firebase:
+    git:
+      url: https://github.com/tekartik/firebase.dart
+      ref: dart3a
+      path: firebase
   # firebase_functions_interop: ">=1.0.0-dev.11.0"
   # firebase_admin_interop: ">=1.1.0"
 
