@@ -1,6 +1,7 @@
 import 'dart:js_interop' as js;
 import 'dart:typed_data';
 
+import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_node/impl/firebase_node.dart';
 // ignore: implementation_imports
 import 'package:tekartik_firebase_storage/src/common/storage_service_mixin.dart';
@@ -8,7 +9,9 @@ import 'package:tekartik_firebase_storage/src/common/storage_service_mixin.dart'
 import 'common_import.dart';
 import 'storage_node_js_interop.dart' as node;
 
-class StorageServiceNode with StorageServiceMixin implements StorageService {
+class StorageServiceNode
+    with FirebaseProductServiceMixin<FirebaseStorage>, StorageServiceMixin
+    implements StorageService {
   StorageServiceNode();
 
   @override
@@ -27,7 +30,9 @@ StorageServiceNode? _storageServiceNode;
 StorageServiceNode get storageServiceNode =>
     _storageServiceNode ??= StorageServiceNode();
 
-class StorageNode with StorageMixin implements Storage {
+class StorageNode
+    with FirebaseAppProductMixin<FirebaseStorage>, StorageMixin
+    implements Storage {
   final StorageServiceNode serviceNode;
   final node.Storage nativeInstance;
 

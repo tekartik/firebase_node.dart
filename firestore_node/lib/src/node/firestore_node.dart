@@ -1,10 +1,10 @@
-library wip;
+library;
 
 import 'dart:js_interop' as js;
 import 'dart:js_interop_unsafe';
 
+import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
-
 // ignore: implementation_imports
 import 'package:tekartik_firebase_node/impl/firebase_node.dart' show AppNode;
 import 'package:tekartik_js_utils_interop/js_date.dart' as js;
@@ -23,7 +23,10 @@ node.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
 }
 
 class FirestoreServiceNode
-    with FirestoreServiceDefaultMixin, FirestoreServiceMixin
+    with
+        FirebaseProductServiceMixin<Firestore>,
+        FirestoreServiceDefaultMixin,
+        FirestoreServiceMixin
     implements FirestoreService {
   @override
   Firestore firestore(App app) {
@@ -75,7 +78,9 @@ FirestoreServiceNode get firestoreServiceNode =>
 
 FirestoreService get firestoreService => firestoreServiceNode;
 
-class FirestoreNode with FirestoreDefaultMixin implements Firestore {
+class FirestoreNode
+    with FirebaseAppProductMixin<Firestore>, FirestoreDefaultMixin
+    implements Firestore {
   @override
   final FirestoreServiceNode service;
   final node.Firestore nativeInstance;

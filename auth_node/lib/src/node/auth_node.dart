@@ -179,7 +179,7 @@ UserRecord? wrapUserRecord(node.UserRecord? nativeUserRecord) =>
 UserMetadata? wrapUserMetadata(node.UserMetadata? nativeUserMetadata) =>
     nativeUserMetadata != null ? UserMetadataNode(nativeUserMetadata) : null;
 
-class AuthNode with FirebaseAppProductMixin, AuthMixin {
+class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
   final AuthServiceNode authService;
   final node.Auth nativeInstance;
 

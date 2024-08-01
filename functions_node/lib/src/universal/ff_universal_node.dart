@@ -11,7 +11,9 @@ class FfServerNode implements FfServer {
 }
 
 class FirebaseFunctionsServiceUniversalNode
-    with FirebaseProductServiceMixin, FirebaseFunctionsServiceDefaultMixin
+    with
+        FirebaseProductServiceMixin<FirebaseFunction>,
+        FirebaseFunctionsServiceDefaultMixin
     implements FirebaseFunctionsServiceUniversal {
   /// App unused here on nocde
   @override

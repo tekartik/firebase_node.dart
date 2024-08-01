@@ -7,7 +7,9 @@ import 'package:tekartik_firebase_functions_node/src/ff_universal_common.dart';
 import 'package:tekartik_http_io/http_server_io.dart';
 
 class FirebaseFunctionsServiceHttpUniversalIo
-    with FirebaseProductServiceMixin, FirebaseFunctionsServiceDefaultMixin
+    with
+        FirebaseProductServiceMixin<FirebaseFunctions>,
+        FirebaseFunctionsServiceDefaultMixin
     implements FirebaseFunctionsServiceUniversal {
   @override
   FirebaseFunctionsHttpUniversalIo functions(FirebaseApp app) =>
