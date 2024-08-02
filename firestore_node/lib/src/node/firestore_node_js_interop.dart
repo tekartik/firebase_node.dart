@@ -35,12 +35,14 @@ extension FirestoreModuleExt on FirestoreModule {
 
   @js.JS('GeoPoint')
   external GeoPointProto get geoPointProto;
+
   // ignore: non_constant_identifier_names
   @js.JS('AggregateField')
   external AggregateFields get aggregateFields;
 
   /// Sets the log function for all active Firestore instances.
   external void setLogFunction(js.JSFunction logger);
+
   //void Function(String msg) logger);
 
   external Firestore getFirestore(node.App app);
@@ -160,6 +162,7 @@ extension FirestoreExt on Firestore {
   /// transaction failed, a rejected Future with the corresponding failure error
   /// will be returned.
   external js.JSPromise runTransaction(js.JSFunction updateFunction);
+
   //js.JSPromise Function(Transaction transaction) updateFunction);
 
   /// Creates a write batch, used for performing multiple writes as a single
@@ -240,6 +243,7 @@ extension TransactionExt on Transaction {
   external js.JSPromise<
           DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
       get(DocumentReference documentRef);
+
   @js.JS('get')
   external js.JSPromise<
           DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
@@ -447,8 +451,8 @@ extension DocumentReferenceExt on DocumentReference {
   /// the snapshot listener.
   external js.JSFunction onSnapshot(
       js.JSFunction onNext, js.JSFunction onError);
-  //void Function(DocumentSnapshot snapshot) onNext,
-  //[void Function(Error error)? onError]);
+//void Function(DocumentSnapshot snapshot) onNext,
+//[void Function(Error error)? onError]);
 }
 
 /// A `DocumentSnapshot` contains data read from a document in your Firestore
@@ -499,7 +503,7 @@ extension DocumentSnapshotExt on DocumentSnapshot {
   /// Retrieves the field specified by `fieldPath`.
   /// field exists in the document.
   external js.JSAny? get(String fieldPath);
-  // dynamic /*String|FieldPath*/ fieldPath);
+// dynamic /*String|FieldPath*/ fieldPath);
 }
 
 /// A `QueryDocumentSnapshot` contains data read from a document in your
@@ -588,6 +592,7 @@ extension DocumentQueryExt on DocumentQuery {
       String /*String|FieldPath*/ field3,
       String /*String|FieldPath*/ field4,
       String /*String|FieldPath*/ field5]);
+
   DocumentQuery selectAll(List<String> fields) => callMethodVarArgs(
       'select'.toJS, fields.map((field) => field.toJS).toList());
 
@@ -677,6 +682,7 @@ extension DocumentQueryExt on DocumentQuery {
   //    [void Function(Error error)? onError]);
   external js.JSFunction onSnapshot(
       js.JSFunction onNext, js.JSFunction onError);
+
   //    [void Function(Error error)? onError]);
 
   /// Returns a query that counts the documents in the result set of this query.
@@ -845,7 +851,7 @@ extension FieldValuesExt on FieldValues {
   /// with an empty array.
   FieldValue arrayRemove(List<js.JSAny?> elements) =>
       callMethodVarArgs('arrayRemove'.toJS, elements);
-  // external FieldValue arrayRemove(js.JSArray elements);
+// external FieldValue arrayRemove(js.JSArray elements);
 }
 
 extension type FieldValue._(js.JSObject _) implements js.JSObject {}
@@ -926,10 +932,12 @@ extension AggregateQuerySnapshotExt on AggregateQuerySnapshot {
 
 extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
   bool isJSTimestamp() => has('_seconds') && has('_nanoseconds');
+
   // this.instanceof(firestoreModule.timestampProto as js.JSFunction);
   bool isJSGeoPoint() => has('_latitude') && has('_longitude');
+
   // instanceof(firestoreModule.geoPointProto as js.JSFunction);
   bool isJSDocumentReference() => has('_firestore') && has('_path');
 // [_firestore, _path, _converter]
-  // has('_latitude') && has('_longitude');
+// has('_latitude') && has('_longitude');
 }

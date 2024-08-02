@@ -2,6 +2,7 @@ import 'package:tekartik_firebase_firestore/firestore.dart' as fbfirestore;
 // ignore: implementation_imports
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node.dart'
     as fbfirestore;
+
 // ignore: implementation_imports
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node_js_interop.dart'
     as firestore_node;
@@ -62,6 +63,7 @@ class DocumentBuilderNode
   FirestoreFunctionsNode firestoreFunctions;
 
   fbfirestore.FirestoreNode get firestore => firestoreFunctions.firestore;
+
   DocumentBuilderNode(this.firestoreFunctions, this.path);
 
   //firestore.Firestore get firestore => firestoreFunctions.firestore;

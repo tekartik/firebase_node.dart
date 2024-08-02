@@ -151,7 +151,8 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     } else {
       app = AppNode(this, nativeInstance.initializeApp(nativeOptions, name));
     }
-    _apps[name ?? _nameDefault] = app;
+    _apps[name ?? _nameDefault] =
+        FirebaseMixin.latestFirebaseInstanceOrNull = app;
     return app;
   }
 
@@ -218,6 +219,7 @@ class FirebaseAppNode with FirebaseAppMixin {
 
   @override
   Firebase get firebase => firebaseNode;
+
   @override
   String get name => nativeInstance.name;
 

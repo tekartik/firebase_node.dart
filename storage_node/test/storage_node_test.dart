@@ -9,7 +9,6 @@ import 'package:tekartik_firebase_storage_node/src/node/storage_node.dart'
     show StorageNode, BucketNode;
 import 'package:tekartik_firebase_storage_node/storage_node_interop.dart';
 import 'package:tekartik_firebase_storage_test/storage_test.dart';
-
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_platform_node/context_universal.dart';
 import 'package:test/test.dart';

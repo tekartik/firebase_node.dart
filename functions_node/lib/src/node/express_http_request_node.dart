@@ -14,6 +14,7 @@ import 'import_node.dart' as js;
 class ExpressHttpRequestNode implements ExpressHttpRequest {
   final node.JSHttpsRequest nativeHttpRequest;
   final node.JSHttpsResponse nativeHttpResponse;
+
   ExpressHttpRequestNode(this.nativeHttpRequest, this.nativeHttpResponse);
 
   @override

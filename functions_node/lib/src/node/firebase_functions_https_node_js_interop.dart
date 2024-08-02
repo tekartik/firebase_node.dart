@@ -138,6 +138,7 @@ extension type JSHttpsResponse._(js.JSObject _) implements js.JSObject {
   /// Redirects to the URL derived from the specified path, with specified status, a positive integer that corresponds to an HTTP status code . If not specified, status defaults to “302 “Found”.
   @js.JS('redirect')
   external void _redirect(String path);
+
   @js.JS('redirect')
   external void _statusRedirect(int status, String path);
 
@@ -151,6 +152,7 @@ extension type JSHttpsResponse._(js.JSObject _) implements js.JSObject {
 
   JSHttpsResponse setHeader(String field, String value) =>
       _setHeader(field, value.toJS);
+
   JSHttpsResponse setHeaderList(String field, List<String> values) =>
       _setHeader(field, values.map((e) => e.toJS).toList().toJS);
 }
@@ -216,6 +218,7 @@ extension type JSAuthData._(js.JSObject _) implements js.JSObject {}
 
 extension JSAuthDataExt on JSAuthData {
   external js.JSDecodedIdToken get token;
+
   external String get uid;
 }
 
