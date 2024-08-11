@@ -566,9 +566,10 @@ Object fromNativeValue(js.JSAny value,
   if (dartValue != null) {
     return dartValue;
   }
-  if (value.isA<js.JSObject>()) {
-    return fromNativeMap(value as js.JSObject, nestedFromNativeValueOrNull);
-  }
+  try {
+    value = value as js.JSObject;
+    return fromNativeMap(value, nestedFromNativeValueOrNull);
+  } catch (_) {}
 
   throw ArgumentError.value(
       value, '${value.runtimeType}', 'Unsupported value for fromNativeValue');
@@ -577,28 +578,35 @@ Object fromNativeValue(js.JSAny value,
 /// All but map
 Object? _commonSimpleTypesFromNativeValue(js.JSAny value,
     [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
-  if (value is js.JSNumber) {
-    return value.toDartNum;
-  } else if (value is js.JSBoolean) {
-    return value.toDart;
-  } else if (value is js.JSString) {
-    return value.toDart;
-  } else if (value is js.JSUint8Array) {
-    return Blob(value.toDart);
+  if (value.isA<js.JSNumber>()) {
+    return (value as js.JSNumber).toDartNum;
+  } else if (value.isA<js.JSBoolean>()) {
+    return (value as js.JSBoolean).toDart;
+  } else if (value.isA<js.JSString>()) {
+    return (value as js.JSString).toDart;
+  } else if (value.isA<js.JSUint8Array>()) {
+    return Blob((value as js.JSUint8Array).toDart);
   }
-  if (value is js.JSArray) {
-    return fromNativeList(value, nestedFromNativeValueOrNull);
-  } else if (value is js.JSObject) {
-    if (value.isJSTimestamp()) {
-      var nodeTimestamp = value as node.Timestamp;
-      return Timestamp(nodeTimestamp.seconds, nodeTimestamp.nanoseconds);
-    } else if (value.isJSDate) {
-      return (value as js.JSDate).toDart;
-    } else if (value.isJSGeoPoint()) {
-      var nodeGeoPoint = value as node.GeoPoint;
-      return GeoPoint(nodeGeoPoint.latitude, nodeGeoPoint.longitude);
-    }
+  if (value.isA<js.JSArray>()) {
+    return fromNativeList((value as js.JSArray), nestedFromNativeValueOrNull);
   }
+  js.JSObject jsObject;
+  try {
+    jsObject = value as js.JSObject;
+  } catch (_) {
+    return null;
+  }
+
+  if (jsObject.isJSTimestamp()) {
+    var nodeTimestamp = value as node.Timestamp;
+    return Timestamp(nodeTimestamp.seconds, nodeTimestamp.nanoseconds);
+  } else if (value.isA<js.JSDate>()) {
+    return (value as js.JSDate).toDart;
+  } else if (value.isJSGeoPoint()) {
+    var nodeGeoPoint = value as node.GeoPoint;
+    return GeoPoint(nodeGeoPoint.latitude, nodeGeoPoint.longitude);
+  }
+
   return null;
 }
 
@@ -626,9 +634,10 @@ Object? commonFromNativeValue(js.JSAny value,
   if (dartValue != null) {
     return dartValue;
   }
-  if (value is js.JSObject) {
+  try {
+    value = value as js.JSObject;
     return fromNativeMap(value, nestedFromNativeValueOrNull);
-  }
+  } catch (_) {}
   return null;
 }
 
@@ -644,7 +653,9 @@ Object documentValueFromNativeValue(FirestoreNode firestore, js.JSAny value) {
   if (dartValue != null) {
     return dartValue;
   }
-  if (value is js.JSObject) {
+  try {
+    value = value as js.JSObject;
+
     if (value.isJSDocumentReference()) {
       return DocumentReferenceNode._(
           firestore, value as node.DocumentReference);
@@ -656,7 +667,7 @@ Object documentValueFromNativeValue(FirestoreNode firestore, js.JSAny value) {
     }
     return fromNativeMap(
         value, (value) => documentValueFromNativeValueOrNull(firestore, value));
-  }
+  } catch (_) {}
   throw ArgumentError.value(value, '${value.runtimeType}',
       'Unsupported value for documentValueFromNativeValue');
 }
