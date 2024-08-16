@@ -101,8 +101,10 @@ class ExpressHttpResponseNode implements ExpressHttpResponse {
       jsBody = asUint8List(body).toJS;
     } else if (body is Map || body is List) {
       jsBody = jsonEncode(body).toJS;
+    } else if (body == null) {
+      jsBody = null;
     } else {
-      throw 'body ${body?.runtimeType} not supported';
+      throw 'body ${body.runtimeType} not supported';
     }
     nativeHttpResponse.send(jsBody);
 

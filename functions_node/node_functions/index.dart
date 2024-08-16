@@ -6,7 +6,8 @@ import 'package:tekartik_firebase_functions_test/firebase_functions_test.dart';
 import 'package:tekartik_http_node/http_client_node.dart';
 
 /// Memory for inner communication, http for outer
-class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext {
+class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext
+    with FirebaseFunctionsTestClientContextMixin {
   @override
   // ignore: overridden_fields
   final String baseUrl = 'http://localhost:5000/tekartik-free-dev/us-central1';
