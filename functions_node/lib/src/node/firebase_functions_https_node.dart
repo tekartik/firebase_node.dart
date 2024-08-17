@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'dart:js_interop' as js;
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
+import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_https_node_js_interop.dart'
     as node;
 
@@ -36,9 +36,15 @@ class HttpsFunctionsNode
   @override
   HttpsCallableFunction onCall(CallHandler handler,
       {HttpsCallableOptions? callableOptions}) {
-    FutureOr<Object?> handleCall(node.JSCallableRequest request) {
+    FutureOr<Object?> handleCall(node.JSCallableRequest request) async {
       var requestNode = CallRequestNode(request);
-      return handler(requestNode);
+      try {
+        return await handler(requestNode);
+      } on HttpsError catch (e) {
+        // TODO handle error
+        print('error: ${e.code} ${e.message} ${e.details}');
+        throw e.toJS.dartify()!;
+      }
     }
 
     return HttpsCallableFunctionNode(
@@ -91,4 +97,18 @@ node.JSCallableOptions toNodeCallableOptions(
       enforceAppCheck: callableOptions.enforceAppCheck,
       region: callableOptions.region,
       cors: callableOptions.cors?.toJS);
+}
+
+/// To throw as a JS object
+extension on HttpsError {
+  node.JSHttpsError get toJS {
+    js.JSAny? jsDetails;
+    try {
+      jsDetails = details?.jsify();
+    } catch (e) {
+      jsDetails = details?.toString().toJS;
+    }
+
+    return node.JSHttpsError(code: code, message: message, details: jsDetails);
+  }
 }

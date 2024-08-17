@@ -202,6 +202,28 @@ extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
   });
 }
 
+/// Options that can be set on an onRequest HTTPS function.
+///
+/// export interface HttpsOptions extends Omit<GlobalOptions, "region">
+@js.JS('HttpsError')
+extension type JSHttpsError._(js.JSObject _) implements js.JSObject {
+  /// Options
+  external factory JSHttpsError({
+    String code,
+    String message,
+    js.JSAny? details,
+  });
+
+  /// A standard error code that will be returned to the client. This also determines the HTTP status code of the response, as defined in code.proto.
+  external String code;
+
+  /// Message
+  external String message;
+
+  /// Extra data to be converted to JSON and included in the error response.
+  external js.JSAny? details;
+}
+
 extension JSHttpsOptionsExt on JSHttpsOptions {
   /// string | boolean | RegExp | Array<string | RegExp>
   ///
