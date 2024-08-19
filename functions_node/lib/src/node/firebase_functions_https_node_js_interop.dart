@@ -2,6 +2,7 @@
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
 import 'dart:js_interop' as js;
+import 'dart:js_interop_unsafe';
 
 // ignore: implementation_imports
 import 'package:tekartik_firebase_auth_node/src/node/auth_node_js_interop.dart'
@@ -69,6 +70,9 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
       return _onCall(options, jsHandler.toJS);
     }
   }
+
+  @js.JS('HttpsError')
+  external JSHttpsErrorProto get httpsErrorProto;
 }
 
 /// An express request with the wire format representation of the request body.
@@ -205,20 +209,37 @@ extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
 /// Options that can be set on an onRequest HTTPS function.
 ///
 /// export interface HttpsOptions extends Omit<GlobalOptions, "region">
-@js.JS('HttpsError')
 extension type JSHttpsError._(js.JSObject _) implements js.JSObject {
-  /// Options
-  external factory JSHttpsError({
-    String code,
-    String message,
-    js.JSAny? details,
-  });
+  factory JSHttpsError(String code, String message, [js.JSAny? details]) {
+    return firebaseFunctionsModule.https.httpsErrorProto
+        .newHttpsError(code, message, details);
+  }
+}
 
+extension JSHttpsErrorExt on JSHttpsError {
   /// A standard error code that will be returned to the client. This also determines the HTTP status code of the response, as defined in code.proto.
   external String code;
 
   /// Message
   external String message;
+
+  /// Extra data to be converted to JSON and included in the error response.
+  /// This data must be JSON-serializable.
+  external js.JSAny? get details;
+}
+
+extension type JSHttpsErrorProto._(js.JSObject _) implements js.JSObject {}
+
+extension JSHttpsErrorProtoExt on JSHttpsErrorProto {
+  /// Options
+  JSHttpsError newHttpsError(String code, String message, [js.JSAny? details]) {
+    if (details == null) {
+      return (this as js.JSFunction).callAsConstructor(code.toJS, message.toJS);
+    } else {
+      return (this as js.JSFunction)
+          .callAsConstructor(code.toJS, message.toJS, details);
+    }
+  }
 
   /// Extra data to be converted to JSON and included in the error response.
   external js.JSAny? details;

@@ -41,9 +41,7 @@ class HttpsFunctionsNode
       try {
         return await handler(requestNode);
       } on HttpsError catch (e) {
-        // TODO handle error
-        print('error: ${e.code} ${e.message} ${e.details}');
-        throw e.toJS.dartify()!;
+        throw e.toJS.toJSBox;
       }
     }
 
@@ -100,7 +98,7 @@ node.JSCallableOptions toNodeCallableOptions(
 }
 
 /// To throw as a JS object
-extension on HttpsError {
+extension HttpsErrorNodeExt on HttpsError {
   node.JSHttpsError get toJS {
     js.JSAny? jsDetails;
     try {
@@ -109,6 +107,6 @@ extension on HttpsError {
       jsDetails = details?.toString().toJS;
     }
 
-    return node.JSHttpsError(code: code, message: message, details: jsDetails);
+    return node.JSHttpsError(code, message, jsDetails);
   }
 }
