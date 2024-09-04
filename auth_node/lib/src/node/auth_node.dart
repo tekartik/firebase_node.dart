@@ -24,8 +24,8 @@ class AuthServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return AuthNode(
-          this, node.firebaseAdminAuthModule.getAuth(appNode.nativeInstance));
+      return AuthNode(this, appNode,
+          node.firebaseAdminAuthModule.getAuth(appNode.nativeInstance));
     });
   }
 
@@ -180,10 +180,13 @@ UserMetadata? wrapUserMetadata(node.UserMetadata? nativeUserMetadata) =>
     nativeUserMetadata != null ? UserMetadataNode(nativeUserMetadata) : null;
 
 class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
-  final AuthServiceNode authService;
+  final AuthServiceNode serviceNode;
   final node.Auth nativeInstance;
+  final AppNode appNode;
+  AuthNode(this.serviceNode, this.appNode, this.nativeInstance);
 
-  AuthNode(this.authService, this.nativeInstance);
+  @override
+  FirebaseApp get app => appNode;
 
   /// Retrieves a list of users (single batch only) with a size of [maxResults]
   /// and starting from the offset as specified by [pageToken].
@@ -223,4 +226,7 @@ class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
   @override
   Future<User> reloadCurrentUser() =>
       throw UnsupportedError('reloadCurrentUser not supported for node');
+
+  @override
+  FirebaseAuthService get service => serviceNode;
 }

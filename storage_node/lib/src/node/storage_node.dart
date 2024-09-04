@@ -19,7 +19,7 @@ class StorageServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return StorageNode(this,
+      return StorageNode(this, appNode,
           node.firebaseAdminStorageModule.getStorage(appNode.nativeInstance));
     });
   }
@@ -33,10 +33,11 @@ StorageServiceNode get storageServiceNode =>
 class StorageNode
     with FirebaseAppProductMixin<FirebaseStorage>, StorageMixin
     implements Storage {
+  final AppNode appNode;
   final StorageServiceNode serviceNode;
   final node.Storage nativeInstance;
 
-  StorageNode(this.serviceNode, this.nativeInstance);
+  StorageNode(this.serviceNode, this.appNode, this.nativeInstance);
 
   @override
   Bucket bucket([String? name]) {
@@ -48,6 +49,12 @@ class StorageNode
     }
     return _wrapBucket(this, nativeBucket);
   }
+
+  @override
+  FirebaseApp get app => appNode;
+
+  @override
+  FirebaseStorageService get service => serviceNode;
 }
 
 class BucketNode with BucketMixin implements Bucket {

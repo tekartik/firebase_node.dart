@@ -35,6 +35,7 @@ class FirestoreServiceNode
       final appNode = app as AppNode;
       return FirestoreNode(
           this,
+          appNode,
           node.firebaseAdminFirestoreModule
               .getFirestore(appNode.nativeInstance));
     });
@@ -81,11 +82,12 @@ FirestoreService get firestoreService => firestoreServiceNode;
 class FirestoreNode
     with FirebaseAppProductMixin<Firestore>, FirestoreDefaultMixin
     implements Firestore {
+  final AppNode appNode;
   @override
   final FirestoreServiceNode service;
   final node.Firestore nativeInstance;
 
-  FirestoreNode(this.service, this.nativeInstance);
+  FirestoreNode(this.service, this.appNode, this.nativeInstance);
 
   @override
   CollectionReference collection(String path) =>
@@ -156,6 +158,9 @@ class FirestoreNode
 
   @override
   String toString() => 'FirestoreNode()';
+
+  @override
+  FirebaseApp get app => appNode;
 }
 
 //FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
