@@ -1,4 +1,3 @@
-import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase_functions/ff_server.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_http/ff_server.dart';
