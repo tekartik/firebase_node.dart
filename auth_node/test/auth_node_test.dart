@@ -1,5 +1,5 @@
 @TestOn('node')
-library tekartik_firebase_auth_node.test.auth_node_test;
+library;
 
 import 'package:tekartik_firebase_auth_node/auth_node_interop.dart';
 import 'package:tekartik_firebase_auth_test/auth_test.dart';

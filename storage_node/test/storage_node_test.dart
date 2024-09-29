@@ -1,5 +1,5 @@
 @TestOn('node')
-library tekartik_firebase_storage_node.storage_node_test;
+library;
 
 import 'package:tekartik_firebase_node/firebase_node_interop.dart'
     show firebaseNode;

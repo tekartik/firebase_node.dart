@@ -1,7 +1,7 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library tekartik_pubsub_node;
+library;
 
 export 'src/pubsub_interop.dart';
 
