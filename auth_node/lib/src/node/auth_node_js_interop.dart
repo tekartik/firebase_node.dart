@@ -369,7 +369,7 @@ extension JSDecodedIdTokenExt on JSDecodedIdToken {
   /// The issuer identifier for the issuer of the response.
   ///
   /// This value is a URL with the format
-  /// `https://securetoken.google.com/<PROJECT_ID>`, where <PROJECT_ID> is the
+  /// `https://securetoken.google.com/<PROJECT_ID>`, where `<PROJECT_ID>` is the
   /// same project ID specified in the [aud] property.
   external String get iss;
 

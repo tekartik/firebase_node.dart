@@ -113,7 +113,7 @@ extension CredentialExt on Credential {
   /// Returns a Google OAuth2 [AccessToken] object used to authenticate with
   /// Firebase services.
   ///
-  /// Returns node.Promise<AccessToken>.
+  /// Returns `node.Promise<AccessToken>`
   external js.JSPromise getAccessToken();
 }
 

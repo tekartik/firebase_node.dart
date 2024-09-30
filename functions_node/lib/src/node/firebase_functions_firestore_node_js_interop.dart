@@ -15,7 +15,7 @@ extension type JSFirestoreFunctions._(js.JSObject _) implements js.JSObject {}
 extension JSFirestoreFunctionsExt on JSFirestoreFunctions {
   /// Event handler which triggers when a document is created, updated, or deleted in Firestore.
   ///
-  /// export declare function onDocumentWritten<Document extends string>(document: Document, handler: (event: FirestoreEvent<Change<DocumentSnapshot> | undefined, ParamsOf<Document>>) => any | Promise<any>): CloudFunction<FirestoreEvent<Change<DocumentSnapshot> | undefined, ParamsOf<Document>>>;quest.
+  /// export declare function `onDocumentWritten<Document extends string>(document: Document, handler: (event: FirestoreEvent<Change<DocumentSnapshot> | undefined, ParamsOf<Document>>) => any | Promise<any>): CloudFunction<FirestoreEvent<Change<DocumentSnapshot> | undefined, ParamsOf<Document>.`
 
   @js.JS('onDocumentWritten')
   external JSFirestoreFunction _onDocumentWritten(
@@ -59,7 +59,7 @@ extension JSCloudEventExt<T extends js.JSAny?> on JSCloudEvent<T> {
 
 /// EventHandlerOptions interface
 ///
-/// export interface EventHandlerOptions extends Omit<GlobalOptions, "enforceAppCheck">
+/// export interface EventHandlerOptions extends `Omit<GlobalOptions, "enforceAppCheck">`
 extension type JSEventHandlerOptions._(js.JSObject _)
     implements JSGlobalOptions {
   external factory JSEventHandlerOptions(
@@ -67,7 +67,7 @@ extension type JSEventHandlerOptions._(js.JSObject _)
 }
 
 /// firestore.DocumentOptions interface
-/// export interface DocumentOptions<Document extends string = string> extends EventHandlerOptions
+/// export interface `DocumentOptions<Document extends string = string>` extends EventHandlerOptions
 extension type JSDocumentOptions._(js.JSObject _)
     implements JSEventHandlerOptions {
   /// Options
@@ -83,7 +83,7 @@ extension type JSDocumentOptions._(js.JSObject _)
 
 /// Change class
 /// The Cloud Functions interface for events that change state, such as Realtime Database or Cloud Firestore onWrite and onUpdate events.
-/// export declare class Change<T>
+/// export declare class `Change<T>`
 extension type JSChange<T extends js.JSAny?>._(js.JSObject _)
     implements js.JSObject {}
 

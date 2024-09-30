@@ -175,7 +175,7 @@ typedef JSFirebaseFunction = js.JSFunction;
 
 /// Options that can be set on an onRequest HTTPS function.
 ///
-/// export interface HttpsOptions extends Omit<GlobalOptions, "region">
+/// export interface HttpsOptions extends `Omit<GlobalOptions, "region">`
 extension type JSHttpsOptions._(js.JSObject _) implements JSGlobalOptions {
   /// Options
   external factory JSHttpsOptions(
@@ -188,7 +188,7 @@ extension type JSHttpsOptions._(js.JSObject _) implements JSGlobalOptions {
 
 /// Options that can be set on an onRequest HTTPS function.
 ///
-/// export interface HttpsOptions extends Omit<GlobalOptions, "region">
+/// export interface HttpsOptions extends `Omit<GlobalOptions, "region">`
 extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
   /// Options
   external factory JSCallableOptions({
@@ -208,7 +208,7 @@ extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
 
 /// Options that can be set on an onRequest HTTPS function.
 ///
-/// export interface HttpsOptions extends Omit<GlobalOptions, "region">
+/// export interface HttpsOptions extends `Omit<GlobalOptions, "region">`
 extension type JSHttpsError._(js.JSObject _) implements js.JSObject {
   factory JSHttpsError(String code, String message, [js.JSAny? details]) {
     return firebaseFunctionsModule.https.httpsErrorProto
@@ -246,7 +246,7 @@ extension JSHttpsErrorProtoExt on JSHttpsErrorProto {
 }
 
 extension JSHttpsOptionsExt on JSHttpsOptions {
-  /// string | boolean | RegExp | Array<string | RegExp>
+  /// string | boolean | RegExp | `Array<string | RegExp>`
   ///
   /// If true, allows CORS on requests to this function. If this is a string or
   /// RegExp, allows requests from domains that match the provided value. If

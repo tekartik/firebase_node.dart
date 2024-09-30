@@ -83,6 +83,6 @@ extension JSScheduleOptionsExt on JSScheduleOptions {
 
   /// The timezone that the schedule executes in.
   ///
-  /// timeZone?: timezone | Expression<string> | ResetValue
+  /// timeZone?: timezone | `Expression<string>` | ResetValue
   external String? get timeZone;
 }
