@@ -539,8 +539,8 @@ extension QueryDocumentSnapshotExt on QueryDocumentSnapshot {
 /*export type OrderByDirection = 'desc' | 'asc';*/
 
 /// Filter conditions in a `Query.where()` clause are specified using the
-/// strings '<', '<=', '==', '>=', and '>'.
-/*export type WhereFilterOp = '<' | '<=' | '==' | '>=' | '>';*/
+/// strings `<`, `<=`, `==`, `>=`, and `>`.
+/*export type WhereFilterOp = `<` | `<=` | `==` | `>=` | `>`;*/
 
 /// A `Query` refers to a Query which you can read or listen to. You can also
 /// construct refined `Query` objects by adding filters and ordering.
