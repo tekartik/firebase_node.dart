@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:http/http.dart';
 import 'package:tekartik_http/http.dart';
 import 'package:tekartik_test_menu_browser/test_menu_universal.dart';
 

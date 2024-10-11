@@ -3,7 +3,6 @@ library;
 
 import 'dart:async';
 
-import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
 import 'package:tekartik_app_node_build/gcf_build.dart';
