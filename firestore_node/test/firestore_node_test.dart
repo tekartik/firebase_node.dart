@@ -28,6 +28,10 @@ Future<void> main() async {
   }
   var rootCollectionPath =
       _env['TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH'];
+  test('support', () {
+    expect(firestoreServiceNode.supportsVectorValue, isTrue);
+  });
+
   test('app', () {
     print(
         'TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH: $rootCollectionPath');

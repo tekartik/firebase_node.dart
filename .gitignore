@@ -8,6 +8,5 @@
 /pubsub_node/package-lock.json
 /storage_node/pubspec_overrides.yaml
 pubspec_overrides.yaml
-/pubspec.yaml
 /pubspec.lock
 .dart_tool/

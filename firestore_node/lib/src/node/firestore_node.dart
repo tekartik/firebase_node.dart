@@ -69,6 +69,8 @@ class FirestoreServiceNode
   bool get supportsAggregateQueries => true;
 
   @override
+  bool get supportsVectorValue => true;
+  @override
   String toString() => 'FirestoreServiceNode()';
 }
 
@@ -492,6 +494,9 @@ js.JSAny? commonToNativeValue(Object value,
   } else if (value is GeoPoint) {
     return node.firestoreModule.geoPointProto
         .fromLatitudeAndLongitude(value.latitude, value.longitude);
+  } else if (value is VectorValue) {
+    return node.firestoreModule.fieldValue
+        .vector(value.toArray().map((e) => e.toJS).toList().toJS);
   } else if (value is DocumentReferenceNode) {
     return value.nativeInstance;
   }
@@ -610,6 +615,9 @@ Object? _commonSimpleTypesFromNativeValue(js.JSAny value,
   } else if (value.isJSGeoPoint()) {
     var nodeGeoPoint = value as node.GeoPoint;
     return GeoPoint(nodeGeoPoint.latitude, nodeGeoPoint.longitude);
+  } else if (value.isVector()) {
+    var nodeVector = value as node.VectorValue;
+    return VectorValue(nodeVector.toDoubleList());
   }
 
   return null;

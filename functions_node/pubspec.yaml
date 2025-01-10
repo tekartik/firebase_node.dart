@@ -38,7 +38,7 @@ dependencies:
       url: https://github.com/tekartik/firebase_node.dart
       path: auth_node
       ref: dart3a
-  sembast: '>=1.9.0-dev.1'
+  sembast: ">=3.7.4+3"
   uuid: '>=1.0.0'
   tekartik_fs_node:
     git:
@@ -65,8 +65,8 @@ dev_dependencies:
       path: app_build_menu
       ref: dart3a
     version: '>=0.3.0'
-  test: '>=1.2.0'
-  dev_build: '>=0.13.3+12'
+  test: ">=1.24.0"
+  dev_build: ">=1.1.0+2"
   tekartik_firebase_functions_test:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
@@ -85,10 +85,10 @@ dev_dependencies:
       path: http_io
       ref: dart3a
     version: '>=0.1.0'
-  process_run: '>=0.11.1-dev.1'
+  process_run: ">=1.2.1+1"
   # needed node dependencies
-  build_web_compilers:
-  build_runner:
+  build_web_compilers: ">=4.0.11"
+  build_runner: ">=2.4.13"
   tekartik_build_node:
     git:
       url: https://github.com/tekartik/build_node.dart
@@ -100,13 +100,7 @@ dev_dependencies:
       ref: dart3a
       path: functions_call
 
-dependency_overrides:
-  tekartik_firebase_firestore_node:
-    path: ../firestore_node
-  tekartik_firebase_node:
-    path: ../firebase_node
-  tekartik_firebase_auth_node:
-    path: ../auth_node
+resolution: workspace
   # Temp
 #  firebase_functions_interop:
 #   path: ../../../../github.com/tekartikdev/firebase-functions-interop

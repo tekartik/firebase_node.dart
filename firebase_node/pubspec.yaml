@@ -9,7 +9,7 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
-  collection: '>=1.14.10'
+  collection: ">=1.18.0"
   uuid: '>=1.0.0'
   tekartik_firebase:
     git:
@@ -56,14 +56,14 @@ dependencies:
       ref: dart3a
       path: platform
 dev_dependencies:
-  test: ">=1.2.0"
+  test: ">=1.24.0"
   tekartik_firebase_test:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase_test
       ref: dart3a
       version: '>=0.7.3'
-  process_run:
+  process_run: ">=1.2.1+1"
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
@@ -71,7 +71,7 @@ dev_dependencies:
       ref: dart3a
     version: '>=0.1.0'
   # needed node dependencies
-  build_runner:
+  build_runner: ">=2.4.13"
   tekartik_build_node:
     git:
       url: https://github.com/tekartik/build_node.dart
@@ -79,6 +79,7 @@ dev_dependencies:
       ref: dart3a
 
 dependency_overrides:
+resolution: workspace
   # tekartik_firebase:
   #  path: ../firebase
   # tekartik_firebase_local:

@@ -7,11 +7,11 @@ environment:
   sdk: ^3.5.0
 
 dev_dependencies:
-  path:
-  pub_semver:
-  process_run: '>=0.10.3'
-  test:
-  dev_build:
+  path: ">=1.9.0"
+  pub_semver: ">=2.1.4"
+  process_run: ">=1.2.1+1"
+  test: ">=1.24.0"
+  dev_build: ">=1.1.0+2"
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
@@ -20,6 +20,7 @@ dev_dependencies:
     version: '>=0.1.0'
 
 dependency_overrides:
+resolution: workspace
   # Temp
   # tekartik_app_node_build:
   #  path: ../../app_node_utils.dart/app_build

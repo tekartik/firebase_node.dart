@@ -36,7 +36,6 @@ extension FirestoreModuleExt on FirestoreModule {
   @js.JS('GeoPoint')
   external GeoPointProto get geoPointProto;
 
-  // ignore: non_constant_identifier_names
   @js.JS('AggregateField')
   external AggregateFields get aggregateFields;
 
@@ -102,6 +101,15 @@ extension GeoPointProtoExt on GeoPointProto {
   GeoPoint fromLatitudeAndLongitude(num latitude, num longitude) {
     return callAsConstructorVarArgs([latitude.toJS, longitude.toJS]);
   }
+}
+
+extension type VectorValue._(js.JSObject _) implements js.JSObject {}
+
+extension VectorValueExt on VectorValue {
+  external js.JSArray toArray();
+
+  List<double> toDoubleList() =>
+      toArray().toDart.map((e) => (e as js.JSNumber).toDartDouble).toList();
 }
 
 /// Document data (for use with `DocumentReference.set()`) consists of fields
@@ -852,6 +860,10 @@ extension FieldValuesExt on FieldValues {
   FieldValue arrayRemove(List<js.JSAny?> elements) =>
       callMethodVarArgs('arrayRemove'.toJS, elements);
 // external FieldValue arrayRemove(js.JSArray elements);
+
+  /// Vector
+  FieldValue vector(js.JSArray<js.JSAny> elements) =>
+      callMethod('vector'.toJS, elements);
 }
 
 extension type FieldValue._(js.JSObject _) implements js.JSObject {}
@@ -938,6 +950,9 @@ extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
 
   // instanceof(firestoreModule.geoPointProto as js.JSFunction);
   bool isJSDocumentReference() => has('_firestore') && has('_path');
+
+  /// {'_values': [1]}
+  bool isVector() => has('_values');
 // [_firestore, _path, _converter]
 // has('_latitude') && has('_longitude');
 }

@@ -1,6 +1,8 @@
 @TestOn('node')
 library;
 
+import 'dart:js_interop';
+
 import 'package:tekartik_firebase_firestore/firestore.dart' as firestore;
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node.dart';
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node_js_interop.dart';
@@ -27,6 +29,9 @@ void main() {
       print(cloudFirestoreModule.fieldValue.serverTimestamp());
       expect(firebaseAdminFirestoreModule.fieldValue.serverTimestamp(),
           cloudFirestoreModule.fieldValue.serverTimestamp());
+      print(jsObjectKeys(
+          firebaseAdminFirestoreModule.fieldValue.vector([.5.toJS].toJS)));
+      // [_values]
     });
     test('Bytes', () {
       //var jsUint8Array = Uint8List.fromList([1, 2, 3]).toJS;
@@ -62,6 +67,20 @@ void main() {
       //print(geoPoint.instanceOfString('GeoPoint')); // false
       // print(geoPoint.instanceof(firestoreModule.geoPointProto as JSFunction));
     });
+    test('Vector', () {
+      //print(jsObjectKeys(firestoreModule.vectorProto));
+      var geoPoint =
+          firestoreModule.geoPointProto.fromLatitudeAndLongitude(1, 2);
+      expect(geoPoint.isJSTimestamp(), isFalse);
+      expect(geoPoint.isJSGeoPoint(), isTrue);
+      expect(geoPoint.latitude, 1);
+      expect(geoPoint.longitude, 2);
+      print(jsObjectKeys(geoPoint));
+      // [_latitude, _longitude]
+      //print(jsObjectKeys(geoPoint.getProperty('__proto__'.toJS)));
+      //print(geoPoint.instanceOfString('GeoPoint')); // false
+      // print(geoPoint.instanceof(firestoreModule.geoPointProto as JSFunction));
+    });
     test('fromToNative', () {
       void testRoundTrip(Object? value) {
         expect(fromNativeValueOrNull(toNativeValueOrNull(value)), value);
@@ -80,6 +99,7 @@ void main() {
       testRoundTrip({'test': 1});
       testRoundTrip([firestore.Timestamp(1, 2000)]);
       testRoundTrip({'test': firestore.Timestamp(1, 2000)});
+      testRoundTrip(firestore.VectorValue([1]));
     });
     test('documentValueToNativeValue', () {});
   });
