@@ -21,20 +21,26 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
 
   @js.JS('onRequest')
   external JSHttpsFunction _onRequest(
-      JSHttpsOptions options, _JSHttpsHandler handler);
+    JSHttpsOptions options,
+    _JSHttpsHandler handler,
+  );
 
   @js.JS('onRequest')
   external JSHttpsFunction _onRequestNoOptions(_JSHttpsHandler handler);
 
   @js.JS('onCall')
   external JSCallableFunction _onCall(
-      JSCallableOptions options, _JSCallableHandler handler);
+    JSCallableOptions options,
+    _JSCallableHandler handler,
+  );
 
   @js.JS('onCall')
   external JSHttpsFunction _onCallNoOptions(_JSCallableHandler handler);
 
-  JSHttpsFunction onRequest(
-      {JSHttpsOptions? options, required HttpsHandler handler}) {
+  JSHttpsFunction onRequest({
+    JSHttpsOptions? options,
+    required HttpsHandler handler,
+  }) {
     js.JSAny? jsHandler(JSHttpsRequest request, JSHttpsResponse response) {
       var result = handler(request, response);
       if (result is Future) {
@@ -53,8 +59,10 @@ extension JSHttpsFunctionsExt on JSHttpsFunctions {
     }
   }
 
-  JSCallableFunction onCall(
-      {JSCallableOptions? options, required CallableHandler handler}) {
+  JSCallableFunction onCall({
+    JSCallableOptions? options,
+    required CallableHandler handler,
+  }) {
     js.JSAny? jsHandler(JSCallableRequest request) {
       var result = handler(request);
       if (result is Future) {
@@ -168,8 +176,8 @@ typedef JSCallableFunction = js.JSFunction;
 typedef _JSHttpsHandler = js.JSFunction;
 typedef _JSCallableHandler = js.JSFunction;
 
-typedef HttpsHandler = FutureOr<void> Function(
-    JSHttpsRequest request, JSHttpsResponse response);
+typedef HttpsHandler =
+    FutureOr<void> Function(JSHttpsRequest request, JSHttpsResponse response);
 typedef CallableHandler = FutureOr<Object?> Function(JSCallableRequest request);
 typedef JSFirebaseFunction = js.JSFunction;
 
@@ -178,12 +186,13 @@ typedef JSFirebaseFunction = js.JSFunction;
 /// export interface HttpsOptions extends `Omit<GlobalOptions, "region">`
 extension type JSHttpsOptions._(js.JSObject _) implements JSGlobalOptions {
   /// Options
-  external factory JSHttpsOptions(
-      {String? region,
-      String? memory,
-      int? concurrency,
-      js.JSAny? cors,
-      int? timeoutSeconds});
+  external factory JSHttpsOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    js.JSAny? cors,
+    int? timeoutSeconds,
+  });
 }
 
 /// Options that can be set on an onRequest HTTPS function.
@@ -211,8 +220,11 @@ extension type JSCallableOptions._(js.JSObject _) implements JSHttpsOptions {
 /// export interface HttpsOptions extends `Omit<GlobalOptions, "region">`
 extension type JSHttpsError._(js.JSObject _) implements js.JSObject {
   factory JSHttpsError(String code, String message, [js.JSAny? details]) {
-    return firebaseFunctionsModule.https.httpsErrorProto
-        .newHttpsError(code, message, details);
+    return firebaseFunctionsModule.https.httpsErrorProto.newHttpsError(
+      code,
+      message,
+      details,
+    );
   }
 }
 
@@ -236,8 +248,11 @@ extension JSHttpsErrorProtoExt on JSHttpsErrorProto {
     if (details == null) {
       return (this as js.JSFunction).callAsConstructor(code.toJS, message.toJS);
     } else {
-      return (this as js.JSFunction)
-          .callAsConstructor(code.toJS, message.toJS, details);
+      return (this as js.JSFunction).callAsConstructor(
+        code.toJS,
+        message.toJS,
+        details,
+      );
     }
   }
 

@@ -1,8 +1,12 @@
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
 
-String buildFolder =
-    join('.dart_tool', 'tekartik_firebase_function_node', 'build', 'bin');
+String buildFolder = join(
+  '.dart_tool',
+  'tekartik_firebase_function_node',
+  'build',
+  'bin',
+);
 
 Future main() async {
   await build();

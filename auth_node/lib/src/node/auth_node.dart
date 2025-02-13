@@ -22,8 +22,11 @@ class AuthServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return AuthNode(this, appNode,
-          node.firebaseAdminAuthModule.getAuth(appNode.nativeInstance));
+      return AuthNode(
+        this,
+        appNode,
+        node.firebaseAdminAuthModule.getAuth(appNode.nativeInstance),
+      );
     });
   }
 
@@ -163,7 +166,8 @@ class DecodedIdTokenNode implements DecodedIdToken {
 }
 
 ListUsersResult? wrapListUsersResult(
-        node.ListUsersResult? nativeListUsersResult) =>
+  node.ListUsersResult? nativeListUsersResult,
+) =>
     nativeListUsersResult != null
         ? ListUsersResultNode(nativeListUsersResult)
         : null;
@@ -191,10 +195,13 @@ class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
   ///
   /// This is used to retrieve all the users of a specified project in batches.
   @override
-  Future<ListUsersResult> listUsers(
-      {int? maxResults, String? pageToken}) async {
+  Future<ListUsersResult> listUsers({
+    int? maxResults,
+    String? pageToken,
+  }) async {
     return wrapListUsersResult(
-        await nativeInstance.listUsers(maxResults, pageToken))!;
+      await nativeInstance.listUsers(maxResults, pageToken),
+    )!;
   }
 
   @override
@@ -214,10 +221,14 @@ class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
       throw UnsupportedError('onCurrentUser not supported for node');
 
   @override
-  Future<DecodedIdToken> verifyIdToken(String idToken,
-      {bool? checkRevoked}) async {
-    var nativeDecodedIdToken =
-        await nativeInstance.verifyIdToken(idToken, checkRevoked);
+  Future<DecodedIdToken> verifyIdToken(
+    String idToken, {
+    bool? checkRevoked,
+  }) async {
+    var nativeDecodedIdToken = await nativeInstance.verifyIdToken(
+      idToken,
+      checkRevoked,
+    );
     return DecodedIdTokenNode(nativeDecodedIdToken);
   }
 

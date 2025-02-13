@@ -11,8 +11,9 @@ import 'package:tekartik_core_node/require.dart' as node;
 const defaultAppName = '[DEFAULT]';
 
 /// Singleton instance of [FirebaseAdminModule] module.
-final firebaseAdminModule =
-    node.require<FirebaseAdminModule>('firebase-admin/app');
+final firebaseAdminModule = node.require<FirebaseAdminModule>(
+  'firebase-admin/app',
+);
 
 /// Firebase Admin SDK.
 extension type FirebaseAdminModule._(js.JSObject _) implements js.JSObject {}
@@ -84,12 +85,14 @@ extension CredentialsExt on Credentials {
 extension type ServiceAccount._(js.JSObject _) implements js.JSObject {
   /// Creates a new instance of [ServiceAccount].
   external factory ServiceAccount(
-      // ignore: non_constant_identifier_names
-      {String? projectId,
-      // ignore: non_constant_identifier_names
-      String? clientEmail,
-      // ignore: non_constant_identifier_names
-      String? privateKey});
+  // ignore: non_constant_identifier_names
+  {
+    String? projectId,
+    // ignore: non_constant_identifier_names
+    String? clientEmail,
+    // ignore: non_constant_identifier_names
+    String? privateKey,
+  });
 }
 
 /// Service account.

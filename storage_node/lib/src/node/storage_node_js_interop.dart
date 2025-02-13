@@ -112,14 +112,14 @@ extension FileExt on File {
   @js.JS('getMetadata')
   external js.JSPromise<js.JSArray<FileMetadata>> jsGetMetadata();
 
-// Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
-//   var response =
-//       (await node_util.promiseToFuture<Object?>(file.getMetadata())) as List;
-//   // The reponse is an array! first item being the meta data
-//   // devPrint('fileGetMetadataResponse: $response');
-//   var fileMetadata = response[0] as FileMetadata;
-//   return GetFileMetadataResponse(metadata: fileMetadata);
-// }
+  // Future<GetFileMetadataResponse> fileGetMetaData(File file) async {
+  //   var response =
+  //       (await node_util.promiseToFuture<Object?>(file.getMetadata())) as List;
+  //   // The reponse is an array! first item being the meta data
+  //   // devPrint('fileGetMetadataResponse: $response');
+  //   var fileMetadata = response[0] as FileMetadata;
+  //   return GetFileMetadataResponse(metadata: fileMetadata);
+  // }
 }
 
 // File meta data in GetFiles
@@ -152,8 +152,12 @@ extension FileMetadataExt on FileMetadata {
 }
 
 extension type GetFilesOptions._(js.JSObject _) implements js.JSObject {
-  external factory GetFilesOptions(
-      {int? maxResults, String? prefix, bool? autoPaginate, String? pageToken});
+  external factory GetFilesOptions({
+    int? maxResults,
+    String? prefix,
+    bool? autoPaginate,
+    String? pageToken,
+  });
 }
 
 extension GetFilesOptionsExt on GetFilesOptions {

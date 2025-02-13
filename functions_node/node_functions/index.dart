@@ -13,9 +13,10 @@ class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext
   final String baseUrl = 'http://localhost:5000/tekartik-free-dev/us-central1';
 
   FirebaseFunctionsTestContextNode({super.baseUrl})
-      : super(
-            httpClientFactory: httpClientFactoryNode,
-            firebaseFunctions: firebaseFunctionsNode);
+    : super(
+        httpClientFactory: httpClientFactoryNode,
+        firebaseFunctions: firebaseFunctionsNode,
+      );
 
   @override
   Future<FfServer> serve() {

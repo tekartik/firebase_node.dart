@@ -32,7 +32,8 @@ Future main(List<String> arguments) async {
         client,
         httpMethodGet,
         Uri.parse(
-            'http://localhost:5000/tekartik-eu-dev/europe-west1/thelloworldv2'),
+          'http://localhost:5000/tekartik-eu-dev/europe-west1/thelloworldv2',
+        ),
       );
       write('result: $result');
     });
@@ -43,7 +44,8 @@ Future main(List<String> arguments) async {
         client,
         httpMethodPost,
         Uri.parse(
-            'http://localhost:5000/tekartik-eu-dev/europe-west1/thelloworldcorsv2'),
+          'http://localhost:5000/tekartik-eu-dev/europe-west1/thelloworldcorsv2',
+        ),
       );
       write('result: $result');
     });

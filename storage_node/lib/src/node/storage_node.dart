@@ -19,8 +19,11 @@ class StorageServiceNode
     return getInstance(app, () {
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
-      return StorageNode(this, appNode,
-          node.firebaseAdminStorageModule.getStorage(appNode.nativeInstance));
+      return StorageNode(
+        this,
+        appNode,
+        node.firebaseAdminStorageModule.getStorage(appNode.nativeInstance),
+      );
     });
   }
 }
@@ -74,8 +77,9 @@ class BucketNode with BucketMixin implements Bucket {
 
   @override
   Future<GetFilesResponse> getFiles([GetFilesOptions? options]) async {
-    var nativeResponse =
-        await nativeInstance.getFiles(_unwrapGetFilesOptions(options));
+    var nativeResponse = await nativeInstance.getFiles(
+      _unwrapGetFilesOptions(options),
+    );
     return GetFilesResponseNode(this, nativeResponse);
   }
 
@@ -119,9 +123,10 @@ class FileNode with FileMixin implements File {
   Bucket get bucket => bucketNode;
 
   @override
-  FileMetadata? get metadata => nativeInstance.metadata == null
-      ? null
-      : FileMetadataNode(nativeInstance.metadata!);
+  FileMetadata? get metadata =>
+      nativeInstance.metadata == null
+          ? null
+          : FileMetadataNode(nativeInstance.metadata!);
 
   @override
   Future<FileMetadata> getMetadata() async {
@@ -145,9 +150,10 @@ class GetFilesResponseNode implements GetFilesResponse {
       _wrapGetFilesOptions(nativeInstance.nextQuery);
 
   @override
-  String toString() => {
+  String toString() =>
+      {
         'files': files,
-        if (nextQuery != null) 'nextQuery': nextQuery
+        if (nextQuery != null) 'nextQuery': nextQuery,
       }.toString();
 }
 
@@ -168,10 +174,11 @@ GetFilesOptions? _wrapGetFilesOptions(node.GetFilesOptions? options) {
     return null;
   }
   return GetFilesOptions(
-      maxResults: options.maxResults,
-      prefix: options.prefix,
-      autoPaginate: options.autoPaginate ?? false,
-      pageToken: options.pageToken);
+    maxResults: options.maxResults,
+    prefix: options.prefix,
+    autoPaginate: options.autoPaginate ?? false,
+    pageToken: options.pageToken,
+  );
 }
 
 class FileMetadataNode implements FileMetadata {
@@ -189,10 +196,11 @@ class FileMetadataNode implements FileMetadata {
   int get size => int.tryParse(nativeInstance.size) ?? 0;
 
   @override
-  String toString() => {
+  String toString() =>
+      {
         'size': size,
         'dateUpdated': dateUpdated.toUtc().toIso8601String(),
-        'md5Hash': md5Hash
+        'md5Hash': md5Hash,
       }.toString();
 }
 

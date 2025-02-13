@@ -27,10 +27,15 @@ void main() {
       print(jsObjectKeys(cloudFirestoreModule.fieldValue));
       print(firebaseAdminFirestoreModule.fieldValue.serverTimestamp());
       print(cloudFirestoreModule.fieldValue.serverTimestamp());
-      expect(firebaseAdminFirestoreModule.fieldValue.serverTimestamp(),
-          cloudFirestoreModule.fieldValue.serverTimestamp());
-      print(jsObjectKeys(
-          firebaseAdminFirestoreModule.fieldValue.vector([.5.toJS].toJS)));
+      expect(
+        firebaseAdminFirestoreModule.fieldValue.serverTimestamp(),
+        cloudFirestoreModule.fieldValue.serverTimestamp(),
+      );
+      print(
+        jsObjectKeys(
+          firebaseAdminFirestoreModule.fieldValue.vector([.5.toJS].toJS),
+        ),
+      );
       // [_values]
     });
     test('Bytes', () {
@@ -43,8 +48,14 @@ void main() {
     test('Timestamp', () {
       print(jsObjectKeys(firebaseAdminFirestoreModule.timestampProto.now()));
       // [_seconds, _nanoseconds]
-      print(jsObjectKeys(firebaseAdminFirestoreModule.timestampProto
-          .fromSecondsAndNanoseconds(1, 2)));
+      print(
+        jsObjectKeys(
+          firebaseAdminFirestoreModule.timestampProto.fromSecondsAndNanoseconds(
+            1,
+            2,
+          ),
+        ),
+      );
       var timestamp = firebaseAdminFirestoreModule.timestampProto
           .fromSecondsAndNanoseconds(1, 2000);
       // expect(timestamp, isA<Timestamp>()); // !! Invalid test
@@ -55,8 +66,10 @@ void main() {
     });
     test('GeoPoint', () {
       print(jsObjectKeys(firestoreModule.geoPointProto));
-      var geoPoint =
-          firestoreModule.geoPointProto.fromLatitudeAndLongitude(1, 2);
+      var geoPoint = firestoreModule.geoPointProto.fromLatitudeAndLongitude(
+        1,
+        2,
+      );
       expect(geoPoint.isJSTimestamp(), isFalse);
       expect(geoPoint.isJSGeoPoint(), isTrue);
       expect(geoPoint.latitude, 1);
@@ -69,8 +82,10 @@ void main() {
     });
     test('Vector', () {
       //print(jsObjectKeys(firestoreModule.vectorProto));
-      var geoPoint =
-          firestoreModule.geoPointProto.fromLatitudeAndLongitude(1, 2);
+      var geoPoint = firestoreModule.geoPointProto.fromLatitudeAndLongitude(
+        1,
+        2,
+      );
       expect(geoPoint.isJSTimestamp(), isFalse);
       expect(geoPoint.isJSGeoPoint(), isTrue);
       expect(geoPoint.latitude, 1);

@@ -18,24 +18,32 @@ class HttpsFunctionsNode
   HttpsFunctionsNode(this.functions, this.nativeInstance);
 
   @override
-  HttpsFunction onRequest(RequestHandler handler,
-      {HttpsOptions? httpsOptions}) {
+  HttpsFunction onRequest(
+    RequestHandler handler, {
+    HttpsOptions? httpsOptions,
+  }) {
     void handleRequest(
-        node.JSHttpsRequest request, node.JSHttpsResponse response) {
+      node.JSHttpsRequest request,
+      node.JSHttpsResponse response,
+    ) {
       var expressRequest = ExpressHttpRequestNode(request, response);
       handler(expressRequest);
     }
 
     return HttpsFunctionNode(
-        functions,
-        nativeInstance.onRequest(
-            options: toNodeHttpsOptionsOrNull(httpsOptions),
-            handler: handleRequest));
+      functions,
+      nativeInstance.onRequest(
+        options: toNodeHttpsOptionsOrNull(httpsOptions),
+        handler: handleRequest,
+      ),
+    );
   }
 
   @override
-  HttpsCallableFunction onCall(CallHandler handler,
-      {HttpsCallableOptions? callableOptions}) {
+  HttpsCallableFunction onCall(
+    CallHandler handler, {
+    HttpsCallableOptions? callableOptions,
+  }) {
     FutureOr<Object?> handleCall(node.JSCallableRequest request) async {
       var requestNode = CallRequestNode(request);
       try {
@@ -46,10 +54,12 @@ class HttpsFunctionsNode
     }
 
     return HttpsCallableFunctionNode(
-        functions,
-        nativeInstance.onCall(
-            options: toNodeCallableOptionsOrNull(callableOptions),
-            handler: handleCall));
+      functions,
+      nativeInstance.onCall(
+        options: toNodeCallableOptionsOrNull(callableOptions),
+        handler: handleCall,
+      ),
+    );
   }
 }
 
@@ -77,11 +87,14 @@ node.JSHttpsOptions? toNodeHttpsOptionsOrNull(HttpsOptions? httpsOptions) {
 
 node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
   return node.JSHttpsOptions(
-      region: httpsOptions.region, cors: httpsOptions.cors?.toJS);
+    region: httpsOptions.region,
+    cors: httpsOptions.cors?.toJS,
+  );
 }
 
 node.JSCallableOptions? toNodeCallableOptionsOrNull(
-    HttpsCallableOptions? callableOptions) {
+  HttpsCallableOptions? callableOptions,
+) {
   if (callableOptions == null) {
     return null;
   }
@@ -89,12 +102,14 @@ node.JSCallableOptions? toNodeCallableOptionsOrNull(
 }
 
 node.JSCallableOptions toNodeCallableOptions(
-    HttpsCallableOptions callableOptions) {
+  HttpsCallableOptions callableOptions,
+) {
   return node.JSCallableOptions(
-      consumeAppCheckToken: callableOptions.consumeAppCheckToken,
-      enforceAppCheck: callableOptions.enforceAppCheck,
-      region: callableOptions.region,
-      cors: callableOptions.cors?.toJS);
+    consumeAppCheckToken: callableOptions.consumeAppCheckToken,
+    enforceAppCheck: callableOptions.enforceAppCheck,
+    region: callableOptions.region,
+    cors: callableOptions.cors?.toJS,
+  );
 }
 
 /// To throw as a JS object

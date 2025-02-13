@@ -34,7 +34,8 @@ Future<void> main() async {
 
   test('app', () {
     print(
-        'TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH: $rootCollectionPath');
+      'TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH: $rootCollectionPath',
+    );
     // devPrint('Using firebase project: ${context.serviceAccount}');
   });
 
@@ -44,10 +45,10 @@ Future<void> main() async {
 
     var firebase = firebaseNode;
     runFirestoreTests(
-        firebase: firebase,
-        firestoreService: firestoreServiceNode,
-        options: context.appOptions,
-        testContext:
-            FirestoreTestContext(rootCollectionPath: rootCollectionPath));
+      firebase: firebase,
+      firestoreService: firestoreServiceNode,
+      options: context.appOptions,
+      testContext: FirestoreTestContext(rootCollectionPath: rootCollectionPath),
+    );
   }
 }

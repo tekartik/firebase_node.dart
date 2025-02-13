@@ -18,9 +18,12 @@ FirebaseAdmin get firebaseNode =>
 extension FirebaseNodeAppOptionsExt on FirebaseAppOptions {
   /// Create a FirebaseAppOptions from a service account map
   FirebaseAppOptions withServiceAccountMap(
-      Map<String, Object?> serviceAccountMap) {
-    return FirebaseAppOptionsNode(serviceAccountMap,
-        storageBucket: storageBucket);
+    Map<String, Object?> serviceAccountMap,
+  ) {
+    return FirebaseAppOptionsNode(
+      serviceAccountMap,
+      storageBucket: storageBucket,
+    );
   }
 }
 
@@ -45,7 +48,7 @@ class FirebaseAppOptionsNode
 
   /// Constructor
   FirebaseAppOptionsNode(this.serviceAccountMap, {String? storageBucket})
-      : _storageBucket = storageBucket;
+    : _storageBucket = storageBucket;
 
   /// The client email
   String get clientEmail {
@@ -69,7 +72,8 @@ class FirebaseAppOptionsNode
 
 /// Create a FirebaseAppOptions from a service account map
 FirebaseAppOptions firebaseNodeAppOptionsFromServiceAccountMap(
-    Map<String, Object?> serviceAccountMap) {
+  Map<String, Object?> serviceAccountMap,
+) {
   return FirebaseAppOptionsNode(serviceAccountMap);
 }
 
@@ -166,21 +170,27 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseAdminCredentialServiceNode? _credentialService;
 
   @override
-  FirebaseAdminCredentialService get credential => _credentialService ??=
-      FirebaseAdminCredentialServiceNode(native.firebaseAdminModule);
+  FirebaseAdminCredentialService get credential =>
+      _credentialService ??= FirebaseAdminCredentialServiceNode(
+        native.firebaseAdminModule,
+      );
 }
 
 native.AppOptions? _unwrapAppOptions(
-    FirebaseNode firebaseNode, FirebaseAppOptions? appOptions) {
+  FirebaseNode firebaseNode,
+  FirebaseAppOptions? appOptions,
+) {
   if (appOptions is FirebaseAppOptionsNode) {
     var projectId = appOptions.projectId;
     var storageBucket = appOptions.storageBucket;
     return native.AppOptions(
       credential: firebaseNode.nativeInstance.serviceAccountCredential(
-          native.ServiceAccount(
-              projectId: projectId,
-              clientEmail: appOptions.clientEmail,
-              privateKey: appOptions.privateKey)),
+        native.ServiceAccount(
+          projectId: projectId,
+          clientEmail: appOptions.clientEmail,
+          privateKey: appOptions.privateKey,
+        ),
+      ),
       //databaseURL: appOptions.databaseURL,
       projectId: projectId,
       storageBucket: storageBucket,
@@ -189,18 +199,20 @@ native.AppOptions? _unwrapAppOptions(
   }
   if (appOptions != null) {
     return native.AppOptions(
-        databaseURL: appOptions.databaseURL,
-        projectId: appOptions.projectId,
-        storageBucket: appOptions.storageBucket);
+      databaseURL: appOptions.databaseURL,
+      projectId: appOptions.projectId,
+      storageBucket: appOptions.storageBucket,
+    );
   }
   return null;
 }
 
 AppOptions _wrapAppOptions(native.AppOptions nativeInstance) {
   return AppOptions(
-      databaseURL: nativeInstance.databaseURL,
-      projectId: nativeInstance.projectId,
-      storageBucket: nativeInstance.storageBucket);
+    databaseURL: nativeInstance.databaseURL,
+    projectId: nativeInstance.projectId,
+    storageBucket: nativeInstance.storageBucket,
+  );
 }
 
 /// Compat

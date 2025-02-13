@@ -13,13 +13,15 @@ TestStorageOptions? getStorageOptionsFromEnv(Map<String, String> env) {
     return TestStorageOptions(bucket: storageBucket, rootPath: rootPath);
   } else {
     print(
-        'missing firebaseStorageTestBucket or firebaseStorageTestRootPath env variable');
+      'missing firebaseStorageTestBucket or firebaseStorageTestRootPath env variable',
+    );
     return null;
   }
 }
 
 /// Get storage option from env on node, dummy on io
-TestStorageOptions? get storageOptionsFromEnv => _storageOptionsFromEnv ??= () {
+TestStorageOptions? get storageOptionsFromEnv =>
+    _storageOptionsFromEnv ??= () {
       if (isRunningAsJavascript) {
         return getStorageOptionsFromEnv(_env);
       } else {

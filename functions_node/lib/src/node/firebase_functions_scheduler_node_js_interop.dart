@@ -18,10 +18,14 @@ extension JSSchedulerFunctionsExt on JSSchedulerFunctions {
 
   @js.JS('onSchedule')
   external JSScheduleFunction _onSchedule(
-      JSScheduleOptions options, _JSScheduleHandler handler);
+    JSScheduleOptions options,
+    _JSScheduleHandler handler,
+  );
 
-  JSScheduleFunction onSchedule(
-      {required JSScheduleOptions options, required ScheduleHandler handler}) {
+  JSScheduleFunction onSchedule({
+    required JSScheduleOptions options,
+    required ScheduleHandler handler,
+  }) {
     js.JSAny? jsHandler(JSScheduledEvent data) {
       var result = handler(data);
       if (result is Future) {
@@ -66,13 +70,14 @@ typedef ScheduleHandler = FutureOr<void> Function(JSScheduledEvent event);
 
 extension type JSScheduleOptions._(js.JSObject _) implements JSGlobalOptions {
   /// Options
-  external factory JSScheduleOptions(
-      {String? region,
-      String? memory,
-      int? concurrency,
-      required String schedule,
-      String? timeZone,
-      int? timeoutSeconds});
+  external factory JSScheduleOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    required String schedule,
+    String? timeZone,
+    int? timeoutSeconds,
+  });
 }
 
 extension JSScheduleOptionsExt on JSScheduleOptions {

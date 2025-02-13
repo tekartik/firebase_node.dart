@@ -25,7 +25,7 @@ final firebaseFunctionsServiceIo = FirebaseFunctionsServiceHttpUniversalIo();
 
 class FirebaseFunctionsHttpUniversalIo extends FirebaseFunctionsUniversalBase {
   FirebaseFunctionsHttpUniversalIo._(FirebaseApp firebaseApp)
-      : super(firebaseApp, httpServerFactoryIo);
+    : super(firebaseApp, httpServerFactoryIo);
 
   @override
   Future<FfServer> serve({int? port}) async {

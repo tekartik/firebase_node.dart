@@ -52,8 +52,11 @@ class EventContextCompat implements EventContext {
   @override
   final fbfirestore.Timestamp timestamp;
 
-  EventContextCompat(
-      {required this.eventType, required this.params, required this.timestamp});
+  EventContextCompat({
+    required this.eventType,
+    required this.params,
+    required this.timestamp,
+  });
 }
 
 class DocumentBuilderNode
@@ -71,22 +74,27 @@ class DocumentBuilderNode
   @override
   FirestoreFunction onWrite(ChangeEventHandler<DocumentSnapshot> handler) {
     return FirestoreFunctionNode(
-        firebaseFunctionsNode,
-        firestoreFunctions.nativeInstance.onDocumentWritten(
-            options: node.JSDocumentOptions(document: path),
-            handler: (event) {
-              var data = event.data;
+      firebaseFunctionsNode,
+      firestoreFunctions.nativeInstance.onDocumentWritten(
+        options: node.JSDocumentOptions(document: path),
+        handler: (event) {
+          var data = event.data;
 
-              /// Important to return the handler content here so that the function does not end
-              return handler(
-                  DocumentSnapshotChangeNode(firestore, data as node.JSChange),
-                  EventContextCompat(
-                      eventType: 'onWrite',
-                      params: {},
-                      timestamp: fbfirestore.Timestamp.now()));
-            }));
+          /// Important to return the handler content here so that the function does not end
+          return handler(
+            DocumentSnapshotChangeNode(firestore, data as node.JSChange),
+            EventContextCompat(
+              eventType: 'onWrite',
+              params: {},
+              timestamp: fbfirestore.Timestamp.now(),
+            ),
+          );
+        },
+      ),
+    );
   }
-/*
+
+  /*
   @override
   FirestoreFunction onCreate(DataEventHandler<DocumentSnapshot> handler) {
 
@@ -98,7 +106,7 @@ class DocumentBuilderNode
               throw UnimplementedError('onDocumentWritten');
             }));
   }*/
-/*
+  /*
   @override
   FirestoreFunction onUpdate(ChangeEventHandler<DocumentSnapshot> handler) {
 
@@ -141,12 +149,17 @@ class DocumentSnapshotChangeNode
 
   @override
   fbfirestore.DocumentSnapshot get after => fbfirestore.DocumentSnapshotNode(
-      firestore, implChange.after as firestore_node.DocumentSnapshot);
+    firestore,
+    implChange.after as firestore_node.DocumentSnapshot,
+  );
 
   @override
   fbfirestore.DocumentSnapshot get before => fbfirestore.DocumentSnapshotNode(
-      firestore, implChange.after as firestore_node.DocumentSnapshot);
+    firestore,
+    implChange.after as firestore_node.DocumentSnapshot,
+  );
 }
+
 /*
 class EventContextNode implements EventContext {
   final impl.EventContext implEventContext;

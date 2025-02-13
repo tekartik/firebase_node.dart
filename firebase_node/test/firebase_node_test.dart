@@ -40,14 +40,16 @@ Future<void> main() async {
       var firebase = firebaseNode as FirebaseNode;
       // print(jsObjectKeys(firebase.nativeInstance));
       // [initializeApp, getApp, getApps, deleteApp, applicationDefault, cert, refreshToken, FirebaseAppError, AppErrorCodes, SDK_VERSION]
-      var app = firebaseNode.initializeApp(
-          options: context.appOptions, name: 'admin') as AppNode;
+      var app =
+          firebaseNode.initializeApp(options: context.appOptions, name: 'admin')
+              as AppNode;
       // print(jsObjectKeys(app.nativeInstance!));
       // print(jsObjectGetOwnPropertyNames(app.nativeInstance!));
       // [appStore, services_, isDeleted_, name_, options_, INTERNAL]
       // print(firebase.credential.applicationDefault());
-      print((await firebase.credential.applicationDefault()!.getAccessToken())
-          .data);
+      print(
+        (await firebase.credential.applicationDefault()!.getAccessToken()).data,
+      );
       print(app.options);
       print(app.options.projectId);
       await app.delete();

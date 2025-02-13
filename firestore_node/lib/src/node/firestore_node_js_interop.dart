@@ -11,13 +11,15 @@ import 'package:tekartik_js_utils_interop/js_date.dart' as js;
 
 /// Singleton instance of [FirebaseAdmin] module.
 final firebaseAdminFirestoreModule = () {
-  return firestoreModule =
-      node.require<FirestoreModule>('firebase-admin/firestore');
+  return firestoreModule = node.require<FirestoreModule>(
+    'firebase-admin/firestore',
+  );
 }();
 
 final cloudFirestoreModule = () {
-  return firestoreModule =
-      node.require<FirestoreModule>('@google-cloud/firestore');
+  return firestoreModule = node.require<FirestoreModule>(
+    '@google-cloud/firestore',
+  );
 }();
 
 /// First loaded wins
@@ -57,8 +59,10 @@ extension TimestampProtoExt on TimestampProto {
   external Timestamp fromMillis(int milliseconds);
 
   Timestamp fromSecondsAndNanoseconds(int seconds, int nanoseconds) {
-    return (this as js.JSFunction)
-        .callAsConstructorVarArgs([seconds.toJS, nanoseconds.toJS]);
+    return (this as js.JSFunction).callAsConstructorVarArgs([
+      seconds.toJS,
+      nanoseconds.toJS,
+    ]);
   }
 }
 
@@ -145,12 +149,13 @@ extension FirestoreExt on Firestore {
 
   /// Retrieves multiple documents from Firestore.
   /// snapshots.
-  external js.JSPromise<js.JSArray<DocumentSnapshot>> getAll(
-      [DocumentReference? documentRef1,
-      DocumentReference? documentRef2,
-      DocumentReference? documentRef3,
-      DocumentReference? documentRef4,
-      DocumentReference? documentRef5]);
+  external js.JSPromise<js.JSArray<DocumentSnapshot>> getAll([
+    DocumentReference? documentRef1,
+    DocumentReference? documentRef2,
+    DocumentReference? documentRef3,
+    DocumentReference? documentRef4,
+    DocumentReference? documentRef5,
+  ]);
 
   /// Fetches the root collections that are associated with this Firestore
   /// database.
@@ -249,25 +254,32 @@ extension TransactionExt on Transaction {
   /// documents.
   /*external js.JSPromise<QuerySnapshot> get(Query query);*/
   external js.JSPromise<
-          DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
-      get(DocumentReference documentRef);
+    DocumentSnapshot
+  > /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
+  get(DocumentReference documentRef);
 
   @js.JS('get')
   external js.JSPromise<
-          DocumentSnapshot> /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
-      queryGet(DocumentQuery documentRefQuery);
+    DocumentSnapshot
+  > /*Promise<DocumentSnapshot>|Promise<QuerySnapshot>*/
+  queryGet(DocumentQuery documentRefQuery);
 
   /// Create the document referred to by the provided `DocumentReference`.
   /// The operation will fail the transaction if a document exists at the
   /// specified location.
   external Transaction create(
-      DocumentReference documentRef, DocumentData? data);
+    DocumentReference documentRef,
+    DocumentData? data,
+  );
 
   /// Writes to the document referred to by the provided `DocumentReference`.
   /// If the document does not exist yet, it will be created. If you pass
   /// `SetOptions`, the provided data can be merged into the existing document.
-  external Transaction set(DocumentReference documentRef, DocumentData? data,
-      [SetOptions? options]);
+  external Transaction set(
+    DocumentReference documentRef,
+    DocumentData? data, [
+    SetOptions? options,
+  ]);
 
   /// Updates fields in the document referred to by the provided
   /// `DocumentReference`. The update will fail if applied to a document that
@@ -275,8 +287,11 @@ extension TransactionExt on Transaction {
   /// Nested fields can be updated by providing dot-separated field path
   /// strings.
   /// update the document.
-  external Transaction update(DocumentReference documentRef, UpdateData data,
-      [Precondition precondition]);
+  external Transaction update(
+    DocumentReference documentRef,
+    UpdateData data, [
+    Precondition precondition,
+  ]);
 
   /// Updates fields in the document referred to by the provided
   /// `DocumentReference`. The update will fail if applied to a document that
@@ -296,8 +311,10 @@ extension TransactionExt on Transaction {
   );*/
 
   /// Deletes the document referred to by the provided `DocumentReference`.
-  external Transaction delete(DocumentReference documentRef,
-      [Precondition? precondition]);
+  external Transaction delete(
+    DocumentReference documentRef, [
+    Precondition? precondition,
+  ]);
 }
 
 /// A write batch, used to perform multiple writes as a single atomic unit.
@@ -320,8 +337,11 @@ extension WriteBatchExt on WriteBatch {
   /// Write to the document referred to by the provided [DocumentReference].
   /// If the document does not exist yet, it will be created. If you pass
   /// [options], the provided data can be merged into the existing document.
-  external WriteBatch set(DocumentReference documentRef, DocumentData? data,
-      [SetOptions? options]);
+  external WriteBatch set(
+    DocumentReference documentRef,
+    DocumentData? data, [
+    SetOptions? options,
+  ]);
 
   /// Updates fields in the document referred to by this DocumentReference.
   /// The update will fail if applied to a document that does not exist.
@@ -458,9 +478,11 @@ extension DocumentReferenceExt on DocumentReference {
   /// cancelled. No further callbacks will occur.
   /// the snapshot listener.
   external js.JSFunction onSnapshot(
-      js.JSFunction onNext, js.JSFunction onError);
-//void Function(DocumentSnapshot snapshot) onNext,
-//[void Function(Error error)? onError]);
+    js.JSFunction onNext,
+    js.JSFunction onError,
+  );
+  //void Function(DocumentSnapshot snapshot) onNext,
+  //[void Function(Error error)? onError]);
 }
 
 /// A `DocumentSnapshot` contains data read from a document in your Firestore
@@ -511,7 +533,7 @@ extension DocumentSnapshotExt on DocumentSnapshot {
   /// Retrieves the field specified by `fieldPath`.
   /// field exists in the document.
   external js.JSAny? get(String fieldPath);
-// dynamic /*String|FieldPath*/ fieldPath);
+  // dynamic /*String|FieldPath*/ fieldPath);
 }
 
 /// A `QueryDocumentSnapshot` contains data read from a document in your
@@ -566,16 +588,21 @@ extension DocumentQueryExt on DocumentQuery {
   /// relation constraint provided.
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the filter.
-  external DocumentQuery where(String fieldPath,
-      String /*'<'|'<='|'=='|'>='|'>'*/ opStr, js.JSAny? value);
+  external DocumentQuery where(
+    String fieldPath,
+    String /*'<'|'<='|'=='|'>='|'>'*/ opStr,
+    js.JSAny? value,
+  );
 
   /// Creates and returns a new Query that's additionally sorted by the
   /// specified field, optionally in descending order instead of ascending.
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the order.
   /// not specified, order will be ascending.
-  external DocumentQuery orderBy(String fieldPath,
-      [String? /*'desc'|'asc'*/ directionStr]);
+  external DocumentQuery orderBy(
+    String fieldPath, [
+    String? /*'desc'|'asc'*/ directionStr,
+  ]);
 
   /// Creates and returns a new Query that's additionally limited to only
   /// return up to the specified number of documents.
@@ -594,15 +621,18 @@ extension DocumentQueryExt on DocumentQuery {
   /// return the references of matching documents.
   /// This function returns a new (immutable) instance of the Query (rather
   /// than modify the existing instance) to impose the field mask.
-  external DocumentQuery select(
-      [String /*String|FieldPath*/ field1,
-      String /*String|FieldPath*/ field2,
-      String /*String|FieldPath*/ field3,
-      String /*String|FieldPath*/ field4,
-      String /*String|FieldPath*/ field5]);
+  external DocumentQuery select([
+    String /*String|FieldPath*/ field1,
+    String /*String|FieldPath*/ field2,
+    String /*String|FieldPath*/ field3,
+    String /*String|FieldPath*/ field4,
+    String /*String|FieldPath*/ field5,
+  ]);
 
   DocumentQuery selectAll(List<String> fields) => callMethodVarArgs(
-      'select'.toJS, fields.map((field) => field.toJS).toList());
+    'select'.toJS,
+    fields.map((field) => field.toJS).toList(),
+  );
 
   /// Creates and returns a new Query that starts at the provided document
   /// (inclusive). The starting position is relative to the order of the query.
@@ -689,7 +719,9 @@ extension DocumentQueryExt on DocumentQuery {
   //external Function onSnapshot(void Function(QuerySnapshot snapshot) onNext,
   //    [void Function(Error error)? onError]);
   external js.JSFunction onSnapshot(
-      js.JSFunction onNext, js.JSFunction onError);
+    js.JSFunction onNext,
+    js.JSFunction onError,
+  );
 
   //    [void Function(Error error)? onError]);
 
@@ -757,11 +789,12 @@ const documentChangeTypeModified = 'modified';
 /// A `DocumentChange` represents a change to the documents matching a query.
 /// It contains the document affected and the type of change that occurred.
 extension type DocumentChange._(js.JSObject _) implements js.JSObject {
-  external factory DocumentChange(
-      {String? /*'added'|'removed'|'modified'*/ type,
-      QueryDocumentSnapshot? doc,
-      num? oldIndex,
-      num? newIndex});
+  external factory DocumentChange({
+    String? /*'added'|'removed'|'modified'*/ type,
+    QueryDocumentSnapshot? doc,
+    num? oldIndex,
+    num? newIndex,
+  });
 }
 
 extension DocumentChangeExt on DocumentChange {
@@ -859,7 +892,7 @@ extension FieldValuesExt on FieldValues {
   /// with an empty array.
   FieldValue arrayRemove(List<js.JSAny?> elements) =>
       callMethodVarArgs('arrayRemove'.toJS, elements);
-// external FieldValue arrayRemove(js.JSArray elements);
+  // external FieldValue arrayRemove(js.JSArray elements);
 
   /// Vector
   FieldValue vector(js.JSArray<js.JSAny> elements) =>
@@ -882,12 +915,13 @@ extension FieldPathPrototypeExt on FieldPathPrototype {
 extension type FieldPath._(js.JSObject _) implements js.JSObject {
   /// Creates a FieldPath from the provided field names. If more than one field
   /// name is provided, the path will point to a nested field in a document.
-  external factory FieldPath(
-      [String? fieldNames1,
-      String? fieldNames2,
-      String? fieldNames3,
-      String? fieldNames4,
-      String? fieldNames5]);
+  external factory FieldPath([
+    String? fieldNames1,
+    String? fieldNames2,
+    String? fieldNames3,
+    String? fieldNames4,
+    String? fieldNames5,
+  ]);
 }
 
 extension type AggregateFields._(js.JSObject _) implements js.JSObject {}
@@ -953,6 +987,6 @@ extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
 
   /// {'_values': [1]}
   bool isVector() => has('_values');
-// [_firestore, _path, _converter]
-// has('_latitude') && has('_longitude');
+  // [_firestore, _path, _converter]
+  // has('_latitude') && has('_longitude');
 }

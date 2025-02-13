@@ -17,8 +17,9 @@ import 'firestore_node_js_interop.dart' as node;
 
 node.FirestoreSettings _unwrapSettings(FirestoreSettings settings) {
   var nativeSettings = node.FirestoreSettings(
-      // ignore: deprecated_member_use
-      timestampsInSnapshots: settings.timestampsInSnapshots);
+    // ignore: deprecated_member_use
+    timestampsInSnapshots: settings.timestampsInSnapshots,
+  );
   return nativeSettings;
 }
 
@@ -34,10 +35,10 @@ class FirestoreServiceNode
       assert(app is AppNode, 'invalid firebase app type');
       final appNode = app as AppNode;
       return FirestoreNode(
-          this,
-          appNode,
-          node.firebaseAdminFirestoreModule
-              .getFirestore(appNode.nativeInstance));
+        this,
+        appNode,
+        node.firebaseAdminFirestoreModule.getFirestore(appNode.nativeInstance),
+      );
     });
   }
 
@@ -104,21 +105,23 @@ class FirestoreNode
 
   @override
   Future<T> runTransaction<T>(
-      FutureOr<T> Function(Transaction transaction) updateFunction) async {
+    FutureOr<T> Function(Transaction transaction) updateFunction,
+  ) async {
     late T result;
     await nativeInstance
-        .runTransaction((node.Transaction nativeTransaction) {
-          return () async {
-            var transaction = TransactionNode(this, nativeTransaction);
-            var resultOrFuture = updateFunction(transaction);
-            if (resultOrFuture is Future) {
-              result = (await resultOrFuture);
-            } else {
-              result = resultOrFuture;
-            }
-          }()
-              .toJS;
-        }.toJS)
+        .runTransaction(
+          (node.Transaction nativeTransaction) {
+            return () async {
+              var transaction = TransactionNode(this, nativeTransaction);
+              var resultOrFuture = updateFunction(transaction);
+              if (resultOrFuture is Future) {
+                result = (await resultOrFuture);
+              } else {
+                result = resultOrFuture;
+              }
+            }().toJS;
+          }.toJS,
+        )
         .toDart;
     return result;
   }
@@ -139,11 +142,20 @@ class FirestoreNode
     } else if (jsRefs.length == 3) {
       result = nativeInstance.getAll(jsRefs[0], jsRefs[1], jsRefs[2]);
     } else if (jsRefs.length == 4) {
-      result =
-          nativeInstance.getAll(jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3]);
+      result = nativeInstance.getAll(
+        jsRefs[0],
+        jsRefs[1],
+        jsRefs[2],
+        jsRefs[3],
+      );
     } else if (jsRefs.length == 5) {
       result = nativeInstance.getAll(
-          jsRefs[0], jsRefs[1], jsRefs[2], jsRefs[3], jsRefs[4]);
+        jsRefs[0],
+        jsRefs[1],
+        jsRefs[2],
+        jsRefs[3],
+        jsRefs[4],
+      );
     } else {
       throw ArgumentError('Unsupported getAll with ${jsRefs.length} refs');
     }
@@ -152,8 +164,7 @@ class FirestoreNode
 
   @override
   Future<List<CollectionReference>> listCollections() async {
-    return (await (nativeInstance.listCollections().toDart))
-        .toDart
+    return (await (nativeInstance.listCollections().toDart)).toDart
         .map((e) => _collectionReference(this, e))
         .toList();
   }
@@ -168,23 +179,26 @@ class FirestoreNode
 //FirestoreNode firestore(node.Firestore impl) => FirestoreNode(impl);
 
 CollectionReferenceNode _collectionReference(
-        FirestoreNode firestore, node.CollectionReference impl) =>
-    CollectionReferenceNode._(firestore, impl);
+  FirestoreNode firestore,
+  node.CollectionReference impl,
+) => CollectionReferenceNode._(firestore, impl);
 
 DocumentReferenceNode _wrapDocumentReference(
-        FirestoreNode firestore, node.DocumentReference impl) =>
-    DocumentReferenceNode._(firestore, impl);
+  FirestoreNode firestore,
+  node.DocumentReference impl,
+) => DocumentReferenceNode._(firestore, impl);
 
 DocumentReferenceNode? _wrapDocumentReferenceOrNull(
-        FirestoreNode firestore, node.DocumentReference? impl) =>
-    impl == null ? null : _wrapDocumentReference(firestore, impl);
+  FirestoreNode firestore,
+  node.DocumentReference? impl,
+) => impl == null ? null : _wrapDocumentReference(firestore, impl);
 
 node.DocumentReference _unwrapDocumentReference(DocumentReference docRef) =>
     (docRef as DocumentReferenceNode).nativeInstance;
 
 List<node.DocumentReference> _unwrapDocumentReferences(
-        Iterable<DocumentReference> docRef) =>
-    docRef.map((ref) => _unwrapDocumentReference(ref)).toList(growable: false);
+  Iterable<DocumentReference> docRef,
+) => docRef.map((ref) => _unwrapDocumentReference(ref)).toList(growable: false);
 
 class WriteBatchNode implements WriteBatch {
   final node.WriteBatch nativeInstance;
@@ -199,8 +213,11 @@ class WriteBatchNode implements WriteBatch {
       nativeInstance.delete(_unwrapDocumentReference(ref));
 
   @override
-  void set(DocumentReference ref, Map<String, dynamic> data,
-      [SetOptions? options]) {
+  void set(
+    DocumentReference ref,
+    Map<String, dynamic> data, [
+    SetOptions? options,
+  ]) {
     final docData = documentDataToNativeDocumentData(DocumentData(data));
     final nativeRef = _unwrapDocumentReference(ref);
     if (options != null) {
@@ -212,8 +229,10 @@ class WriteBatchNode implements WriteBatch {
 
   @override
   void update(DocumentReference ref, Map<String, dynamic> data) =>
-      nativeInstance.update(_unwrapDocumentReference(ref),
-          documentDataToNativeUpdateData(DocumentData(data)));
+      nativeInstance.update(
+        _unwrapDocumentReference(ref),
+        documentDataToNativeUpdateData(DocumentData(data)),
+      );
 }
 
 class QueryNode extends Object
@@ -250,9 +269,12 @@ abstract mixin class QueryNodeMixin implements Query {
   Query orderBy(String key, {bool? descending}) {
     // if (key == firestoreNameFieldPath) {
     return _wrapQuery(
-        firestoreNode,
-        nativeInstance.orderBy(key,
-            (descending ?? false) ? orderByDescending : orderByDirectionAsc));
+      firestoreNode,
+      nativeInstance.orderBy(
+        key,
+        (descending ?? false) ? orderByDescending : orderByDirectionAsc,
+      ),
+    );
   }
 
   @override
@@ -262,8 +284,9 @@ abstract mixin class QueryNodeMixin implements Query {
       assert(snapshot == null);
       result = nativeInstance.startAt(toNativeValues(values));
     } else {
-      result = nativeInstance
-          .startAtDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+      result = nativeInstance.startAtDocumentSnapshot(
+        _unwrapDocumentSnapshot(snapshot!),
+      );
     }
     return _wrapQuery(firestoreNode, result);
   }
@@ -275,8 +298,9 @@ abstract mixin class QueryNodeMixin implements Query {
       assert(snapshot == null);
       result = nativeInstance.startAfter(toNativeValues(values));
     } else {
-      result = nativeInstance
-          .startAfterDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+      result = nativeInstance.startAfterDocumentSnapshot(
+        _unwrapDocumentSnapshot(snapshot!),
+      );
     }
     return _wrapQuery(firestoreNode, result);
   }
@@ -288,8 +312,9 @@ abstract mixin class QueryNodeMixin implements Query {
       assert(snapshot == null);
       result = nativeInstance.endAt(toNativeValues(values));
     } else {
-      result = nativeInstance
-          .endAtDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+      result = nativeInstance.endAtDocumentSnapshot(
+        _unwrapDocumentSnapshot(snapshot!),
+      );
     }
     return _wrapQuery(firestoreNode, result);
   }
@@ -301,8 +326,9 @@ abstract mixin class QueryNodeMixin implements Query {
       assert(snapshot == null);
       result = nativeInstance.endBefore(toNativeValues(values));
     } else {
-      result = nativeInstance
-          .endBeforeDocumentSnapshot(_unwrapDocumentSnapshot(snapshot!));
+      result = nativeInstance.endBeforeDocumentSnapshot(
+        _unwrapDocumentSnapshot(snapshot!),
+      );
     }
     return _wrapQuery(firestoreNode, result);
   }
@@ -351,9 +377,10 @@ abstract mixin class QueryNodeMixin implements Query {
 
     if (isNull != null) {
       assert(
-          isNull,
-          'isNull can only be set to true. '
-          'Use isEqualTo to filter on non-null values.');
+        isNull,
+        'isNull can only be set to true. '
+        'Use isEqualTo to filter on non-null values.',
+      );
       query = query.where(field, '==', null);
     }
     return _wrapQuery(firestoreNode, query);
@@ -363,8 +390,9 @@ abstract mixin class QueryNodeMixin implements Query {
   Stream<QuerySnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     late StreamController<QuerySnapshot> streamController;
     void onNext(node.QuerySnapshot nativeQuerySnapshot) {
-      streamController
-          .add(_wrapQuerySnapshot(firestoreNode, nativeQuerySnapshot));
+      streamController.add(
+        _wrapQuerySnapshot(firestoreNode, nativeQuerySnapshot),
+      );
     }
 
     void onError(js.JSAny error) {
@@ -373,13 +401,14 @@ abstract mixin class QueryNodeMixin implements Query {
 
     late js.JSFunction? unsubscribe;
     streamController = StreamController<QuerySnapshot>(
-        sync: true,
-        onListen: () {
-          unsubscribe = nativeInstance.onSnapshot(onNext.toJS, onError.toJS);
-        },
-        onCancel: () {
-          unsubscribe?.callAsFunction();
-        });
+      sync: true,
+      onListen: () {
+        unsubscribe = nativeInstance.onSnapshot(onNext.toJS, onError.toJS);
+      },
+      onCancel: () {
+        unsubscribe?.callAsFunction();
+      },
+    );
 
     //return nativeInstance.onSnapshot(onNext.toJS).transform(transformer);
     return streamController.stream;
@@ -387,9 +416,10 @@ abstract mixin class QueryNodeMixin implements Query {
 
   @override
   Future<int> count() async {
-    return ((await nativeInstance.count().get().toDart)
-            .data()
-            .getProperty('count'.toJS) as js.JSNumber)
+    return ((await nativeInstance.count().get().toDart).data().getProperty(
+              'count'.toJS,
+            )
+            as js.JSNumber)
         .toDartInt;
   }
 
@@ -405,7 +435,9 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
       super.nativeInstance as node.CollectionReference;
 
   CollectionReferenceNode._(
-      super.firestore, node.CollectionReference super.implCollectionReference);
+    super.firestore,
+    node.CollectionReference super.implCollectionReference,
+  );
 
   @override
   DocumentReference doc([String? path]) =>
@@ -414,10 +446,11 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
   @override
   Future<DocumentReference> add(Map<String, dynamic> data) async =>
       _wrapDocumentReference(
-          firestore,
-          (await nativeInstance
-              .add(documentDataToNativeDocumentData(DocumentData(data)))
-              .toDart));
+        firestore,
+        (await nativeInstance
+            .add(documentDataToNativeDocumentData(DocumentData(data)))
+            .toDart),
+      );
 
   @override
   // ignore: invalid_use_of_protected_member
@@ -454,18 +487,25 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
 List<js.JSAny?> toNativeValues(List values) =>
     values.map(toNativeValueOrNull).toList(growable: false);
 
-js.JSAny toNativeValue(Object value,
-    [js.JSAny? Function(Object?)? nestedToNativeValueOrNull]) {
+js.JSAny toNativeValue(
+  Object value, [
+  js.JSAny? Function(Object?)? nestedToNativeValueOrNull,
+]) {
   var nativeValue = commonToNativeValue(value, nestedToNativeValueOrNull);
   if (nativeValue == null) {
     throw ArgumentError.value(
-        value, '${value.runtimeType}', 'Unsupported value for toNativeValue');
+      value,
+      '${value.runtimeType}',
+      'Unsupported value for toNativeValue',
+    );
   }
   return nativeValue;
 }
 
-js.JSAny? commonToNativeValue(Object value,
-    [js.JSAny? Function(Object?)? nestedToNativeValueOrNull]) {
+js.JSAny? commonToNativeValue(
+  Object value, [
+  js.JSAny? Function(Object?)? nestedToNativeValueOrNull,
+]) {
   if (value is String) {
     return value.toJS;
   } else if (value is num) {
@@ -475,13 +515,17 @@ js.JSAny? commonToNativeValue(Object value,
   } else if (value is DateTime) {
     return value.toJS;
   } else if (value is Timestamp) {
-    return node.firestoreModule.timestampProto
-        .fromSecondsAndNanoseconds(value.seconds, value.nanoseconds);
+    return node.firestoreModule.timestampProto.fromSecondsAndNanoseconds(
+      value.seconds,
+      value.nanoseconds,
+    );
   } else if (value is Map) {
     var object = js.JSObject();
     value.forEach((key, value) {
-      object.setProperty((key as String).toJS,
-          (nestedToNativeValueOrNull ?? toNativeValueOrNull)(value));
+      object.setProperty(
+        (key as String).toJS,
+        (nestedToNativeValueOrNull ?? toNativeValueOrNull)(value),
+      );
     });
     return object;
   } else if (value is List) {
@@ -492,19 +536,24 @@ js.JSAny? commonToNativeValue(Object value,
   } else if (value is Blob) {
     return value.data.toJS;
   } else if (value is GeoPoint) {
-    return node.firestoreModule.geoPointProto
-        .fromLatitudeAndLongitude(value.latitude, value.longitude);
+    return node.firestoreModule.geoPointProto.fromLatitudeAndLongitude(
+      value.latitude,
+      value.longitude,
+    );
   } else if (value is VectorValue) {
-    return node.firestoreModule.fieldValue
-        .vector(value.toArray().map((e) => e.toJS).toList().toJS);
+    return node.firestoreModule.fieldValue.vector(
+      value.toArray().map((e) => e.toJS).toList().toJS,
+    );
   } else if (value is DocumentReferenceNode) {
     return value.nativeInstance;
   }
   return null;
 }
 
-js.JSAny? toNativeValueOrNull(Object? value,
-    [js.JSAny? Function(Object?)? nestedToNativeValueOrNull]) {
+js.JSAny? toNativeValueOrNull(
+  Object? value, [
+  js.JSAny? Function(Object?)? nestedToNativeValueOrNull,
+]) {
   if (value == null) {
     return null;
   } else {
@@ -537,7 +586,9 @@ class FirestoreErrorNode implements Exception {
 
 js.JSAny documentValueToNativeValue(Object value) {
   var nativeValue = commonToNativeValue(
-      value, (value) => documentValueToNativeValueOrNull(value));
+    value,
+    (value) => documentValueToNativeValueOrNull(value),
+  );
   if (nativeValue == null) {
     if (value is FieldValue) {
       if (value == FieldValue.delete) {
@@ -546,19 +597,22 @@ js.JSAny documentValueToNativeValue(Object value) {
         return node.firestoreModule.fieldValue.serverTimestamp();
       } else if (value is FieldValueArray) {
         if (value.type == FieldValueType.arrayUnion) {
-          return node.firestoreModule.fieldValue.arrayUnion(value.data
-              .map((element) => toNativeValueOrNull(element))
-              .toList());
+          return node.firestoreModule.fieldValue.arrayUnion(
+            value.data.map((element) => toNativeValueOrNull(element)).toList(),
+          );
         } else if (value.type == FieldValueType.arrayRemove) {
-          return node.firestoreModule.fieldValue.arrayRemove(value.data
-              .map((element) => toNativeValueOrNull(element))
-              .toList());
+          return node.firestoreModule.fieldValue.arrayRemove(
+            value.data.map((element) => toNativeValueOrNull(element)).toList(),
+          );
         }
       }
       throw ArgumentError('Unsupported FieldValue $value');
     }
-    throw ArgumentError.value(value, '${value.runtimeType}',
-        'Unsupported value for documentValueToNativeValue');
+    throw ArgumentError.value(
+      value,
+      '${value.runtimeType}',
+      'Unsupported value for documentValueToNativeValue',
+    );
   }
   return nativeValue;
 }
@@ -570,8 +624,10 @@ js.JSAny? documentValueToNativeValueOrNull(Object? value) {
   return documentValueToNativeValue(value);
 }
 
-Object fromNativeValue(js.JSAny value,
-    [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
+Object fromNativeValue(
+  js.JSAny value, [
+  Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
+]) {
   var dartValue = _commonSimpleTypesFromNativeValue(value);
   if (dartValue != null) {
     return dartValue;
@@ -582,12 +638,17 @@ Object fromNativeValue(js.JSAny value,
   } catch (_) {}
 
   throw ArgumentError.value(
-      value, '${value.runtimeType}', 'Unsupported value for fromNativeValue');
+    value,
+    '${value.runtimeType}',
+    'Unsupported value for fromNativeValue',
+  );
 }
 
 /// All but map
-Object? _commonSimpleTypesFromNativeValue(js.JSAny value,
-    [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
+Object? _commonSimpleTypesFromNativeValue(
+  js.JSAny value, [
+  Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
+]) {
   if (value.isA<js.JSNumber>()) {
     return (value as js.JSNumber).toDartNum;
   } else if (value.isA<js.JSBoolean>()) {
@@ -623,26 +684,35 @@ Object? _commonSimpleTypesFromNativeValue(js.JSAny value,
   return null;
 }
 
-List fromNativeList(js.JSArray value,
-    [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
+List fromNativeList(
+  js.JSArray value, [
+  Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
+]) {
   return value.toDart
-      .map((value) =>
-          (nestedFromNativeValueOrNull ?? fromNativeValueOrNull)(value))
+      .map(
+        (value) =>
+            (nestedFromNativeValueOrNull ?? fromNativeValueOrNull)(value),
+      )
       .toList();
 }
 
-Map<String, Object?> fromNativeMap(js.JSObject value,
-    [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
+Map<String, Object?> fromNativeMap(
+  js.JSObject value, [
+  Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
+]) {
   var map = <String, Object?>{};
   for (var key in js.jsObjectKeys(value)) {
-    map[key] = (nestedFromNativeValueOrNull ??
-        fromNativeValueOrNull)(value.getProperty(key.toJS));
+    map[key] = (nestedFromNativeValueOrNull ?? fromNativeValueOrNull)(
+      value.getProperty(key.toJS),
+    );
   }
   return map;
 }
 
-Object? commonFromNativeValue(js.JSAny value,
-    [Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull]) {
+Object? commonFromNativeValue(
+  js.JSAny value, [
+  Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
+]) {
   var dartValue = _commonSimpleTypesFromNativeValue(value);
   if (dartValue != null) {
     return dartValue;
@@ -671,7 +741,9 @@ Object documentValueFromNativeValue(FirestoreNode firestore, js.JSAny value) {
 
     if (value.isJSDocumentReference()) {
       return DocumentReferenceNode._(
-          firestore, value as node.DocumentReference);
+        firestore,
+        value as node.DocumentReference,
+      );
     }
     if (value == node.firestoreModule.fieldValue.delete()) {
       return FieldValue.delete;
@@ -679,14 +751,21 @@ Object documentValueFromNativeValue(FirestoreNode firestore, js.JSAny value) {
       return FieldValue.serverTimestamp;
     }
     return fromNativeMap(
-        value, (value) => documentValueFromNativeValueOrNull(firestore, value));
+      value,
+      (value) => documentValueFromNativeValueOrNull(firestore, value),
+    );
   } catch (_) {}
-  throw ArgumentError.value(value, '${value.runtimeType}',
-      'Unsupported value for documentValueFromNativeValue');
+  throw ArgumentError.value(
+    value,
+    '${value.runtimeType}',
+    'Unsupported value for documentValueFromNativeValue',
+  );
 }
 
 Object? documentValueFromNativeValueOrNull(
-    FirestoreNode firestore, js.JSAny? value) {
+  FirestoreNode firestore,
+  js.JSAny? value,
+) {
   if (value == null) {
     return null;
   }
@@ -700,9 +779,12 @@ node.DocumentData documentDataToNativeDocumentData(DocumentData documentData) {
 }
 
 DocumentData documentDataFromNativeDocumentData(
-    FirestoreNode firestore, node.DocumentData nativeInstance) {
-  var map = documentValueFromNativeValueOrNull(firestore, nativeInstance)
-      as Map<String, dynamic>;
+  FirestoreNode firestore,
+  node.DocumentData nativeInstance,
+) {
+  var map =
+      documentValueFromNativeValueOrNull(firestore, nativeInstance)
+          as Map<String, dynamic>;
   var documentData = DocumentData(map);
   return documentData;
 }
@@ -729,8 +811,10 @@ class DocumentReferenceNode
   @override
   Future set(Map<String, dynamic> data, [SetOptions? options]) async {
     await nativeInstance
-        .set(documentDataToNativeDocumentData(DocumentData(data)),
-            _unwrapSetOptions(options))
+        .set(
+          documentDataToNativeDocumentData(DocumentData(data)),
+          _unwrapSetOptions(options),
+        )
         .toDart;
   }
 
@@ -764,8 +848,9 @@ class DocumentReferenceNode
   Stream<DocumentSnapshot> onSnapshot({bool includeMetadataChanges = false}) {
     late StreamController<DocumentSnapshot> streamController;
     void onNext(node.DocumentSnapshot nativeDocumentSnapshot) {
-      streamController
-          .add(_wrapDocumentSnapshot(firestore, nativeDocumentSnapshot));
+      streamController.add(
+        _wrapDocumentSnapshot(firestore, nativeDocumentSnapshot),
+      );
     }
 
     void onError(js.JSAny error) {
@@ -774,13 +859,14 @@ class DocumentReferenceNode
 
     late js.JSFunction? unsubscribe;
     streamController = StreamController<DocumentSnapshot>(
-        sync: true,
-        onListen: () {
-          unsubscribe = nativeInstance.onSnapshot(onNext.toJS, onError.toJS);
-        },
-        onCancel: () {
-          unsubscribe?.callAsFunction();
-        });
+      sync: true,
+      onListen: () {
+        unsubscribe = nativeInstance.onSnapshot(onNext.toJS, onError.toJS);
+      },
+      onCancel: () {
+        unsubscribe?.callAsFunction();
+      },
+    );
 
     return streamController.stream;
   }
@@ -805,8 +891,7 @@ class DocumentReferenceNode
 
   @override
   Future<List<CollectionReference>> listCollections() async {
-    return (await nativeInstance.listCollections().toDart)
-        .toDart
+    return (await nativeInstance.listCollections().toDart).toDart
         .map((e) => _collectionReference(firestore, e))
         .toList();
   }
@@ -821,10 +906,13 @@ class DocumentSnapshotNode
   DocumentSnapshotNode(this.firestore, this.nativeInstance);
 
   @override
-  Map<String, dynamic> get data => (exists
-      ? documentDataFromNativeDocumentData(firestore, nativeInstance.data()!)
-          .asMap()
-      : null)!;
+  Map<String, dynamic> get data =>
+      (exists
+          ? documentDataFromNativeDocumentData(
+            firestore,
+            nativeInstance.data()!,
+          ).asMap()
+          : null)!;
 
   @override
   DocumentReference get ref =>
@@ -924,47 +1012,56 @@ class TransactionNode implements Transaction {
   @override
   Future<DocumentSnapshot> get(DocumentReference documentRef) async =>
       _wrapDocumentSnapshot(
-          firestore,
-          await nativeInstance
-              .get(_unwrapDocumentReference(documentRef))
-              .toDart);
+        firestore,
+        await nativeInstance.get(_unwrapDocumentReference(documentRef)).toDart,
+      );
 
   @override
-  void set(DocumentReference documentRef, Map<String, dynamic> data,
-      [SetOptions? options]) {
+  void set(
+    DocumentReference documentRef,
+    Map<String, dynamic> data, [
+    SetOptions? options,
+  ]) {
     nativeInstance.set(
-        _unwrapDocumentReference(documentRef),
-        documentDataToNativeDocumentData(DocumentData(data)),
-        _unwrapSetOptions(options));
+      _unwrapDocumentReference(documentRef),
+      documentDataToNativeDocumentData(DocumentData(data)),
+      _unwrapSetOptions(options),
+    );
   }
 
   @override
   void update(DocumentReference documentRef, Map<String, Object?> data) {
-    nativeInstance.update(_unwrapDocumentReference(documentRef),
-        documentDataToNativeUpdateData(DocumentData(data)));
+    nativeInstance.update(
+      _unwrapDocumentReference(documentRef),
+      documentDataToNativeUpdateData(DocumentData(data)),
+    );
   }
 }
 
 QueryNode _wrapQuery(
-        FirestoreNode firestore, node.DocumentQuery nativeInstance) =>
-    QueryNode(firestore, nativeInstance);
+  FirestoreNode firestore,
+  node.DocumentQuery nativeInstance,
+) => QueryNode(firestore, nativeInstance);
 
 DocumentSnapshotNode _wrapDocumentSnapshot(
-        FirestoreNode firestore, node.DocumentSnapshot nativeInstance) =>
-    DocumentSnapshotNode(firestore, nativeInstance);
+  FirestoreNode firestore,
+  node.DocumentSnapshot nativeInstance,
+) => DocumentSnapshotNode(firestore, nativeInstance);
 
-List<DocumentSnapshotNode> _wrapDocumentSnapshots(FirestoreNode firestore,
-        Iterable<node.DocumentSnapshot> nativeInstances) =>
-    nativeInstances
-        .map((e) => _wrapDocumentSnapshot(firestore, e))
-        .toList(growable: false);
+List<DocumentSnapshotNode> _wrapDocumentSnapshots(
+  FirestoreNode firestore,
+  Iterable<node.DocumentSnapshot> nativeInstances,
+) => nativeInstances
+    .map((e) => _wrapDocumentSnapshot(firestore, e))
+    .toList(growable: false);
 
 node.DocumentSnapshot _unwrapDocumentSnapshot(DocumentSnapshot snapshot) =>
     (snapshot as DocumentSnapshotNode).nativeInstance;
 
 QuerySnapshotNode _wrapQuerySnapshot(
-        FirestoreNode firestore, node.QuerySnapshot nativeInstance) =>
-    QuerySnapshotNode._(firestore, nativeInstance);
+  FirestoreNode firestore,
+  node.QuerySnapshot nativeInstance,
+) => QuerySnapshotNode._(firestore, nativeInstance);
 
 node.SetOptions? _unwrapSetOptions(SetOptions? options) =>
     options != null ? node.SetOptions(merge: options.merge == true) : null;

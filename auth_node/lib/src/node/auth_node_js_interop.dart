@@ -38,7 +38,9 @@ extension AuthExt on Auth {
   /// and payload.
   @js.JS('createCustomToken')
   external js.JSPromise<js.JSString> jsCreateCustomToken(
-      String uid, js.JSObject? developerClaims);
+    String uid,
+    js.JSObject? developerClaims,
+  );
 
   /// Creates a new user.
   ///
@@ -82,8 +84,10 @@ extension AuthExt on Auth {
   /// Returns a js.JSPromise that resolves with the current batch of downloaded users
   /// and the next page token as an instance of [ListUsersResult].
   @js.JS('listUsers')
-  external js.JSPromise<ListUsersResult> jsListUsers(
-      [int? maxResults, String? pageToken]);
+  external js.JSPromise<ListUsersResult> jsListUsers([
+    int? maxResults,
+    String? pageToken,
+  ]);
 
   /// Revokes all refresh tokens for an existing user.
   ///
@@ -115,14 +119,18 @@ extension AuthExt on Auth {
   /// Returns a js.JSPromise containing `void`.
   @js.JS('setCustomUserClaims')
   external js.JSPromise jsSetCustomUserClaims(
-      String uid, js.JSAny? customUserClaims);
+    String uid,
+    js.JSAny? customUserClaims,
+  );
 
   /// Updates an existing user.
   ///
   /// Returns a js.JSPromise containing updated [UserRecord].
   @js.JS('updateUser')
   external js.JSPromise<UserRecord> jsUpdateUser(
-      String uid, UpdateUserRequest properties);
+    String uid,
+    UpdateUserRequest properties,
+  );
 
   /// Verifies a Firebase ID token (JWT).
   ///
@@ -130,8 +138,10 @@ extension AuthExt on Auth {
   /// [JSDecodedIdToken]; otherwise, the js.JSPromise is rejected. An optional flag can
   /// be passed to additionally check whether the ID token was revoked.
   @js.JS('jsVerifyIdToken')
-  external js.JSPromise<JSDecodedIdToken> jsVerifyIdToken(String idToken,
-      [bool? checkRevoked]);
+  external js.JSPromise<JSDecodedIdToken> jsVerifyIdToken(
+    String idToken, [
+    bool? checkRevoked,
+  ]);
 }
 
 extension type CreateUserRequest._(js.JSObject _) implements js.JSObject {
@@ -406,13 +416,14 @@ extension AuthExt2 on Auth {
   ///
   /// Returns a [Future] containing a custom token string for the provided [uid]
   /// and payload.
-  Future<String> createCustomToken(String uid,
-          [Map<String, Object?>? developerClaims]) async =>
+  Future<String> createCustomToken(
+    String uid, [
+    Map<String, Object?>? developerClaims,
+  ]) async =>
       (await jsCreateCustomToken(
-                  uid,
-                  (developerClaims ?? <String, Object?>{}).jsify()
-                      as js.JSObject)
-              .toDart)
+            uid,
+            (developerClaims ?? <String, Object?>{}).jsify() as js.JSObject,
+          ).toDart)
           .toDart;
 
   /// Creates a new user.
@@ -476,8 +487,9 @@ extension AuthExt2 on Auth {
   /// is transmitted on every authenticated request. For profile non-access
   /// related user attributes, use database or other separate storage systems.
   Future<void> setCustomUserClaims(
-          String uid, Map<String, Object?> customUserClaims) =>
-      jsSetCustomUserClaims(uid, customUserClaims.jsify()).toDart;
+    String uid,
+    Map<String, Object?> customUserClaims,
+  ) => jsSetCustomUserClaims(uid, customUserClaims.jsify()).toDart;
 
   /// Updates an existing user.
   Future<UserRecord> updateUser(String uid, UpdateUserRequest properties) =>

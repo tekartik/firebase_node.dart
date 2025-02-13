@@ -45,7 +45,9 @@ class FirebaseFunctionsHttpUniversal extends FirebaseFunctionsUniversalBase
 
 final FirebaseFunctionsUniversal firebaseFunctionsUniversalMemory =
     FirebaseFunctionsHttpUniversal(
-        newFirebaseAppLocal(), httpServerFactoryMemory);
+      newFirebaseAppLocal(),
+      httpServerFactoryMemory,
+    );
 
 /// Extension to expose the serve method.
 extension FirebaseFunctionsUniversalExt on FirebaseFunctions {

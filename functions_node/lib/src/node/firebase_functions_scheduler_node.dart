@@ -15,17 +15,21 @@ class SchedulerFunctionsNode
 
   @override
   ScheduleFunction onSchedule(
-      ScheduleOptions scheduleOptions, ScheduleHandler handler) {
+    ScheduleOptions scheduleOptions,
+    ScheduleHandler handler,
+  ) {
     FutureOr<void> handleRequest(node.JSScheduledEvent data) {
       var scheduleEvent = ScheduleEventNode(data);
       return handler(scheduleEvent);
     }
 
     return SchedulerFunctionNode(
-        functions,
-        nativeInstance.onSchedule(
-            options: toNodeScheduleOptions(scheduleOptions),
-            handler: handleRequest));
+      functions,
+      nativeInstance.onSchedule(
+        options: toNodeScheduleOptions(scheduleOptions),
+        handler: handleRequest,
+      ),
+    );
   }
 }
 
@@ -39,11 +43,12 @@ class SchedulerFunctionNode extends FirebaseFunctionNode
 
 node.JSScheduleOptions toNodeScheduleOptions(ScheduleOptions options) {
   return node.JSScheduleOptions(
-      region: options.region,
-      schedule: options.schedule,
-      timeZone: options.timeZone,
-      memory: options.memory,
-      timeoutSeconds: options.timeoutSeconds);
+    region: options.region,
+    schedule: options.schedule,
+    timeZone: options.timeZone,
+    memory: options.memory,
+    timeoutSeconds: options.timeoutSeconds,
+  );
 }
 
 class ScheduleEventNode

@@ -12,8 +12,9 @@ import 'firebase_functions_scheduler_node_js_interop.dart';
 import 'import_node.dart';
 
 /// The Firebase Auth service interface.
-final firebaseFunctionsModule =
-    require<JSFirebaseFonctionsModule>('firebase-functions/v2');
+final firebaseFunctionsModule = require<JSFirebaseFonctionsModule>(
+  'firebase-functions/v2',
+);
 final firebaseFunctions = firebaseFunctionsModule;
 extension type JSFirebaseFonctionsModule._(js.JSObject _)
     implements js.JSObject {}
@@ -46,8 +47,12 @@ extension JSExportsExt on JSExports {}
 /// These options are common to HTTPS and event handling functions.
 extension type JSGlobalOptions._(js.JSObject _) implements js.JSObject {
   /// Options
-  external factory JSGlobalOptions(
-      {String? region, String? memory, int? concurrency, int? timeoutSeconds});
+  external factory JSGlobalOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    int? timeoutSeconds,
+  });
 }
 
 extension JSGlobalOptionsExt on JSGlobalOptions {

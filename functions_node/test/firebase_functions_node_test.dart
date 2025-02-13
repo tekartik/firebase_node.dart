@@ -51,46 +51,55 @@ Future main() async {
       return completer.future;
     }
 
-    group('serve', () {
-      String? projectId;
-      Shell? shell;
-      setUpAll(() async {
-        print('hola');
-        try {
-          var lines =
-              (await Shell(workingDirectory: 'deploy').run('firebase use'))
-                  .outLines;
-          // Project on the first line !
-          // either: Active Project: xxxxxx
-          // or: xxxxxx
-          var line = lines.first;
-          projectId = line.split(' ').last;
+    group(
+      'serve',
+      () {
+        String? projectId;
+        Shell? shell;
+        setUpAll(() async {
+          print('hola');
+          try {
+            var lines =
+                (await Shell(
+                  workingDirectory: 'deploy',
+                ).run('firebase use')).outLines;
+            // Project on the first line !
+            // either: Active Project: xxxxxx
+            // or: xxxxxx
+            var line = lines.first;
+            projectId = line.split(' ').last;
 
+            if (projectId != null) {
+              await gcfNodePackageBuild('.');
+              shell = await startServer();
+            }
+          } catch (_) {}
+          if (projectId != null) {}
+        });
+
+        test('helloWorldV1', () async {
           if (projectId != null) {
-            await gcfNodePackageBuild('.');
-            shell = await startServer();
+            var result = await read(
+              Uri.parse(
+                'http://localhost:5000/$projectId/$defaultRegion/helloWorld',
+              ),
+            );
+            print(result);
           }
-        } catch (_) {}
-        if (projectId != null) {}
-      });
+        }, skip: false);
 
-      test('helloWorldV1', () async {
-        if (projectId != null) {
-          var result = await read(Uri.parse(
-              'http://localhost:5000/$projectId/$defaultRegion/helloWorld'));
-          print(result);
-        }
-      }, skip: false);
+        test('helloWorldV2', () async {
+          if (projectId != null) {
+            var result = await read(
+              Uri.parse(
+                'http://localhost:5000/$projectId/$defaultRegion/helloworldv2',
+              ),
+            );
+            print(result);
+          }
+        }, skip: false);
 
-      test('helloWorldV2', () async {
-        if (projectId != null) {
-          var result = await read(Uri.parse(
-              'http://localhost:5000/$projectId/$defaultRegion/helloworldv2'));
-          print(result);
-        }
-      }, skip: false);
-
-      /*TODO temp excluded
+        /*TODO temp excluded
       common.main(
           testContext: FirebaseFunctionsTestContext(
               httpClientFactory: httpClientFactory),
@@ -98,9 +107,12 @@ Future main() async {
           baseUrl: context.baseUrl);
 
        */
-      tearDownAll(() async {
-        shell?.kill();
-      });
-    }, skip: !firebaseInstalled, timeout: Timeout(Duration(minutes: 5)));
+        tearDownAll(() async {
+          shell?.kill();
+        });
+      },
+      skip: !firebaseInstalled,
+      timeout: Timeout(Duration(minutes: 5)),
+    );
   });
 }

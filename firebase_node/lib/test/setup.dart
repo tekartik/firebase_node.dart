@@ -40,7 +40,8 @@ Future<FirebaseNodeTestContext> setup({
   var serviceAccountJsonOrPath = _envGetServiceAccountJsonOrPath();
   if (serviceAccountJsonOrPath == null) {
     throw UnsupportedError(
-        'Missing env TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT');
+      'Missing env TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT',
+    );
   }
   Future<Map<String, Object?>> serviceAccountFromPath(String path) async {
     try {
@@ -90,8 +91,9 @@ bool get runningOnGithub => platform.runningOnGithub;
 /// ubuntu-latest
 bool isGithubActionsUbuntuAndDartStable() {
   return platform.environment['TEKARTIK_GITHUB_ACTIONS_DART'] == 'stable' &&
-      (platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']
-              ?.startsWith('ubuntu') ??
+      (platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']?.startsWith(
+            'ubuntu',
+          ) ??
           false);
 }
 

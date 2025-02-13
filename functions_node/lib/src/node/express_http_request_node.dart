@@ -27,8 +27,9 @@ class ExpressHttpRequestNode implements ExpressHttpRequest {
   }
 
   @override
-  late final ExpressHttpResponse response =
-      ExpressHttpResponseNode(nativeHttpResponse);
+  late final ExpressHttpResponse response = ExpressHttpResponseNode(
+    nativeHttpResponse,
+  );
 
   @override
   late final headers = () {
@@ -39,9 +40,9 @@ class ExpressHttpRequestNode implements ExpressHttpRequest {
       for (var key in js.jsObjectKeys(jsHeaders)) {
         var value = jsHeaders.getProperty(key.toJS);
         if (value.isA<js.JSArray>()) {
-          var values = (value as js.JSArray)
-              .toDart
-              .map((e) => (e as js.JSString).toDart);
+          var values = (value as js.JSArray).toDart.map(
+            (e) => (e as js.JSString).toDart,
+          );
           for (var value in values) {
             headers.add(key.toString(), value);
           }
@@ -82,8 +83,10 @@ class ExpressHttpResponseNode implements ExpressHttpResponse {
       if (values.length > 1) {
         nativeHttpResponse = nativeHttpResponse.setHeaderList(name, values);
       } else {
-        nativeHttpResponse =
-            nativeHttpResponse.setHeader(name, values.firstOrNull ?? '');
+        nativeHttpResponse = nativeHttpResponse.setHeader(
+          name,
+          values.firstOrNull ?? '',
+        );
       }
     });
   }

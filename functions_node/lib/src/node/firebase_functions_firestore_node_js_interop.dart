@@ -19,13 +19,17 @@ extension JSFirestoreFunctionsExt on JSFirestoreFunctions {
 
   @js.JS('onDocumentWritten')
   external JSFirestoreFunction _onDocumentWritten(
-      JSDocumentOptions options, _JSDocumentWrittenHandler handler);
+    JSDocumentOptions options,
+    _JSDocumentWrittenHandler handler,
+  );
 
-  JSFirestoreFunction onDocumentWritten(
-      {required JSDocumentOptions options,
-      required DocumentWrittenHandler handler}) {
+  JSFirestoreFunction onDocumentWritten({
+    required JSDocumentOptions options,
+    required DocumentWrittenHandler handler,
+  }) {
     js.JSAny? jsHandler(
-        JSFirestoreEvent<JSChange<firestore.DocumentSnapshot>> data) {
+      JSFirestoreEvent<JSChange<firestore.DocumentSnapshot>> data,
+    ) {
       return handler(data).toJSOrNull;
     }
 
@@ -33,8 +37,10 @@ extension JSFirestoreFunctionsExt on JSFirestoreFunctions {
   }
 }
 
-typedef DocumentWrittenHandler = FutureOr<void> Function(
-    JSFirestoreEvent<JSChange<firestore.DocumentSnapshot>> event);
+typedef DocumentWrittenHandler =
+    FutureOr<void> Function(
+      JSFirestoreEvent<JSChange<firestore.DocumentSnapshot>> event,
+    );
 
 typedef JSFirestoreFunction = js.JSFunction;
 typedef _JSDocumentWrittenHandler = js.JSFunction;
@@ -62,8 +68,12 @@ extension JSCloudEventExt<T extends js.JSAny?> on JSCloudEvent<T> {
 /// export interface EventHandlerOptions extends `Omit<GlobalOptions, "enforceAppCheck">`
 extension type JSEventHandlerOptions._(js.JSObject _)
     implements JSGlobalOptions {
-  external factory JSEventHandlerOptions(
-      {String? region, String? memory, int? concurrency, int? timeoutSeconds});
+  external factory JSEventHandlerOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    int? timeoutSeconds,
+  });
 }
 
 /// firestore.DocumentOptions interface
@@ -71,14 +81,15 @@ extension type JSEventHandlerOptions._(js.JSObject _)
 extension type JSDocumentOptions._(js.JSObject _)
     implements JSEventHandlerOptions {
   /// Options
-  external factory JSDocumentOptions(
-      {String? region,
-      String? memory,
-      int? concurrency,
-      int? timeoutSeconds,
+  external factory JSDocumentOptions({
+    String? region,
+    String? memory,
+    int? concurrency,
+    int? timeoutSeconds,
 
-      ///document	Document	The document path
-      required String document});
+    ///document	Document	The document path
+    required String document,
+  });
 }
 
 /// Change class

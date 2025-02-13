@@ -42,9 +42,11 @@ Future<void> main() async {
     print('app: ${app.options.projectId}');
     group('node', () {
       setUpAll(() async {});
-      runStorageAppTests(app,
-          storageService: storageServiceNode,
-          storageOptions: TestStorageOptions(rootPath: testRootPath));
+      runStorageAppTests(
+        app,
+        storageService: storageServiceNode,
+        storageOptions: TestStorageOptions(rootPath: testRootPath),
+      );
       tearDownAll(() {
         return app.delete();
       });
@@ -61,7 +63,10 @@ Future<void> main() async {
         // Add 2 files
 
         GetFilesOptions? query = GetFilesOptions(
-            maxResults: 10, prefix: 'tests', autoPaginate: false);
+          maxResults: 10,
+          prefix: 'tests',
+          autoPaginate: false,
+        );
         String? lastFirstFileName;
         while (true) {
           var response = await bucketNode.getFiles(query);

@@ -27,8 +27,9 @@ Future<void> main() async {
 
   group('auth_node', () {
     runAuthTests(
-        firebase: firebase,
-        authService: authService,
-        options: context.appOptions);
+      firebase: firebase,
+      authService: authService,
+      options: context.appOptions,
+    );
   });
 }
