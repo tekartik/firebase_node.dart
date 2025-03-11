@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:js_interop' as js;
 
-import 'package:tekartik_firebase/firebase.dart';
 import 'package:tekartik_firebase/firebase_admin.dart';
 // ignore: implementation_imports
 import 'package:tekartik_firebase/src/firebase_mixin.dart';
@@ -243,4 +242,9 @@ class FirebaseAppNode with FirebaseAppMixin {
 
   @override
   AppOptions get options => _wrapAppOptions(nativeInstance.options);
+
+  @override
+  bool get hasAdminCredentials {
+    return true;
+  }
 }

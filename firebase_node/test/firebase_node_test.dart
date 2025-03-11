@@ -43,6 +43,7 @@ Future<void> main() async {
       var app =
           firebaseNode.initializeApp(options: context.appOptions, name: 'admin')
               as AppNode;
+      expect(app.hasAdminCredentials, isTrue);
       // print(jsObjectKeys(app.nativeInstance!));
       // print(jsObjectGetOwnPropertyNames(app.nativeInstance!));
       // [appStore, services_, isDeleted_, name_, options_, INTERNAL]
