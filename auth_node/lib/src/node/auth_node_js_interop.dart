@@ -419,12 +419,10 @@ extension AuthExt2 on Auth {
   Future<String> createCustomToken(
     String uid, [
     Map<String, Object?>? developerClaims,
-  ]) async =>
-      (await jsCreateCustomToken(
-            uid,
-            (developerClaims ?? <String, Object?>{}).jsify() as js.JSObject,
-          ).toDart)
-          .toDart;
+  ]) async => (await jsCreateCustomToken(
+    uid,
+    (developerClaims ?? <String, Object?>{}).jsify() as js.JSObject,
+  ).toDart).toDart;
 
   /// Creates a new user.
   Future<UserRecord> createUser(CreateUserRequest properties) =>

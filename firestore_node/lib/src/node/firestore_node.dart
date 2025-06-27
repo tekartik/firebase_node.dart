@@ -906,13 +906,12 @@ class DocumentSnapshotNode
   DocumentSnapshotNode(this.firestore, this.nativeInstance);
 
   @override
-  Map<String, dynamic> get data =>
-      (exists
-          ? documentDataFromNativeDocumentData(
-            firestore,
-            nativeInstance.data()!,
-          ).asMap()
-          : null)!;
+  Map<String, dynamic> get data => (exists
+      ? documentDataFromNativeDocumentData(
+          firestore,
+          nativeInstance.data()!,
+        ).asMap()
+      : null)!;
 
   @override
   DocumentReference get ref =>
@@ -935,8 +934,8 @@ class DocumentSnapshotNode
 
 Timestamp? _wrapTimestamp(node.Timestamp? nativeInstance) =>
     nativeInstance != null
-        ? Timestamp(nativeInstance.seconds, nativeInstance.nanoseconds)
-        : null;
+    ? Timestamp(nativeInstance.seconds, nativeInstance.nanoseconds)
+    : null;
 
 DocumentChangeType _wrapDocumentChangeType(String type) {
   switch (type) {

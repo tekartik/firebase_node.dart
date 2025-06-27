@@ -167,10 +167,9 @@ class DecodedIdTokenNode implements DecodedIdToken {
 
 ListUsersResult? wrapListUsersResult(
   node.ListUsersResult? nativeListUsersResult,
-) =>
-    nativeListUsersResult != null
-        ? ListUsersResultNode(nativeListUsersResult)
-        : null;
+) => nativeListUsersResult != null
+    ? ListUsersResultNode(nativeListUsersResult)
+    : null;
 
 UserInfo? wrapUserInfo(node.UserInfo? nativeUserInfo) =>
     nativeUserInfo != null ? UserInfoNode(nativeUserInfo) : null;

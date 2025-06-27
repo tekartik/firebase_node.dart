@@ -123,10 +123,9 @@ class FileNode with FileMixin implements File {
   Bucket get bucket => bucketNode;
 
   @override
-  FileMetadata? get metadata =>
-      nativeInstance.metadata == null
-          ? null
-          : FileMetadataNode(nativeInstance.metadata!);
+  FileMetadata? get metadata => nativeInstance.metadata == null
+      ? null
+      : FileMetadataNode(nativeInstance.metadata!);
 
   @override
   Future<FileMetadata> getMetadata() async {
@@ -150,11 +149,10 @@ class GetFilesResponseNode implements GetFilesResponse {
       _wrapGetFilesOptions(nativeInstance.nextQuery);
 
   @override
-  String toString() =>
-      {
-        'files': files,
-        if (nextQuery != null) 'nextQuery': nextQuery,
-      }.toString();
+  String toString() => {
+    'files': files,
+    if (nextQuery != null) 'nextQuery': nextQuery,
+  }.toString();
 }
 
 node.GetFilesOptions? _unwrapGetFilesOptions(GetFilesOptions? options) {
@@ -196,12 +194,11 @@ class FileMetadataNode implements FileMetadata {
   int get size => int.tryParse(nativeInstance.size) ?? 0;
 
   @override
-  String toString() =>
-      {
-        'size': size,
-        'dateUpdated': dateUpdated.toUtc().toIso8601String(),
-        'md5Hash': md5Hash,
-      }.toString();
+  String toString() => {
+    'size': size,
+    'dateUpdated': dateUpdated.toUtc().toIso8601String(),
+    'md5Hash': md5Hash,
+  }.toString();
 }
 
 BucketNode _wrapBucket(StorageNode storage, node.Bucket nativeInstance) =>

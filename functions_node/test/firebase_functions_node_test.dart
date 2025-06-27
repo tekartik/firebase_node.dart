@@ -59,10 +59,9 @@ Future main() async {
         setUpAll(() async {
           print('hola');
           try {
-            var lines =
-                (await Shell(
-                  workingDirectory: 'deploy',
-                ).run('firebase use')).outLines;
+            var lines = (await Shell(
+              workingDirectory: 'deploy',
+            ).run('firebase use')).outLines;
             // Project on the first line !
             // either: Active Project: xxxxxx
             // or: xxxxxx

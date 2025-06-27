@@ -154,8 +154,8 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     } else {
       app = AppNode(this, nativeInstance.initializeApp(nativeOptions, name));
     }
-    _apps[name ?? _nameDefault] =
-        FirebaseMixin.latestFirebaseInstanceOrNull = app;
+    _apps[name ?? _nameDefault] = FirebaseMixin.latestFirebaseInstanceOrNull =
+        app;
     return app;
   }
 
@@ -169,10 +169,8 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
   FirebaseAdminCredentialServiceNode? _credentialService;
 
   @override
-  FirebaseAdminCredentialService get credential =>
-      _credentialService ??= FirebaseAdminCredentialServiceNode(
-        native.firebaseAdminModule,
-      );
+  FirebaseAdminCredentialService get credential => _credentialService ??=
+      FirebaseAdminCredentialServiceNode(native.firebaseAdminModule);
 }
 
 native.AppOptions? _unwrapAppOptions(

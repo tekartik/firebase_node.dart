@@ -20,12 +20,11 @@ TestStorageOptions? getStorageOptionsFromEnv(Map<String, String> env) {
 }
 
 /// Get storage option from env on node, dummy on io
-TestStorageOptions? get storageOptionsFromEnv =>
-    _storageOptionsFromEnv ??= () {
-      if (isRunningAsJavascript) {
-        return getStorageOptionsFromEnv(_env);
-      } else {
-        // io sim
-        return TestStorageOptions(bucket: 'local');
-      }
-    }();
+TestStorageOptions? get storageOptionsFromEnv => _storageOptionsFromEnv ??= () {
+  if (isRunningAsJavascript) {
+    return getStorageOptionsFromEnv(_env);
+  } else {
+    // io sim
+    return TestStorageOptions(bucket: 'local');
+  }
+}();
