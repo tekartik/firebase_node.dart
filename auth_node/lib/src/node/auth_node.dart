@@ -91,7 +91,7 @@ class UserInfoNode implements UserInfo {
   String get uid => nativeInstance.uid;
 }
 
-class UserRecordNode implements UserRecord {
+class UserRecordNode with FirebaseUserRecordDefaultMixin implements UserRecord {
   final node.UserRecord nativeInstance;
 
   UserRecordNode(this.nativeInstance);
@@ -111,6 +111,9 @@ class UserRecordNode implements UserRecord {
 
   @override
   bool get emailVerified => nativeInstance.emailVerified;
+
+  @override
+  bool get isAnonymous => nativeInstance.isAnonymous;
 
   @override
   UserMetadata get metadata => wrapUserMetadata(nativeInstance.metadata)!;

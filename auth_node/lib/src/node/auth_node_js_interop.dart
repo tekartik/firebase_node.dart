@@ -228,6 +228,9 @@ extension UserRecordExt on UserRecord {
   /// Whether or not the user's primary email is verified.
   external bool get emailVerified;
 
+  /// Anonymous user
+  external bool get isAnonymous;
+
   /// Additional metadata about the user.
   external UserMetadata get metadata;
 
