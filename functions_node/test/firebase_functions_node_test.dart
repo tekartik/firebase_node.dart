@@ -31,7 +31,7 @@ Future main() async {
         // out: ✔  functions[helloWorld]: http function initialized (http://localhost:5000/xxx/us-central1/helloWorld).
         // out: >  serving...
         print('line: $line');
-        if (line.contains('$defaultRegion/helloWorld')) {
+        if (line.contains('$regionBelgium-thelloworldcorsv2')) {
           if (!completer.isCompleted) {
             completer.complete(shell);
           }
@@ -80,7 +80,7 @@ Future main() async {
           if (projectId != null) {
             var result = await read(
               Uri.parse(
-                'http://localhost:5000/$projectId/$defaultRegion/helloWorld',
+                'http://localhost:5000/$projectId/$defaultRegion/thelloworldv1',
               ),
             );
             print(result);
@@ -91,7 +91,7 @@ Future main() async {
           if (projectId != null) {
             var result = await read(
               Uri.parse(
-                'http://localhost:5000/$projectId/$defaultRegion/helloworldv2',
+                'http://localhost:5000/$projectId/$regionBelgium/thelloworldv2',
               ),
             );
             print(result);
