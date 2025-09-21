@@ -12,17 +12,14 @@ dependencies:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: node_utils
-      ref: dart3a
     version: '>=0.1.0'
   tekartik_core_node:
     git:
       url: https://github.com/tekartik/common_node.dart
-      ref: dart3a
       path: core_node
   tekartik_js_utils_interop:
     git:
       url: https://github.com/tekartik/js_utils.dart
-      ref: dart3a
       path: js_utils_interop
 dev_dependencies:
   process_run: ">=1.2.1+1"
@@ -31,7 +28,6 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart3a
     version: '>=0.1.0'
   # needed node dependencies
   build_runner: ">=2.4.13"
@@ -39,5 +35,4 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart3a
 resolution: workspace

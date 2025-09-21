@@ -6,7 +6,6 @@ dependencies:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: storage_node
-      ref: dart3a
     version: '>=0.4.0'
 ```
 

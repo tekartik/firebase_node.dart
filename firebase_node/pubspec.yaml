@@ -15,45 +15,37 @@ dependencies:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase
-      ref: dart3a
     version: '>=0.7.3'
   tekartik_firebase_local:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase_local
-      ref: dart3a
     version: '>=0.6.0'
   tekartik_platform_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: platform_node
-      ref: dart3a
     version: '>=0.2.1'
   tekartik_fs_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: fs_node
-      ref: dart3a
     version: '>=0.4.0'
   tekartik_core_node:
     git:
       url: https://github.com/tekartik/common_node.dart
       path: core_node
-      ref: dart3a
   tekartik_js_utils_interop:
     git:
       url: https://github.com/tekartik/js_utils.dart
       path: js_utils_interop
-      ref: dart3a
     version: '>=0.1.0'
   tekartik_common_utils:
     git:
       url: https://github.com/tekartik/common_utils.dart
-      ref: dart3a
   tekartik_platform:
     git:
       url: https://github.com/tekartik/platform.dart
-      ref: dart3a
       path: platform
 dev_dependencies:
   test: ">=1.24.0"
@@ -61,14 +53,12 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/firebase.dart
       path: firebase_test
-      ref: dart3a
     version: '>=0.7.3'
   process_run: ">=1.2.1+1"
   tekartik_app_node_build:
     git:
       url: https://github.com/tekartik/app_node_utils.dart
       path: app_build
-      ref: dart3a
     version: '>=0.1.0'
   # needed node dependencies
   build_runner: ">=2.4.13"
@@ -76,7 +66,6 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/build_node.dart
       path: packages/build_node
-      ref: dart3a
 
 dependency_overrides:
 resolution: workspace
