@@ -94,8 +94,24 @@ class FileNode with FileMixin implements File {
   FileNode(this.bucketNode, this.nativeInstance);
 
   @override
+  Future<void> upload(
+    Uint8List bytes, {
+    StorageUploadFileOptions? options,
+  }) async {
+    var saveOptions = options == null
+        ? null
+        : node.FileSaveOptions(contentType: options.contentType);
+    if (saveOptions == null) {
+      await nativeInstance.save(bytes.toJS).toDart;
+      return;
+    } else {
+      await nativeInstance.save(bytes.toJS, saveOptions).toDart;
+    }
+  }
+
+  @override
   Future<void> writeAsBytes(Uint8List bytes) async {
-    await nativeInstance.save(bytes.toJS).toDart;
+    await upload(bytes);
   }
 
   @override
@@ -179,7 +195,7 @@ GetFilesOptions? _wrapGetFilesOptions(node.GetFilesOptions? options) {
   );
 }
 
-class FileMetadataNode implements FileMetadata {
+class FileMetadataNode with FileMetadataMixin implements FileMetadata {
   final node.FileMetadata nativeInstance;
 
   FileMetadataNode(this.nativeInstance);
@@ -194,10 +210,14 @@ class FileMetadataNode implements FileMetadata {
   int get size => int.tryParse(nativeInstance.size) ?? 0;
 
   @override
+  String? get contentType => nativeInstance.contentType;
+
+  @override
   String toString() => {
     'size': size,
     'dateUpdated': dateUpdated.toUtc().toIso8601String(),
     'md5Hash': md5Hash,
+    if (contentType != null) 'contentType': contentType,
   }.toString();
 }
 

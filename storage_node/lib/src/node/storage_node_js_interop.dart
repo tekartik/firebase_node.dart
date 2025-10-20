@@ -1,6 +1,7 @@
 library;
 
 import 'dart:js_interop' as js;
+import 'dart:js_interop';
 
 // ignore: depend_on_referenced_packages
 import 'package:tekartik_core_node/require.dart' as node;
@@ -77,10 +78,14 @@ class GetFilesResponse {
   GetFilesResponse(this.files, this.nextQuery);
 }
 
+/// File save options
+extension type FileSaveOptions._(JSObject _) implements JSObject {
+  external factory FileSaveOptions({String? contentType});
+}
 extension type File._(js.JSObject _) implements js.JSObject {}
 
 extension FileExt on File {
-  external js.JSPromise save(js.JSAny data);
+  external js.JSPromise save(js.JSAny data, [FileSaveOptions options]);
 
   @js.JS('exists')
   external js.JSPromise<js.JSArray<js.JSBoolean>> jsExists();
@@ -149,6 +154,8 @@ extension FileMetadataExt on FileMetadata {
   external String get size;
 
   external String get updated;
+
+  external String? get contentType;
 }
 
 extension type GetFilesOptions._(js.JSObject _) implements js.JSObject {
