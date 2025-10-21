@@ -57,7 +57,6 @@ Future main() async {
         String? projectId;
         Shell? shell;
         setUpAll(() async {
-          print('hola');
           try {
             var lines = (await Shell(
               workingDirectory: 'deploy',
@@ -69,6 +68,7 @@ Future main() async {
             projectId = line.split(' ').last;
 
             if (projectId != null) {
+              print('Building functions for project: $projectId');
               await gcfNodePackageBuild('.');
               shell = await startServer();
             }
