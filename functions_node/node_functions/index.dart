@@ -19,7 +19,7 @@ class FirebaseFunctionsTestContextNode extends FirebaseFunctionsTestContext
       );
 
   @override
-  Future<FfServer> serve() {
+  Future<FfServer> serve({int? port}) {
     // TODO: implement serve
     throw UnimplementedError('FirebaseFunctionsTestContextNode.serve');
   }
