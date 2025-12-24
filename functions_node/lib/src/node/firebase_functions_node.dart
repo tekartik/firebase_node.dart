@@ -1,5 +1,6 @@
 import 'dart:js_interop';
 
+import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_https_node_js_interop.dart'
     as node;
@@ -13,7 +14,9 @@ import 'firebase_functions_scheduler_node.dart';
 final firebaseFunctionsNode = FirebaseFunctionsNode();
 
 class FirebaseFunctionsNode
-    with FirebaseFunctionsDefaultMixin
+    with
+        FirebaseAppProductMixin<FirebaseFunctions>,
+        FirebaseFunctionsDefaultMixin
     implements FirebaseFunctions {
   final nativeInstance = node.firebaseFunctionsModule;
 
