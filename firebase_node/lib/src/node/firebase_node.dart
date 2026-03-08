@@ -128,10 +128,10 @@ class FirebaseAdminAccessTokenNode implements FirebaseAdminAccessToken {
   int get expiresIn => nativeInstance.expires_in.toInt();
 }
 
-const _nameDefault = '[DEFAULT]';
-
 /// Firebase node implementation
-class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
+class FirebaseNode
+    with FirebaseWithAppsMixin, FirebaseMixin
+    implements FirebaseAdmin {
   FirebaseNode._(this.nativeInstance);
 
   /// Native instance
@@ -154,16 +154,7 @@ class FirebaseNode with FirebaseMixin implements FirebaseAdmin {
     } else {
       app = AppNode(this, nativeInstance.initializeApp(nativeOptions, name));
     }
-    _apps[name ?? _nameDefault] = FirebaseMixin.latestFirebaseInstanceOrNull =
-        app;
-    return app;
-  }
-
-  final _apps = <String?, AppNode>{};
-
-  @override
-  App app({String? name}) {
-    return _apps[name ?? _nameDefault]!;
+    return addApp(app);
   }
 
   FirebaseAdminCredentialServiceNode? _credentialService;
@@ -234,8 +225,10 @@ class FirebaseAppNode with FirebaseAppMixin {
 
   @override
   Future delete() async {
-    await nativeInstance.delete().toDart;
     await closeServices();
+    // call this before deleting as it is no longer accessible
+    firebaseNode.uninitializeApp(this);
+    await nativeInstance.delete().toDart;
   }
 
   @override
