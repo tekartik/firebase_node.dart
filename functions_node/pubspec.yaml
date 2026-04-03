@@ -89,7 +89,10 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: functions_call
-
+  tekartik_firebase_emulator:
+    git:
+      url: https://github.com/tekartik/firebase_node.dart
+      path: firebase_emulator
 resolution: workspace
   # Temp
 #  firebase_functions_interop:

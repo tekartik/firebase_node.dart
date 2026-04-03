@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
-import 'package:tekartik_app_node_build/gcf_build.dart';
+import 'package:tekartik_firebase_emulator/firebase_emulator.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:test/test.dart';
@@ -16,89 +16,53 @@ String buildFolder = join('build', 'tekartik_firebase_function_node');
 
 Future main() async {
   //var httpClientFactory = httpClientFactoryIo;
-
+  var projectId = 'test';
   final firebaseInstalled = whichSync('firebase') != null;
-  group('firebase_functions_node', () {
-    Future<Shell> startServer() async {
-      var controller = ShellLinesController();
-      var shell = Shell(stdout: controller.sink).cd('deploy');
-      var completer = Completer<Shell>();
-      controller.stream.listen((line) {
-        // out: === Serving from '/xxx//github.com/tekartik/firebase_functions.dart/firebase_functions_node/deploy'...
-        // out: ✔  functions: Using node@10 from host.
-        // out: i  functions: Watching "/xxx//github.com/tekartik/firebase_functions.dart/firebase_functions_node/deploy/functions" for Cloud Functions...
-        // out: >  starting...
-        // out: ✔  functions[helloWorld]: http function initialized (http://localhost:5000/xxx/us-central1/helloWorld).
-        // out: >  serving...
-        print('line: $line');
-        if (line.contains('$regionBelgium-thelloworldcorsv2')) {
-          if (!completer.isCompleted) {
-            completer.complete(shell);
-          }
-        }
+  group(
+    'firebase_functions_node',
+    () {
+      Future<FirebaseEmulator> startServer() async {
+        var emulatorService = FirebaseEmulatorService(path: 'deploy');
+        var emulator = emulatorService.start(
+          options: FirebaseEmulatorOptions(
+            onlyFunctions: true,
+            projectId: projectId,
+          ),
+        );
+        return emulator;
+      }
+
+      FirebaseEmulator? emulator;
+      setUpAll(() async {
+        emulator = await startServer();
       });
 
-      unawaited(() async {
-        try {
-          await shell.run('firebase serve --only functions');
-        } on ShellException catch (e) {
-          print('Error $e');
-          if (!completer.isCompleted) {
-            completer.completeError(e);
-          }
+      test('emulator', () async {
+        expect(emulator, isNotNull);
+      });
+      test('helloWorldV1', () async {
+        if (emulator != null) {
+          var result = await read(
+            Uri.parse(
+              'http://localhost:5001/$projectId/$defaultRegion/thelloworldv1',
+            ),
+          );
+          print(result);
         }
-      }());
-      return completer.future;
-    }
+      }, skip: false);
 
-    group(
-      'serve',
-      () {
-        String? projectId;
-        Shell? shell;
-        setUpAll(() async {
-          try {
-            var lines = (await Shell(
-              workingDirectory: 'deploy',
-            ).run('firebase use')).outLines;
-            // Project on the first line !
-            // either: Active Project: xxxxxx
-            // or: xxxxxx
-            var line = lines.first;
-            projectId = line.split(' ').last;
+      test('helloWorldV2', () async {
+        if (emulator != null) {
+          var result = await read(
+            Uri.parse(
+              'http://localhost:5001/$projectId/$regionBelgium/thelloworldv2',
+            ),
+          );
+          print(result);
+        }
+      }, skip: false);
 
-            if (projectId != null) {
-              print('Building functions for project: $projectId');
-              await gcfNodePackageBuild('.');
-              shell = await startServer();
-            }
-          } catch (_) {}
-          if (projectId != null) {}
-        });
-
-        test('helloWorldV1', () async {
-          if (projectId != null) {
-            var result = await read(
-              Uri.parse(
-                'http://localhost:5000/$projectId/$defaultRegion/thelloworldv1',
-              ),
-            );
-            print(result);
-          }
-        }, skip: false);
-
-        test('helloWorldV2', () async {
-          if (projectId != null) {
-            var result = await read(
-              Uri.parse(
-                'http://localhost:5000/$projectId/$regionBelgium/thelloworldv2',
-              ),
-            );
-            print(result);
-          }
-        }, skip: false);
-
-        /*TODO temp excluded
+      /*TODO temp excluded
       common.main(
           testContext: FirebaseFunctionsTestContext(
               httpClientFactory: httpClientFactory),
@@ -106,12 +70,11 @@ Future main() async {
           baseUrl: context.baseUrl);
 
        */
-        tearDownAll(() async {
-          shell?.kill();
-        });
-      },
-      skip: !firebaseInstalled,
-      timeout: Timeout(Duration(minutes: 5)),
-    );
-  });
+      tearDownAll(() async {
+        await emulator?.stop();
+      });
+    },
+    skip: !firebaseInstalled,
+    timeout: Timeout(Duration(minutes: 5)),
+  );
 }

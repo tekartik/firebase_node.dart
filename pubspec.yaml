@@ -10,3 +10,4 @@ workspace:
   - pubsub_node
   - repo_support
   - storage_node
+  - firebase_emulator

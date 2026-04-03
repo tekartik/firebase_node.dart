@@ -1,0 +1,23 @@
+name: tekartik_firebase_emulator
+description: Firebase emulator helper
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+# Add regular dependencies here.
+dependencies:
+  dev_build:
+  tekartik_common_utils:
+    git: https://github.com/tekartik/common_utils.dart
+  meta:
+dev_dependencies:
+  lints: ^6.0.0
+  tekartik_lints:
+    git:
+      url: https://github.com/tekartik/common.dart
+      path: packages/lints
+  test: ^1.25.6
+
+resolution: workspace

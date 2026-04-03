@@ -13,7 +13,7 @@ import 'import_node.dart';
 
 /// The Firebase Auth service interface.
 final firebaseFunctionsModule = require<JSFirebaseFonctionsModule>(
-  'firebase-functions/v2',
+  'firebase-functions',
 );
 final firebaseFunctions = firebaseFunctionsModule;
 extension type JSFirebaseFonctionsModule._(js.JSObject _)
@@ -33,6 +33,7 @@ extension JSFirebaseFonctionsExt on JSFirebaseFonctionsModule {
   external JSParams get params;
 
   /// Sets default options for all functions written using the 2nd gen SDK.
+  /// Deprecated
   external void setGlobalOptions(JSGlobalOptions options);
 }
 
