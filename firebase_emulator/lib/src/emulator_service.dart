@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dev_build/shell.dart';
@@ -7,9 +6,12 @@ import 'package:tekartik_firebase_emulator/src/emulator.dart';
 
 import 'emulator_options.dart';
 
+/// Service for managing Firebase emulators.
 class FirebaseEmulatorService {
+  /// The path to the Firebase project directory.
   final String path;
 
+  /// Creates a new [FirebaseEmulatorService] for the project at [path].
   FirebaseEmulatorService({required this.path});
 
   /// Extract from .firebaserc
@@ -35,9 +37,13 @@ class FirebaseEmulatorService {
     }
   }
 
+  /// Starts the Firebase emulator with the given [options].
+  ///
+  /// Waits until all emulators are ready before returning.
   Future<FirebaseEmulator> start({FirebaseEmulatorOptions? options}) async {
-    var projectId = options?.projectId ?? await getProjectId();
-    options ??= FirebaseEmulatorOptions(projectId: projectId);
+    options ??= FirebaseEmulatorOptions();
+    var projectId = options.projectId ?? await getProjectId();
+
     var controller = ShellLinesController();
     var shell = Shell(
       workingDirectory: path,
@@ -56,8 +62,9 @@ class FirebaseEmulatorService {
       var done = shell.run(
         'firebase'
         ' --project $projectId'
+        '${(options.debug ?? false) ? ' --debug' : ''}'
         ' emulators:start'
-        '${options.onlyFunctions != null ? ' --only functions' : ''}',
+        '${(options.onlyFunctions ?? false) ? ' --only functions' : ''}',
       );
 
       await completer.future.timeout(const Duration(seconds: 10));
@@ -67,6 +74,7 @@ class FirebaseEmulatorService {
         options: options,
         shell: shell,
         done: done,
+        projectId: projectId,
       );
     } catch (e) {
       completer.safeCompleteError(e);

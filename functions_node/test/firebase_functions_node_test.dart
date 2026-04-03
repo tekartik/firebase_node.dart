@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell.dart';
+import 'package:tekartik_app_node_build/gcf_build.dart';
 import 'package:tekartik_firebase_emulator/firebase_emulator.dart';
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
@@ -16,24 +17,23 @@ String buildFolder = join('build', 'tekartik_firebase_function_node');
 
 Future main() async {
   //var httpClientFactory = httpClientFactoryIo;
-  var projectId = 'test';
+
   final firebaseInstalled = whichSync('firebase') != null;
   group(
     'firebase_functions_node',
     () {
       Future<FirebaseEmulator> startServer() async {
         var emulatorService = FirebaseEmulatorService(path: 'deploy');
-        var emulator = emulatorService.start(
-          options: FirebaseEmulatorOptions(
-            onlyFunctions: true,
-            projectId: projectId,
-          ),
+        var emulator = await emulatorService.start(
+          options: FirebaseEmulatorOptions(onlyFunctions: true, debug: false),
         );
+
         return emulator;
       }
 
       FirebaseEmulator? emulator;
       setUpAll(() async {
+        await gcfNodePackageBuild('.');
         emulator = await startServer();
       });
 
@@ -44,7 +44,7 @@ Future main() async {
         if (emulator != null) {
           var result = await read(
             Uri.parse(
-              'http://localhost:5001/$projectId/$defaultRegion/thelloworldv1',
+              'http://localhost:5001/${emulator!.projectId}/$defaultRegion/thelloworldv1',
             ),
           );
           print(result);
@@ -55,7 +55,7 @@ Future main() async {
         if (emulator != null) {
           var result = await read(
             Uri.parse(
-              'http://localhost:5001/$projectId/$regionBelgium/thelloworldv2',
+              'http://localhost:5001/${emulator!.projectId}/$regionBelgium/thelloworldv2',
             ),
           );
           print(result);
