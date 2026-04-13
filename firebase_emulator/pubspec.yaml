@@ -12,6 +12,7 @@ dependencies:
   tekartik_common_utils:
     git: https://github.com/tekartik/common_utils.dart
   meta:
+  path:
 dev_dependencies:
   lints: ^6.0.0
   tekartik_lints:

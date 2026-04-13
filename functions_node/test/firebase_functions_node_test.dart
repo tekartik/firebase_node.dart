@@ -44,7 +44,7 @@ Future main() async {
         if (emulator != null) {
           var result = await read(
             Uri.parse(
-              'http://localhost:5001/${emulator!.projectId}/$defaultRegion/thelloworldv1',
+              'http://127.0.0.1:5001/${emulator!.projectId}/$defaultRegion/thelloworldv1',
             ),
           );
           print(result);
@@ -71,6 +71,7 @@ Future main() async {
 
        */
       tearDownAll(() async {
+        print('stopping emulator');
         await emulator?.stop();
       });
     },

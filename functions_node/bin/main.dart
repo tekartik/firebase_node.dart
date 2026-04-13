@@ -16,8 +16,7 @@ Future main() async {
       .https
       .onRequestV2(HttpsOptions(region: regionBelgium, cors: true), helloWorld);
 
-  //await firebaseFunctionsUniversal.serve();
-  print('serving...');
+  await firebaseFunctionsUniversal.serve();
 }
 
 Future helloWorld(ExpressHttpRequest request) async {
