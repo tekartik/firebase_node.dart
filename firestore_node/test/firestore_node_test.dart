@@ -39,6 +39,9 @@ Future<void> main() async {
     // devPrint('Using firebase project: ${context.serviceAccount}');
   });
 
+  test('supports', () {
+    expect(firestoreServiceNode.supportsBlobs, isTrue);
+  });
   if (rootCollectionPath != null) {
     // Temp skipping transaction test
     skipConcurrentTransactionTests = true;

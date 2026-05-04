@@ -71,6 +71,9 @@ class FirestoreServiceNode
 
   @override
   bool get supportsVectorValue => true;
+
+  @override
+  bool get supportsBlobs => true;
   @override
   String toString() => 'FirestoreServiceNode()';
 }
