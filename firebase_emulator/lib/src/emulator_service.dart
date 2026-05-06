@@ -44,13 +44,31 @@ class FirebaseEmulatorService {
   static final _minFirebaseFunctionsVersion = Version(7, 2, 5);
   static final _minFirebaseCliVersion = Version(15, 14, 0);
 
-  /// Starts the Firebase emulator with the given [options].
-  ///
-  /// Waits until all emulators are ready before returning.
-  Future<FirebaseEmulator> start({FirebaseEmulatorOptions? options}) async {
-    options ??= FirebaseEmulatorOptions();
-    var projectId = options.projectId ?? await getProjectId();
+  var _lastStatusOk = false;
 
+  /// Check if emulator is supported
+  Future<bool> isSupported({bool? force}) async {
+    return _checkIsSupported(force: force);
+  }
+
+  /// Check if emulator is supported
+  Future<bool> _checkIsSupported({bool? force, bool? doThrow}) async {
+    if (_lastStatusOk && force != true) {
+      return true;
+    }
+    try {
+      await _checkStatus();
+      _lastStatusOk = true;
+    } catch (e) {
+      _lastStatusOk = false;
+      if (doThrow == true) {
+        rethrow;
+      }
+    }
+    return _lastStatusOk;
+  }
+
+  Future<void> _checkStatus() async {
     // Check node settings in functions/package.json
     // min
     //   "engines": {
@@ -103,6 +121,15 @@ class FirebaseEmulatorService {
         }
       }
     }
+  }
+
+  /// Starts the Firebase emulator with the given [options].
+  ///
+  /// Waits until all emulators are ready before returning.
+  Future<FirebaseEmulator> start({FirebaseEmulatorOptions? options}) async {
+    await _checkIsSupported(doThrow: true);
+    options ??= FirebaseEmulatorOptions();
+    var projectId = options.projectId ?? await getProjectId();
 
     var controller = ShellLinesController();
     var shell = Shell(
@@ -127,7 +154,9 @@ class FirebaseEmulatorService {
         '${(options.onlyFunctions ?? false) ? ' --only functions' : ''}',
       );
 
-      await completer.future.timeout(const Duration(seconds: 10));
+      // 10 ok for node
+      // 30 needed for dart
+      await completer.future.timeout(const Duration(seconds: 30));
 
       return createEmulator(
         path: path,
