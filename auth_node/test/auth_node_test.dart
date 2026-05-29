@@ -18,6 +18,7 @@ Future<void> main() async {
   }
   if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
     test('Skip on github for other than ubuntu and dart stable', () {
+      // ignore: avoid_print
       print('githubActionsPrefix: $githubActionsPrefix');
     });
     return;

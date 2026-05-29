@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 void main() {
   group('pubsub_node', () {
     test('First Test', () {
+      // ignore: avoid_print
       print(jsObjectKeys(pubsubJs));
     });
   });

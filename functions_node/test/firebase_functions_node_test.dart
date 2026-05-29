@@ -47,6 +47,7 @@ Future main() async {
               'http://127.0.0.1:5001/${emulator!.projectId}/$defaultRegion/thelloworldv1',
             ),
           );
+          // ignore: avoid_print
           print(result);
         }
       }, skip: false);
@@ -58,6 +59,7 @@ Future main() async {
               'http://localhost:5001/${emulator!.projectId}/$regionBelgium/thelloworldv2',
             ),
           );
+          // ignore: avoid_print
           print(result);
         }
       }, skip: false);
@@ -71,6 +73,7 @@ Future main() async {
 
        */
       tearDownAll(() async {
+        // ignore: avoid_print
         print('stopping emulator');
         await emulator?.stop();
       });

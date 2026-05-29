@@ -107,7 +107,7 @@ class ExpressHttpResponseNode implements ExpressHttpResponse {
     } else if (body == null) {
       jsBody = null;
     } else {
-      throw 'body ${body.runtimeType} not supported';
+      throw UnsupportedError('body ${body.runtimeType} not supported');
     }
     nativeHttpResponse.send(jsBody);
 
@@ -127,6 +127,7 @@ class ExpressHttpResponseNode implements ExpressHttpResponse {
         _sendHeaderAndStatus();
         nativeHttpResponse.end();
       } catch (e) {
+        // ignore: avoid_print
         print('error closing response $e');
       }
     }

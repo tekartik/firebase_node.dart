@@ -6,10 +6,10 @@ publish_to: none
 #author: alex <email@example.com>
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.12.0
 
 dependencies:
-  collection: ">=1.18.0"
+  collection: ">=1.19.1"
   uuid: '>=1.0.0'
   tekartik_firebase:
     git:
@@ -48,7 +48,7 @@ dependencies:
       url: https://github.com/tekartik/platform.dart
       path: platform
 dev_dependencies:
-  test: ">=1.24.0"
+  test: ">=1.31.0"
   tekartik_firebase_test:
     git:
       url: https://github.com/tekartik/firebase.dart
@@ -61,7 +61,7 @@ dev_dependencies:
       path: app_build
     version: '>=0.1.0'
   # needed node dependencies
-  build_runner: ">=2.4.13"
+  build_runner: ">=2.15.0"
   tekartik_build_node:
     git:
       url: https://github.com/tekartik/build_node.dart

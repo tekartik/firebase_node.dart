@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:tekartik_firebase_functions_node/firebase_functions_universal.dart';
 
 Future main() async {
+  // ignore: avoid_print
   print('starting...');
 
   firebaseFunctionsUniversal['thelloworldv1'] = firebaseFunctionsUniversal.https
@@ -20,6 +21,7 @@ Future main() async {
 }
 
 Future helloWorld(ExpressHttpRequest request) async {
+  // ignore: avoid_print
   print('request.uri ${request.uri}');
   await request.response.send('2022-12-02 Hello');
 }

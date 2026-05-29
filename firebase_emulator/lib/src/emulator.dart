@@ -21,10 +21,9 @@ class FirebaseEmulator {
     required this.path,
     required this.options,
     required this.projectId,
-    required Shell shell,
-    required Future done,
-  }) : _shell = shell,
-       _done = done;
+    required this._shell,
+    required this._done,
+  });
 
   /// Stops the emulator.
   Future<void> stop() async {

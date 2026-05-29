@@ -46,8 +46,7 @@ class FirebaseAppOptionsNode
   final Map<String, Object?> serviceAccountMap;
 
   /// Constructor
-  FirebaseAppOptionsNode(this.serviceAccountMap, {String? storageBucket})
-    : _storageBucket = storageBucket;
+  FirebaseAppOptionsNode(this.serviceAccountMap, {this._storageBucket});
 
   /// The client email
   String get clientEmail {

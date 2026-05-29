@@ -24,7 +24,7 @@ Future<void> main(List<String> arguments) async {
           'https://europe-west1-tekartik-eu-dev.cloudfunctions.net/thelloworldv1',
         ),
       );
-      print(hello);
+      writeln(hello);
     });
     item('helloWorldv2', () async {
       var hello = await read(
@@ -32,7 +32,7 @@ Future<void> main(List<String> arguments) async {
           'https://europe-west1-tekartik-eu-dev.cloudfunctions.net/thelloworldv2',
         ),
       );
-      print(hello);
+      writeln(hello);
     });
   });
 }

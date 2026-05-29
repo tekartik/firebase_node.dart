@@ -49,6 +49,7 @@ class HttpsFunctionsNode
       try {
         return await handler(requestNode);
       } on HttpsError catch (e) {
+        // ignore: only_throw_errors
         throw e.toJS.toJSBox;
       }
     }
