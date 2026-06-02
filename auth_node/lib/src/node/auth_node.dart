@@ -9,6 +9,7 @@ import 'package:tekartik_firebase_node/impl/firebase_node.dart';
 
 import 'auth_node_js_interop.dart' as node;
 import 'js_import.dart' as js;
+
 // ignore_for_file: implementation_imports
 
 class AuthServiceNode
