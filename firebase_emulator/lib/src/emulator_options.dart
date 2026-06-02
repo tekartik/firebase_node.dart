@@ -6,9 +6,17 @@ class FirebaseEmulatorOptions {
   /// If true, only the Functions emulator is started.
   bool? onlyFunctions;
 
+  /// If true, only auth is started
+  bool? onlyAuth;
+
   /// If true, the emulator is started in debug mode.
   bool? debug;
 
   /// Creates a new [FirebaseEmulatorOptions].
-  FirebaseEmulatorOptions({this.projectId, this.onlyFunctions, this.debug});
+  FirebaseEmulatorOptions({
+    this.projectId,
+    this.onlyFunctions,
+    this.debug,
+    this.onlyAuth,
+  });
 }

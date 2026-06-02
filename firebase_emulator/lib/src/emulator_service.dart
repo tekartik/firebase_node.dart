@@ -145,13 +145,17 @@ class FirebaseEmulatorService {
       }
     });
 
+    var onlyFunctions = options.onlyFunctions ?? false;
+    var onlyAuth = options.onlyAuth ?? false;
+    var only = onlyFunctions || onlyAuth;
+
     try {
       var done = shell.run(
         'firebase'
         ' --project $projectId'
         '${(options.debug ?? false) ? ' --debug' : ''}'
         ' emulators:start'
-        '${(options.onlyFunctions ?? false) ? ' --only functions' : ''}',
+        '${only ? ' --only ${[if (onlyFunctions) 'functions', if (onlyAuth) 'auth'].join(',')}' : ''}',
       );
 
       // 10 ok for node
