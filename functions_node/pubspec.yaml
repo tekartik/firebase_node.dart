@@ -40,11 +40,11 @@ dependencies:
       url: https://github.com/tekartik/common_node.dart
       path: fs_node
     version: '>=0.4.0'
+dev_dependencies:
   tekartik_firebase_functions_http:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_http
-dev_dependencies:
   tekartik_test_menu_browser:
     git:
       url: https://github.com/tekartik/test_menu.dart
@@ -66,7 +66,6 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/firebase_functions.dart
       path: firebase_functions_test
-    version: '>=0.2.1'
   tekartik_http_node:
     git:
       url: https://github.com/tekartik/common_node.dart
@@ -93,6 +92,10 @@ dev_dependencies:
     git:
       url: https://github.com/tekartik/firebase_node.dart
       path: firebase_emulator
+  tekartik_firebase_functions_call_http:
+    git:
+      url: https://github.com/tekartik/firebase_functions.dart
+      path: functions_call_http
 resolution: workspace
   # Temp
 #  firebase_functions_interop:

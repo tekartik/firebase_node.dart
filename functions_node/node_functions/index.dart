@@ -2,7 +2,7 @@ import 'package:tekartik_firebase_functions/src/ff_server.dart';
 import 'package:tekartik_firebase_functions_node/firebase_functions_node.dart';
 import 'package:tekartik_firebase_functions_test/firebase_functions_setup.dart'
     as setup;
-import 'package:tekartik_firebase_functions_test/firebase_functions_test.dart';
+import 'package:tekartik_firebase_functions_test/firebase_functions_test_runner.dart';
 import 'package:tekartik_http_node/http_client_node.dart';
 
 /// Memory for inner communication, http for outer

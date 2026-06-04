@@ -22,7 +22,12 @@ class FirebaseFunctionsNode
 
   @override
   void operator []=(String key, FirebaseFunction function) {
-    nativeInstance[key] = (function as FirebaseFunctionNode).nativeInstance;
+    registerFunction(key, function);
+  }
+
+  @override
+  void registerFunction(String name, FirebaseFunction function) {
+    nativeInstance[name] = (function as FirebaseFunctionNode).nativeInstance;
   }
 
   @override

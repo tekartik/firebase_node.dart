@@ -101,3 +101,6 @@ extension FutureOrToJS on FutureOr<void> {
     }
   }
 }
+
+@js.JS('Promise.reject')
+external js.JSPromise<js.JSAny?> promiseReject(js.JSAny? reason);

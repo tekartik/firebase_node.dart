@@ -4,6 +4,7 @@ import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_https_node_js_interop.dart'
     as node;
+import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart';
 
 import 'call_request_node.dart';
 import 'express_http_request_node.dart';
@@ -49,8 +50,7 @@ class HttpsFunctionsNode
       try {
         return await handler(requestNode);
       } on HttpsError catch (e) {
-        // ignore: only_throw_errors
-        throw e.toJS.toJSBox;
+        return promiseReject(e.toJS);
       }
     }
 
