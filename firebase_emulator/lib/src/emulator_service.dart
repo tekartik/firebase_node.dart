@@ -124,6 +124,15 @@ class FirebaseEmulatorService {
     }
   }
 
+  Future<bool> _isEmulatorAuthRunning() async {
+    return _isEmulatorRunning(host: 'localhost', port: 9099);
+  }
+
+  // ignore: unused_element
+  Future<bool> _isEmulatorFirestoreRunning() async {
+    return _isEmulatorRunning(host: 'localhost', port: 8080);
+  }
+
   Future<bool> _isEmulatorRunning({
     String host = 'localhost',
     int port = 9099,
@@ -171,13 +180,15 @@ class FirebaseEmulatorService {
 
     var onlyFunctions = options.onlyFunctions ?? false;
     var onlyAuth = options.onlyAuth ?? false;
+    var onlyFirestore = options.onlyFirestore ?? false;
+    var onlyStorage = options.onlyStorage ?? false;
 
-    if (onlyAuth) {
-      if (await _isEmulatorRunning()) {
-        return FirebaseRunningEmulator(projectId: projectId);
-      }
+    var only = onlyFunctions || onlyAuth || onlyFirestore || onlyStorage;
+
+    if (await _isEmulatorAuthRunning()) {
+      return FirebaseRunningEmulator(projectId: projectId);
     }
-    var only = onlyFunctions || onlyAuth;
+
     var persistPath = options.persistPath;
     try {
       var done = shell.run(
@@ -185,7 +196,7 @@ class FirebaseEmulatorService {
         ' --project $projectId'
         '${(options.debug ?? false) ? ' --debug' : ''}'
         ' emulators:start'
-        '${only ? ' --only ${[if (onlyFunctions) 'functions', if (onlyAuth) 'auth'].join(',')}' : ''}'
+        '${only ? ' --only ${[if (onlyFunctions) 'functions', if (onlyAuth) 'auth', if (onlyFirestore) 'firestore', if (onlyStorage) 'storage'].join(',')}' : ''}'
         '${persistPath != null ? ' --import $persistPath --export-on-exit $persistPath' : ''}',
       );
 
