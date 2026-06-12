@@ -28,7 +28,8 @@ class FirebaseEmulator {
   /// Stops the emulator.
   Future<void> stop() async {
     try {
-      _shell.kill(ProcessSignal.sigkill);
+      // _shell.kill(ProcessSignal.sigkill);
+      _shell.kill(ProcessSignal.sigint);
       await _done;
     } catch (_) {}
   }
@@ -49,4 +50,30 @@ Future<FirebaseEmulator> createEmulator({
     shell: shell,
     done: done,
   );
+}
+
+/// A running Firebase emulator instance.
+class FirebaseRunningEmulator implements FirebaseEmulator {
+  @override
+  Future<dynamic> get _done => throw UnimplementedError();
+
+  @override
+  Shell get _shell => throw UnimplementedError();
+
+  @override
+  FirebaseEmulatorOptions get options => throw UnimplementedError();
+
+  @override
+  String get path => throw UnimplementedError();
+
+  @override
+  final String projectId;
+
+  /// Creates a new [FirebaseRunningEmulator] for the project at [path].
+  FirebaseRunningEmulator({required this.projectId});
+
+  @override
+  Future<void> stop() async {
+    // no-op
+  }
 }

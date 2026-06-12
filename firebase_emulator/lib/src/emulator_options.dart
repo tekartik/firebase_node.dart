@@ -1,3 +1,5 @@
+import 'dart:io';
+
 /// Options for starting a Firebase emulator.
 class FirebaseEmulatorOptions {
   /// The Firebase project ID. If null, it is read from `.firebaserc`.
@@ -12,11 +14,19 @@ class FirebaseEmulatorOptions {
   /// If true, the emulator is started in debug mode.
   bool? debug;
 
+  /// Persist path (i.e. not only in memory)
+  String? persistPath;
+
+  /// Process start mode
+  final ProcessStartMode? processStartMode;
+
   /// Creates a new [FirebaseEmulatorOptions].
   FirebaseEmulatorOptions({
     this.projectId,
     this.onlyFunctions,
     this.debug,
     this.onlyAuth,
+    this.persistPath,
+    this.processStartMode,
   });
 }

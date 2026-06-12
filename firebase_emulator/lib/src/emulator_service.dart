@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dev_build/package.dart';
 import 'package:dev_build/shell.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_common_utils/map_utils.dart';
@@ -123,6 +124,26 @@ class FirebaseEmulatorService {
     }
   }
 
+  Future<bool> _isEmulatorRunning({
+    String host = 'localhost',
+    int port = 9099,
+  }) async {
+    final url = Uri.parse('http://$host:$port/');
+
+    try {
+      // We send a request to the emulator port.
+      // Even if it returns a 404 (because the root path isn't a valid endpoint),
+      // getting *any* HTTP response means the server is active and listening.
+      await http.get(url).timeout(const Duration(milliseconds: 500));
+      return true;
+    } on SocketException {
+      // A SocketException means connection refused -> Emulator is dead or not started.
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Starts the Firebase emulator with the given [options].
   ///
   /// Waits until all emulators are ready before returning.
@@ -133,9 +154,12 @@ class FirebaseEmulatorService {
 
     var controller = ShellLinesController();
     var shell = Shell(
-      workingDirectory: path,
-      stdout: controller.sink,
-      verbose: true,
+      options: ShellOptions(
+        workingDirectory: path,
+        stdout: controller.sink,
+        verbose: true,
+        mode: options.processStartMode,
+      ),
     );
     var completer = Completer<bool>();
     controller.stream.listen((line) {
@@ -147,15 +171,22 @@ class FirebaseEmulatorService {
 
     var onlyFunctions = options.onlyFunctions ?? false;
     var onlyAuth = options.onlyAuth ?? false;
-    var only = onlyFunctions || onlyAuth;
 
+    if (onlyAuth) {
+      if (await _isEmulatorRunning()) {
+        return FirebaseRunningEmulator(projectId: projectId);
+      }
+    }
+    var only = onlyFunctions || onlyAuth;
+    var persistPath = options.persistPath;
     try {
       var done = shell.run(
         'firebase'
         ' --project $projectId'
         '${(options.debug ?? false) ? ' --debug' : ''}'
         ' emulators:start'
-        '${only ? ' --only ${[if (onlyFunctions) 'functions', if (onlyAuth) 'auth'].join(',')}' : ''}',
+        '${only ? ' --only ${[if (onlyFunctions) 'functions', if (onlyAuth) 'auth'].join(',')}' : ''}'
+        '${persistPath != null ? ' --import $persistPath --export-on-exit $persistPath' : ''}',
       );
 
       // 10 ok for node
