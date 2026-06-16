@@ -27,7 +27,7 @@ class FirebaseFunctionsServiceUniversalNode
 }
 
 /// Node implementation
-class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNode
+class FirebaseFunctionsNodeUniversal extends FirebaseFunctionsNodeImpl
     with FirebaseFunctionsNodeUniversalMixin {
   FirebaseFunctionsNodeUniversal();
 }

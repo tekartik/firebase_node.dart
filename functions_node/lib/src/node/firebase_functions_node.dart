@@ -6,18 +6,33 @@ import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_htt
     as node;
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_node_js_interop.dart'
     as node;
+import 'package:tekartik_firebase_node/firebase_node.dart' as node;
 
 import 'firebase_functions_firestore_node.dart';
 import 'firebase_functions_https_node.dart';
 import 'firebase_functions_scheduler_node.dart';
 
-final firebaseFunctionsNode = FirebaseFunctionsNode();
+final FirebaseFunctionsNode firebaseFunctionsNode = FirebaseFunctionsNodeImpl();
 
-class FirebaseFunctionsNode
+abstract class FirebaseFunctionsNode implements FirebaseFunctions {}
+
+class FirebaseFunctionsNodeImpl
     with
         FirebaseAppProductMixin<FirebaseFunctions>,
         FirebaseFunctionsDefaultMixin
-    implements FirebaseFunctions {
+    implements FirebaseFunctionsNode {
+  @override
+  FirebaseApp get app {
+    try {
+      var app = node.firebaseNode.app();
+      return app;
+    } catch (e) {
+      // ignore: avoid_print
+      print('error getting node app');
+      throw StateError('Cannot get firebaseNode.app. Call initializeApp first');
+    }
+  }
+
   final nativeInstance = node.firebaseFunctionsModule;
 
   @override

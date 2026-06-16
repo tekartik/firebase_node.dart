@@ -1,11 +1,14 @@
 import 'dart:async';
+
 import 'package:tekartik_common_utils/env_utils.dart';
 import 'package:tekartik_firebase_functions_node/firebase_functions_universal.dart';
 import 'package:tekartik_firebase_functions_test/firebase_functions_test_runner.dart';
+import 'package:tekartik_firebase_node/firebase_universal.dart';
 
 Future main() async {
   // ignore: avoid_print
   print('starting...');
+  firebaseUniversal.initializeApp();
 
   firebaseFunctionsUniversal['thelloworldv1'] = firebaseFunctionsUniversal.https
       .onRequest(helloWorld);
