@@ -185,7 +185,7 @@ class FirebaseEmulatorService {
 
     var only = onlyFunctions || onlyAuth || onlyFirestore || onlyStorage;
 
-    if (await _isEmulatorAuthRunning()) {
+    if (await _isEmulatorAuthRunning() || await _isEmulatorFirestoreRunning()) {
       stderr.writeln(
         'Emulator is already running - try using it...not sure about its projectId...',
       );
