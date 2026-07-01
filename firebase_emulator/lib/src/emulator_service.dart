@@ -125,15 +125,29 @@ class FirebaseEmulatorService {
   }
 
   Future<bool> _isEmulatorAuthRunning() async {
-    return _isEmulatorRunning(host: 'localhost', port: 9099);
+    return _isEmulatorPortRunning(host: 'localhost', port: 9099);
+  }
+
+  Future<bool> _isEmulatorStorageRunning() async {
+    return _isEmulatorPortRunning(host: 'localhost', port: 9199);
   }
 
   // ignore: unused_element
   Future<bool> _isEmulatorFirestoreRunning() async {
-    return _isEmulatorRunning(host: 'localhost', port: 8080);
+    return _isEmulatorPortRunning(host: 'localhost', port: 8080);
   }
 
-  Future<bool> _isEmulatorRunning({
+  Future<bool> _isEmulatorRunning() async {
+    var futures = [
+      _isEmulatorAuthRunning(),
+      _isEmulatorFirestoreRunning(),
+      _isEmulatorStorageRunning(),
+    ];
+    var results = await Future.wait(futures);
+    return results.contains(true);
+  }
+
+  Future<bool> _isEmulatorPortRunning({
     String host = 'localhost',
     int port = 9099,
   }) async {
@@ -185,7 +199,7 @@ class FirebaseEmulatorService {
 
     var only = onlyFunctions || onlyAuth || onlyFirestore || onlyStorage;
 
-    if (await _isEmulatorAuthRunning() || await _isEmulatorFirestoreRunning()) {
+    if (await _isEmulatorRunning()) {
       stderr.writeln(
         'Emulator is already running - try using it...not sure about its projectId...',
       );
