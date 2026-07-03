@@ -10,6 +10,77 @@ import 'package:tekartik_firebase_emulator/src/emulator.dart';
 
 import 'emulator_options.dart';
 
+/// Represents the status of the Firebase emulator service.
+abstract class EmulatorServiceStatus {
+  /// Whether the emulator service is currently running.
+  bool get running => false;
+
+  /// Whether the emulator service is supported.
+  bool get supported => false;
+}
+
+/// Status indicating that the Firebase emulator service is not running.
+class EmulatorServiceNotRunningStatus implements EmulatorServiceStatus {
+  @override
+  bool get running => false;
+
+  @override
+  bool get supported => true;
+
+  @override
+  String toString() {
+    return 'EmulatorServiceNotRunningStatus()';
+  }
+}
+
+/// Status indicating that the Firebase emulator service is not supported.
+class EmulatorServiceNotSupportedStatus implements EmulatorServiceStatus {
+  @override
+  bool get running => false;
+
+  @override
+  bool get supported => false;
+
+  @override
+  String toString() {
+    return 'EmulatorServiceNotSupportedStatus()';
+  }
+}
+
+/// Status indicating that the Firebase emulator service is running.
+class EmulatorServiceRunningStatus implements EmulatorServiceStatus {
+  @override
+  bool get running => true;
+
+  /// The port on which the Firestore emulator is running, if active.
+  final int? firestorePort;
+
+  /// The port on which the Auth emulator is running, if active.
+  final int? authPort;
+
+  /// The port on which the Storage emulator is running, if active.
+  final int? storagePort;
+
+  /// The port on which the Functions emulator is running, if active.
+  final int? functionsPort;
+
+  /// Creates a new [EmulatorServiceRunningStatus] with the specified emulator ports.
+  EmulatorServiceRunningStatus({
+    required this.firestorePort,
+    required this.authPort,
+    required this.storagePort,
+    required this.functionsPort,
+  });
+
+  @override
+  String toString() {
+    return 'EmulatorServiceRunningStatus(firestorePort: $firestorePort, authPort: $authPort, storagePort: $storagePort, functionsPort: $functionsPort)';
+  }
+
+  @override
+  bool get supported => true;
+}
+
 /// Service for managing Firebase emulators.
 class FirebaseEmulatorService {
   /// The path to the Firebase project directory.
@@ -47,8 +118,86 @@ class FirebaseEmulatorService {
 
   var _lastStatusOk = false;
 
-  /// Check if emulator is supported
-  Future<bool> isSupported({bool? force}) async {
+  /// Default emulator hub port.
+  static const _hubPort = 4400;
+
+  /// Get the running emulator services (service name to port) by querying
+  /// the emulator hub at `localhost:4400/emulators`.
+  ///
+  /// Returns null if the hub is not running.
+  Future<Map<String, int>?> _getRunningServices() async {
+    final url = Uri.parse('http://localhost:$_hubPort/emulators');
+    try {
+      var response = await http
+          .get(url)
+          .timeout(const Duration(milliseconds: 500));
+      if (response.statusCode != 200) {
+        return null;
+      }
+      var map = parseJsonObject(response.body)!;
+      var services = <String, int>{};
+      for (var service in map.keys) {
+        var port = parseInt(mapValueFromParts<Object>(map, [service, 'port']));
+        if (port != null) {
+          services[service] = port;
+        }
+      }
+      return services;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Check status
+  Future<EmulatorServiceStatus> checkStatus({bool? force}) async {
+    if (!(await _checkIsSupported(force: force))) {
+      return EmulatorServiceNotSupportedStatus();
+    }
+    var runningServices = await _getRunningServices();
+    if (runningServices == null) {
+      return EmulatorServiceNotRunningStatus();
+    }
+    return EmulatorServiceRunningStatus(
+      firestorePort: runningServices['firestore'],
+      authPort: runningServices['auth'],
+      storagePort: runningServices['storage'],
+      functionsPort: runningServices['functions'],
+    );
+  }
+
+  /// Check if emulator is supported.
+  ///
+  /// Returns false if `.firebaserc` is not present in [path].
+  ///
+  /// If an emulator is already running (hub found on localhost:4400), returns
+  /// true only if all the services requested in [options] are running.
+  Future<bool> isSupported({
+    bool? force,
+    FirebaseEmulatorOptions? options,
+  }) async {
+    var status = await checkStatus(force: force);
+    if (!status.supported) {
+      return false;
+    }
+    if (status.running) {
+      var running = status as EmulatorServiceRunningStatus;
+      if ((options?.onlyFunctions ?? false) && running.functionsPort == null) {
+        stderr.writeln('Emulator is running but functions is not running');
+        return false;
+      }
+      if ((options?.onlyAuth ?? false) && running.authPort == null) {
+        stderr.writeln('Emulator is running but auth is not running');
+        return false;
+      }
+      if ((options?.onlyFirestore ?? false) && running.firestorePort == null) {
+        stderr.writeln('Emulator is running but firestore is not running');
+        return false;
+      }
+      if ((options?.onlyStorage ?? false) && running.storagePort == null) {
+        stderr.writeln('Emulator is running but storage is not running');
+        return false;
+      }
+    }
     return _checkIsSupported(force: force);
   }
 
@@ -58,7 +207,7 @@ class FirebaseEmulatorService {
       return true;
     }
     try {
-      await _checkStatus();
+      await _checkSetup();
       _lastStatusOk = true;
     } catch (e) {
       _lastStatusOk = false;
@@ -69,7 +218,22 @@ class FirebaseEmulatorService {
     return _lastStatusOk;
   }
 
-  Future<void> _checkStatus() async {
+  // throw on error
+  Future<void> _checkSetup() async {
+    /// Global installation
+    var firebaseVersion = Version.parse(
+      (await run('firebase --version')).outText,
+    );
+    if (firebaseVersion < _minFirebaseCliVersion) {
+      throw StateError('firebase-tools ^$_minFirebaseCliVersion expected');
+    }
+
+    var firebaseRcFile = File(p.join(path, '.firebaserc'));
+    if (!firebaseRcFile.existsSync()) {
+      throw UnsupportedError(
+        'Firebase emulator not supported: .firebaserc not found in $path',
+      );
+    }
     // Check node settings in functions/package.json
     // min
     //   "engines": {
@@ -83,13 +247,9 @@ class FirebaseEmulatorService {
     var functionsPackageJsonFile = File(
       p.join(path, 'functions', 'package.json'),
     );
-    var firebaseVersion = Version.parse(
-      (await run('firebase --version')).outText,
-    );
-    if (firebaseVersion < _minFirebaseCliVersion) {
-      throw StateError('firebase-tools ^$_minFirebaseCliVersion expected');
-    }
+
     if (functionsPackageJsonFile.existsSync()) {
+      // Node test
       var map = parseJsonObject(await functionsPackageJsonFile.readAsString())!;
       var nodeVersion = parseInt(
         mapValueFromParts<Object>(map, ['engines', 'node']),

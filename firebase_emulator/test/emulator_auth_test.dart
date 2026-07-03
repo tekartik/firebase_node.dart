@@ -7,23 +7,18 @@ import 'package:test/test.dart';
 
 var _emulatorService = FirebaseEmulatorService(path: 'deploy');
 Future main() async {
-  if (await _emulatorService.isSupported()) {
+  var options = FirebaseEmulatorOptions(debug: false, onlyAuth: true);
+  if (await _emulatorService.isSupported(options: options)) {
     stdout.writeln('firebase emulator is supported');
   } else {
     test('not_supported', () {}, skip: 'firebase emulator is not supported');
     return;
   }
-  final fbProjectId = await _emulatorService.getProjectId();
+
   group('firebase_functions_dart', () {
     late FirebaseEmulator emulator;
     setUpAll(() async {
-      emulator = await _emulatorService.start(
-        options: FirebaseEmulatorOptions(
-          projectId: fbProjectId,
-          debug: false,
-          onlyAuth: true,
-        ),
-      );
+      emulator = await _emulatorService.start(options: options);
     });
     test('dummy', () {});
     tearDownAll(() async {
