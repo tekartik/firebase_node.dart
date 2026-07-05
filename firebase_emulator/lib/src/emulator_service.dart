@@ -136,6 +136,7 @@ class FirebaseEmulatorService {
       }
       var map = parseJsonObject(response.body)!;
       var services = <String, int>{};
+      // print(map.cvToJsonPretty());
       for (var service in map.keys) {
         var port = parseInt(mapValueFromParts<Object>(map, [service, 'port']));
         if (port != null) {
@@ -165,6 +166,30 @@ class FirebaseEmulatorService {
     );
   }
 
+  bool _checkRunningStatusMatches(
+    EmulatorServiceStatus status,
+    FirebaseEmulatorOptions options,
+  ) {
+    var running = status as EmulatorServiceRunningStatus;
+    if ((options.onlyFunctions ?? false) && running.functionsPort == null) {
+      stderr.writeln('Emulator is running but functions is not running');
+      return false;
+    }
+    if ((options.onlyAuth ?? false) && running.authPort == null) {
+      stderr.writeln('Emulator is running but auth is not running');
+      return false;
+    }
+    if ((options.onlyFirestore ?? false) && running.firestorePort == null) {
+      stderr.writeln('Emulator is running but firestore is not running');
+      return false;
+    }
+    if ((options.onlyStorage ?? false) && running.storagePort == null) {
+      stderr.writeln('Emulator is running but storage is not running');
+      return false;
+    }
+    return true;
+  }
+
   /// Check if emulator is supported.
   ///
   /// Returns false if `.firebaserc` is not present in [path].
@@ -180,25 +205,12 @@ class FirebaseEmulatorService {
       return false;
     }
     if (status.running) {
-      var running = status as EmulatorServiceRunningStatus;
-      if ((options?.onlyFunctions ?? false) && running.functionsPort == null) {
-        stderr.writeln('Emulator is running but functions is not running');
-        return false;
-      }
-      if ((options?.onlyAuth ?? false) && running.authPort == null) {
-        stderr.writeln('Emulator is running but auth is not running');
-        return false;
-      }
-      if ((options?.onlyFirestore ?? false) && running.firestorePort == null) {
-        stderr.writeln('Emulator is running but firestore is not running');
-        return false;
-      }
-      if ((options?.onlyStorage ?? false) && running.storagePort == null) {
-        stderr.writeln('Emulator is running but storage is not running');
-        return false;
-      }
+      return _checkRunningStatusMatches(
+        status,
+        options ?? FirebaseEmulatorOptions(),
+      );
     }
-    return _checkIsSupported(force: force);
+    return true;
   }
 
   /// Check if emulator is supported
@@ -297,6 +309,7 @@ class FirebaseEmulatorService {
     return _isEmulatorPortRunning(host: 'localhost', port: 8080);
   }
 
+  // ignore: unused_element
   Future<bool> _isEmulatorRunning() async {
     var futures = [
       _isEmulatorAuthRunning(),
@@ -331,9 +344,21 @@ class FirebaseEmulatorService {
   ///
   /// Waits until all emulators are ready before returning.
   Future<FirebaseEmulator> start({FirebaseEmulatorOptions? options}) async {
-    await _checkIsSupported(doThrow: true);
+    var status = await checkStatus();
+    if (!status.supported) {
+      throw UnsupportedError('Firebase emulator not supported $status');
+    }
     options ??= FirebaseEmulatorOptions();
     var projectId = options.projectId ?? await getProjectId();
+
+    if (status.running) {
+      if (!_checkRunningStatusMatches(status, options)) {
+        throw UnsupportedError(
+          'running emulator does not match needed options $status $options',
+        );
+      }
+      return FirebaseRunningEmulator(projectId: projectId);
+    }
 
     var controller = ShellLinesController();
     var shell = Shell(
@@ -358,13 +383,6 @@ class FirebaseEmulatorService {
     var onlyStorage = options.onlyStorage ?? false;
 
     var only = onlyFunctions || onlyAuth || onlyFirestore || onlyStorage;
-
-    if (await _isEmulatorRunning()) {
-      stderr.writeln(
-        'Emulator is already running - try using it...not sure about its projectId...',
-      );
-      return FirebaseRunningEmulator(projectId: projectId);
-    }
 
     var persistPath = options.persistPath;
     try {

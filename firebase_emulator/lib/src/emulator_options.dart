@@ -37,4 +37,9 @@ class FirebaseEmulatorOptions {
     this.persistPath,
     this.processStartMode,
   });
+
+  @override
+  String toString() {
+    return 'FirebaseEmulatorOptions(projectId: $projectId, onlyFunctions: $onlyFunctions, onlyAuth: $onlyAuth, onlyFirestore: $onlyFirestore, onlyStorage: $onlyStorage, debug: $debug, persistPath: $persistPath, processStartMode: $processStartMode)';
+  }
 }
