@@ -21,6 +21,7 @@ class FirebaseEmulatorOptions {
   bool? debug;
 
   /// Persist path (i.e. not only in memory)
+  /// empty means no persist too
   String? persistPath;
 
   /// Process start mode
@@ -37,6 +38,29 @@ class FirebaseEmulatorOptions {
     this.persistPath,
     this.processStartMode,
   });
+
+  /// Creates a copy of this [FirebaseEmulatorOptions] but with the given fields replaced with the new values.
+  FirebaseEmulatorOptions copyWith({
+    String? projectId,
+    bool? onlyFunctions,
+    bool? onlyAuth,
+    bool? onlyFirestore,
+    bool? onlyStorage,
+    bool? debug,
+    String? persistPath,
+    ProcessStartMode? processStartMode,
+  }) {
+    return FirebaseEmulatorOptions(
+      projectId: projectId ?? this.projectId,
+      onlyFunctions: onlyFunctions ?? this.onlyFunctions,
+      onlyAuth: onlyAuth ?? this.onlyAuth,
+      onlyFirestore: onlyFirestore ?? this.onlyFirestore,
+      onlyStorage: onlyStorage ?? this.onlyStorage,
+      debug: debug ?? this.debug,
+      persistPath: persistPath ?? this.persistPath,
+      processStartMode: processStartMode ?? this.processStartMode,
+    );
+  }
 
   @override
   String toString() {

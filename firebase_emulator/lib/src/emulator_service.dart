@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cv/cv_json.dart';
 import 'package:dev_build/package.dart';
 import 'package:dev_build/shell.dart';
 import 'package:http/http.dart' as http;
@@ -125,7 +126,7 @@ class FirebaseEmulatorService {
   /// the emulator hub at `localhost:4400/emulators`.
   ///
   /// Returns null if the hub is not running.
-  Future<Map<String, int>?> _getRunningServices() async {
+  Future<Map<String, int>?> _getRunningServices({bool? verbose}) async {
     final url = Uri.parse('http://localhost:$_hubPort/emulators');
     try {
       var response = await http
@@ -135,6 +136,9 @@ class FirebaseEmulatorService {
         return null;
       }
       var map = parseJsonObject(response.body)!;
+      if (verbose ?? false) {
+        stdout.writeln(map.cvToJsonPretty());
+      }
       var services = <String, int>{};
       // print(map.cvToJsonPretty());
       for (var service in map.keys) {
@@ -150,11 +154,14 @@ class FirebaseEmulatorService {
   }
 
   /// Check status
-  Future<EmulatorServiceStatus> checkStatus({bool? force}) async {
+  Future<EmulatorServiceStatus> checkStatus({
+    bool? force,
+    bool? verbose,
+  }) async {
     if (!(await _checkIsSupported(force: force))) {
       return EmulatorServiceNotSupportedStatus();
     }
-    var runningServices = await _getRunningServices();
+    var runningServices = await _getRunningServices(verbose: verbose);
     if (runningServices == null) {
       return EmulatorServiceNotRunningStatus();
     }
