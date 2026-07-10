@@ -350,7 +350,14 @@ class FirebaseEmulatorService {
   /// Starts the Firebase emulator with the given [options].
   ///
   /// Waits until all emulators are ready before returning.
-  Future<FirebaseEmulator> start({FirebaseEmulatorOptions? options}) async {
+  Future<FirebaseEmulator> start({
+    FirebaseEmulatorOptions? options,
+    Duration? timeout,
+  }) async {
+    // 10 ok for node
+    // 30 needed for dart
+    // 30 not enough, raising to 180...
+    timeout ??= const Duration(seconds: 180);
     var status = await checkStatus();
     if (!status.supported) {
       throw UnsupportedError('Firebase emulator not supported $status');
@@ -402,9 +409,7 @@ class FirebaseEmulatorService {
         '${persistPath != null ? ' --import $persistPath --export-on-exit $persistPath' : ''}',
       );
 
-      // 10 ok for node
-      // 30 needed for dart
-      await completer.future.timeout(const Duration(seconds: 30));
+      await completer.future.timeout(timeout);
 
       return createEmulator(
         path: path,
