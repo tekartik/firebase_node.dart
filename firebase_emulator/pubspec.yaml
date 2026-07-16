@@ -8,12 +8,12 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  dev_build: ">=1.1.7+3"
+  dev_build: ">=1.1.8+2"
   tekartik_common_utils:
     git: https://github.com/tekartik/common_utils.dart
   meta: ">=1.18.0"
   path: ">=1.9.1"
-  cv:
+  cv: ">=1.1.11"
   http:
 dev_dependencies:
   lints: ">=6.1.0"
