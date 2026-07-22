@@ -87,6 +87,7 @@ class FirebaseAdminCredentialServiceNode
   @override
   FirebaseAdminCredential? applicationDefault() {
     var credential = nativeInstance.applicationDefault();
+
     return FirebaseAdminCredentialNode(credential);
   }
 
@@ -108,6 +109,7 @@ class FirebaseAdminCredentialNode implements FirebaseAdminCredential {
   Future<FirebaseAdminAccessToken> getAccessToken() async {
     var nativeToken =
         (await nativeInstance.getAccessToken().toDart) as native.AccessToken;
+
     return FirebaseAdminAccessTokenNode(nativeToken);
   }
 }
@@ -153,6 +155,7 @@ class FirebaseNode
     } else {
       app = AppNode(this, nativeInstance.initializeApp(nativeOptions, name));
     }
+
     return addApp(app);
   }
 

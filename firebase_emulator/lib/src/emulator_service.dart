@@ -214,6 +214,7 @@ class FirebaseEmulatorService {
     if (status.running) {
       return _checkRunningStatusMatches(
         status,
+
         options ?? FirebaseEmulatorOptions(),
       );
     }
@@ -371,6 +372,7 @@ class FirebaseEmulatorService {
           'running emulator does not match needed options $status $options',
         );
       }
+
       return FirebaseRunningEmulator(projectId: projectId);
     }
 

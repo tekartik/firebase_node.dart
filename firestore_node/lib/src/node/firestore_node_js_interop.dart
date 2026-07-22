@@ -168,7 +168,6 @@ extension FirestoreExt on Firestore {
   /// modify Firestore documents under lock. Transactions are committed once
   /// [updateFunction] resolves and attempted up to five times on failure.
   ///
-  ///
   /// If the transaction completed successfully or was explicitly aborted
   /// (by the [updateFunction] returning a failed Future), the Future
   /// returned by the updateFunction will be returned here. Else if the

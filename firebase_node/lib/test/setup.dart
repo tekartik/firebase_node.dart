@@ -43,9 +43,11 @@ Future<FirebaseNodeTestContext> setup({
       'Missing env TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT',
     );
   }
+
   Future<Map<String, Object?>> serviceAccountFromPath(String path) async {
     try {
       var serviceAccountJsonString = await fs.file(path).readAsString();
+
       return serviceAccountFromString(serviceAccountJsonString);
     } catch (e) {
       throw (StateError('Cannot read $path'));
@@ -68,6 +70,7 @@ Future<FirebaseNodeTestContext> setup({
   } else {
     throw UnsupportedError('Need useEnv or serviceAccountMap');
   }
+
   return FirebaseNodeTestContext(serviceAccount: jsonData);
 }
 
