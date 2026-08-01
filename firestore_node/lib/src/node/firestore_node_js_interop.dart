@@ -3,21 +3,22 @@ library;
 import 'dart:js_interop' as js;
 import 'dart:js_interop_unsafe' as js;
 
-import 'package:tekartik_core_node/require.dart' as node;
+//import 'package:tekartik_core_node/require.dart' as node;
 // ignore: implementation_imports
-import 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart'
-    as node;
+//import 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart'
+//  as node;
+import 'package:tekartik_firebase_node/firebase_node_js_interop.dart' as node;
 import 'package:tekartik_js_utils_interop/js_date.dart' as js;
 
 /// Singleton instance of [FirebaseAdmin] module.
 final firebaseAdminFirestoreModule = () {
-  return firestoreModule = node.require<FirestoreModule>(
+  return firestoreModule = node.firebaseRequire<FirestoreModule>(
     'firebase-admin/firestore',
   );
 }();
 
 final cloudFirestoreModule = () {
-  return firestoreModule = node.require<FirestoreModule>(
+  return firestoreModule = node.firebaseRequire<FirestoreModule>(
     '@google-cloud/firestore',
   );
 }();

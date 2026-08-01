@@ -6,13 +6,32 @@ import 'dart:js_interop' as js;
 
 import 'package:tekartik_core_node/require.dart' as node;
 
+import '../../firebase_node.dart';
+
+export 'package:tekartik_core_node/require.dart' hide require;
+export 'package:tekartik_platform_node/context_universal.dart';
+//export 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart';
+
+void _log(Object? message) {
+  // ignore: avoid_print
+  print(message);
+}
+
+/// Require a module.
+T firebaseRequire<T extends js.JSObject>(String module) {
+  // catch exception and display stack trace
+  if (debugFirebaseNode) {
+    _log('firebase require module $module');
+  }
+  return node.require(module) as T;
+}
 // admin =========================================================================
 
 /// The default app name.
 const defaultAppName = '[DEFAULT]';
 
 /// Singleton instance of [FirebaseAdminModule] module.
-final firebaseAdminModule = node.require<FirebaseAdminModule>(
+final firebaseAdminModule = firebaseRequire<FirebaseAdminModule>(
   'firebase-admin/app',
 );
 

@@ -3,21 +3,22 @@ library;
 import 'dart:js_interop' as js;
 import 'dart:js_interop';
 
-// ignore: depend_on_referenced_packages
-import 'package:tekartik_core_node/require.dart' as node;
 // ignore: implementation_imports
-import 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart'
-    as node;
+import 'package:tekartik_firebase_node/firebase_node_js_interop.dart' as node;
 
 import 'common_import.dart';
 
 /// Singleton instance of [FirebaseAdmin] module.
 final firebaseAdminStorageModule = () {
-  return storageModule = node.require<StorageModule>('firebase-admin/storage');
+  return storageModule = node.firebaseRequire<StorageModule>(
+    'firebase-admin/storage',
+  );
 }();
 
 final cloudStorageModule = () {
-  return storageModule = node.require<StorageModule>('@google-cloud/storage');
+  return storageModule = node.firebaseRequire<StorageModule>(
+    '@google-cloud/storage',
+  );
 }();
 
 /// First loaded wins

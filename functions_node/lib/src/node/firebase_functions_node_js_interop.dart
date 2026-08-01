@@ -12,7 +12,7 @@ import 'firebase_functions_scheduler_node_js_interop.dart';
 import 'import_node.dart';
 
 /// The Firebase Auth service interface.
-final firebaseFunctionsModule = require<JSFirebaseFonctionsModule>(
+final firebaseFunctionsModule = firebaseRequire<JSFirebaseFonctionsModule>(
   'firebase-functions',
 );
 final firebaseFunctions = firebaseFunctionsModule;

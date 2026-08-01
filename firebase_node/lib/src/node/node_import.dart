@@ -2,5 +2,4 @@
 // export 'package:tekartik_core_node/require.dart';
 
 export 'package:tekartik_core_node/require.dart' hide require;
-export 'package:tekartik_firebase_node/firebase_node_js_interop.dart' show App;
 export 'package:tekartik_platform_node/context_universal.dart';

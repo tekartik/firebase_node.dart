@@ -4,11 +4,11 @@
 import 'dart:async';
 import 'dart:js_interop' as js;
 
-import 'node_import.dart';
+import 'package:tekartik_firebase_node/firebase_node_js_interop.dart';
 
 /// The Firebase Auth service interface.
 final firebaseAdminAuthModule = () {
-  return authModule = require<AuthModule>('firebase-admin/auth');
+  return authModule = firebaseRequire<AuthModule>('firebase-admin/auth');
 }();
 
 /// First loaded wins
