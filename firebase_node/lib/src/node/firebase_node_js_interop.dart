@@ -10,6 +10,7 @@ import '../../firebase_node.dart';
 
 export 'package:tekartik_core_node/require.dart' hide require;
 export 'package:tekartik_platform_node/context_universal.dart';
+
 //export 'package:tekartik_firebase_node/src/node/firebase_node_js_interop.dart';
 
 void _log(Object? message) {
