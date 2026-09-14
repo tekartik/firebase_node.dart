@@ -5,6 +5,7 @@ environment:
 workspace:
   - auth_node
   - firebase_node
+  - firebase_node_test
   - firestore_node
   - functions_node
   - pubsub_node

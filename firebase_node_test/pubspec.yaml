@@ -1,0 +1,21 @@
+name: tekartik_firebase_node_test
+description: Firebase node test helpers (package.json npm constraints)
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  test: ">=1.31.0"
+  tekartik_app_node_build:
+    git:
+      url: https://github.com/tekartik/app_node_utils.dart
+      path: app_build
+    version: '>=0.3.6'
+
+dev_dependencies:
+  path: ">=1.9.1"
+  process_run: ">=1.3.4"
+
+resolution: workspace

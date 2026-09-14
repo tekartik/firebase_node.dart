@@ -10,6 +10,7 @@ Future<void> main() async {
     'functions_node',
     'firestore_node',
     'firebase_node',
+    'firebase_node_test',
     'auth_node',
   ]) {
     var path = join(topDir, dir);
