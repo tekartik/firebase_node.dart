@@ -33,7 +33,7 @@ jobs:
           sdk: ${{ matrix.dart }}
       - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
       - run: dart --version
       - run: dart pub get
       - run: dart run tool/run_ci.dart
