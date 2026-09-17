@@ -1,0 +1,22 @@
+name: firebase_node_workflow_ci_firebase_test
+description: Workflow support to run the firebase_node env test only
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+dev_dependencies:
+  path: ">=1.9.1"
+  lints: ">=6.0.0"
+  tekartik_firebase_node_test:
+    git:
+      url: https://github.com/tekartik/firebase_node.dart
+      path: firebase_node_test
+  # For `firebaseShellWithFlag`
+  tekartik_firebase_test:
+    git:
+      url: https://github.com/tekartik/firebase.dart
+      path: firebase_test
+    version: '>=0.8.0'
+resolution: workspace

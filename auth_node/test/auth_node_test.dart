@@ -16,10 +16,12 @@ Future<void> main() async {
     });
     return;
   }
-  if (runningOnGithub && !isGithubActionsUbuntuAndDartStable()) {
-    test('Skip on github for other than ubuntu and dart stable', () {
+  if (shouldSkipEnvTestOnGithub()) {
+    test('Skip env test on github', () {
       // ignore: avoid_print
       print('githubActionsPrefix: $githubActionsPrefix');
+      // ignore: avoid_print
+      print('Env test only run by the dedicated env test workflow (linux)');
     });
     return;
   }

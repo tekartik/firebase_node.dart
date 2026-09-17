@@ -90,16 +90,35 @@ class FirebaseNodeTestContext {
 /// True if running on github
 bool get runningOnGithub => platform.runningOnGithub;
 
-/// stable
-/// ubuntu-latest
-bool isGithubActionsUbuntuAndDartStable() {
-  return platform.environment['TEKARTIK_GITHUB_ACTIONS_DART'] == 'stable' &&
-      (platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']?.startsWith(
-            'ubuntu',
-          ) ??
-          false);
-}
+String get _platformName => platform.isLinux
+    ? 'linux'
+    : platform.isMacOS
+    ? 'macos'
+    : platform.isWindows
+    ? 'windows'
+    : 'unknown';
 
 /// Github actions prefix
-final githubActionsPrefix =
-    'ga_${platform.environment['TEKARTIK_GITHUB_ACTIONS_DART']}_${platform.environment['TEKARTIK_GITHUB_ACTIONS_OS']?.split('-').first}';
+final githubActionsPrefix = 'ga_$_platformName';
+
+/// Env variable set by the dedicated env test workflows
+/// (`run_ci_<name>_test.yml`) through
+/// `repo_support/workflow_ci_<name>_test/tool/run_ci.dart`, which uses
+/// `firebaseGithubActionEnvTestShell` (`package:tekartik_firebase_test/ci_shell_io.dart`).
+///
+/// It is not set by the regular run_ci.yml workflow.
+const githubActionsEnvTestEnvKey = 'TEKARTIK_GITHUB_ACTIONS_ENV_TEST';
+
+/// True if the env tests (needing the private service account) are explicitly
+/// requested, i.e. when running the dedicated env test workflow.
+bool isGithubActionsEnvTest() =>
+    platform.environment[githubActionsEnvTestEnvKey] == 'true';
+
+/// True if the env tests (needing the private service account) must be
+/// skipped.
+///
+/// On github they are only run by the dedicated env test workflow
+/// (`run_ci_<name>_test.yml`), on linux. Outside of github they are always run
+/// (when the env is available).
+bool shouldSkipEnvTestOnGithub() =>
+    runningOnGithub && (!isGithubActionsEnvTest() || !platform.isLinux);

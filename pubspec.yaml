@@ -10,5 +10,9 @@ workspace:
   - functions_node
   - pubsub_node
   - repo_support
+  - repo_support/workflow_ci_firebase_test
+  - repo_support/workflow_ci_firestore_test
+  - repo_support/workflow_ci_storage_test
+  - repo_support/workflow_ci_auth_test
   - storage_node
   - firebase_emulator
