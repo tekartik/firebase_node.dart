@@ -16,62 +16,99 @@ String? _envGetServiceAccountJsonOrPath() {
 }
 
 /// Setup
+///
+/// When [verbose] is true, the steps and the resulting context are printed
+/// (never the private key), see `tool/setup_io_env_verbose.dart`.
 Future<FirebaseNodeTestContext?> setupOrNull({
   bool? useEnv,
   Map<String, Object?>? serviceAccountMap,
+  bool? verbose,
 }) async {
   try {
-    return await setup(useEnv: useEnv, serviceAccountMap: serviceAccountMap);
-  } catch (e) {
+    return await setup(
+      useEnv: useEnv,
+      serviceAccountMap: serviceAccountMap,
+      verbose: verbose,
+    );
+  } catch (e, st) {
     print('Error: $e');
+    if (verbose ?? false) {
+      print(st);
+    }
     return null;
   }
 }
 
 /// Setup
+///
+/// When [verbose] is true, each step is printed (never the private key).
 Future<FirebaseNodeTestContext> setup({
   bool? useEnv,
   Map<String, Object?>? serviceAccountMap,
+  bool? verbose,
 }) async {
+  void log(String message) {
+    if (verbose ?? false) {
+      print('# setup: $message');
+    }
+  }
+
+  log(
+    'platform: $_platformName, useEnv: $useEnv, '
+    'serviceAccountMap: ${serviceAccountMap != null}',
+  );
+
   Map<String, Object?> serviceAccountFromString(String jsonString) {
+    log('parsing service account json (${jsonString.length} chars)');
     return (jsonDecode(jsonString) as Map).cast<String, Object?>();
   }
 
   var serviceAccountJsonOrPath = _envGetServiceAccountJsonOrPath();
   if (serviceAccountJsonOrPath == null) {
+    log('env $_envServiceAccount not set');
     throw UnsupportedError(
       'Missing env TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT',
     );
   }
 
   Future<Map<String, Object?>> serviceAccountFromPath(String path) async {
+    log('reading service account file $path');
     try {
       var serviceAccountJsonString = await fs.file(path).readAsString();
 
       return serviceAccountFromString(serviceAccountJsonString);
     } catch (e) {
+      log('cannot read $path: $e');
       throw (StateError('Cannot read $path'));
     }
   }
 
   Map<String, Object?> jsonData;
   if (serviceAccountMap != null) {
+    log('using the service account map given');
     jsonData = serviceAccountMap;
   } else if (useEnv == true) {
     var serviceAccountJsonOrPath = _envGetServiceAccountJsonOrPath();
     if (serviceAccountJsonOrPath == null) {
+      log('env $_envServiceAccount not set');
       throw (StateError('$_envServiceAccount not set'));
     }
     if (serviceAccountJsonOrPath.startsWith('{')) {
+      log('env $_envServiceAccount holds the service account json');
       jsonData = serviceAccountFromString(serviceAccountJsonOrPath);
     } else {
+      log('env $_envServiceAccount holds a path');
       jsonData = await serviceAccountFromPath(serviceAccountJsonOrPath);
     }
   } else {
+    log('neither useEnv nor serviceAccountMap');
     throw UnsupportedError('Need useEnv or serviceAccountMap');
   }
 
-  return FirebaseNodeTestContext(serviceAccount: jsonData);
+  var context = FirebaseNodeTestContext(serviceAccount: jsonData);
+  log('context: $context');
+  log('service account fields: ${jsonData.keys.toList()..sort()}');
+  return context;
 }
 
 /// Test context
@@ -83,8 +120,20 @@ class FirebaseNodeTestContext {
   FirebaseAppOptions get appOptions =>
       firebaseNodeAppOptionsFromServiceAccountMap(serviceAccount);
 
+  /// Service account project id
+  String? get projectId => serviceAccount['project_id']?.toString();
+
+  /// Service account client email
+  String? get clientEmail => serviceAccount['client_email']?.toString();
+
   /// Constructor
   FirebaseNodeTestContext({required this.serviceAccount});
+
+  /// Never displays the private key.
+  @override
+  String toString() =>
+      'FirebaseNodeTestContext(projectId: $projectId, '
+      'clientEmail: $clientEmail, type: ${serviceAccount['type']})';
 }
 
 /// True if running on github

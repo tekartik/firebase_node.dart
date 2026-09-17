@@ -49,9 +49,11 @@ Future<void> main() async {
       // print(jsObjectGetOwnPropertyNames(app.nativeInstance!));
       // [appStore, services_, isDeleted_, name_, options_, INTERNAL]
       // print(firebase.credential.applicationDefault());
-      print(
-        (await firebase.credential.applicationDefault()!.getAccessToken()).data,
-      );
+      // Never print the token itself, this now runs on github.
+      var accessToken = (await firebase.credential
+          .applicationDefault()!
+          .getAccessToken());
+      print('access token: ${accessToken.data.length} chars');
       print(app.options);
       print(app.options.projectId);
       await app.delete();
