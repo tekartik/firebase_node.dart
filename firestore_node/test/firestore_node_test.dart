@@ -5,7 +5,7 @@ library;
 
 import 'package:tekartik_firebase_firestore_node/firestore_node_interop.dart';
 import 'package:tekartik_firebase_firestore_node/src/node/common_import.dart';
-import 'package:tekartik_firebase_firestore_test/firestore_test.dart';
+import 'package:tekartik_firebase_firestore_test/firestore_test_runner.dart';
 import 'package:tekartik_firebase_node/firebase_node_interop.dart';
 import 'package:tekartik_firebase_node/test/setup.dart';
 import 'package:tekartik_platform_node/context_node.dart';

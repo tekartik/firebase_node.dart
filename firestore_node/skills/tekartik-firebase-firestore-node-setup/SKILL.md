@@ -80,7 +80,7 @@ only the service getter differs, so firestore code stays platform neutral.
   time). The shared suite is `runFirestoreTests(firebase: firebaseNode,
   firestoreService: firestoreServiceNode, options: context.appOptions,
   testContext: FirestoreTestContext(rootCollectionPath: ...))` from
-  `package:tekartik_firebase_firestore_test/firestore_test.dart`; the root
+  `package:tekartik_firebase_firestore_test/firestore_test_runner.dart`; the root
   path comes from `TEKARTIK_FIRESTORE_NODE_TEST_ROOT_COLLECTION_PATH` (read
   with `platformContextNode.node!.environment` from
   `package:tekartik_platform_node/context_node.dart`) so the tests write under
@@ -177,7 +177,7 @@ Future<void> main() async {
 library;
 
 import 'package:tekartik_firebase_firestore_node/firestore_node_interop.dart';
-import 'package:tekartik_firebase_firestore_test/firestore_test.dart';
+import 'package:tekartik_firebase_firestore_test/firestore_test_runner.dart';
 import 'package:tekartik_firebase_node/firebase_node_interop.dart';
 import 'package:tekartik_firebase_node/test/setup.dart';
 import 'package:tekartik_platform_node/context_node.dart';

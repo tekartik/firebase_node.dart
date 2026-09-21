@@ -4,7 +4,7 @@ import 'dart:js_interop' as js;
 import 'dart:js_interop_unsafe';
 
 import 'package:tekartik_firebase/firebase_mixin.dart';
-import 'package:tekartik_firebase_firestore_node/src/import_firestore.dart';
+import 'package:tekartik_firebase_firestore/firestore_mixin.dart';
 // ignore: implementation_imports
 import 'package:tekartik_firebase_node/impl/firebase_node.dart' show AppNode;
 import 'package:tekartik_js_utils_interop/js_date.dart' as js;
@@ -244,39 +244,53 @@ class QueryNode extends Object
   final FirestoreNode firestore;
   @override
   final node.DocumentQuery nativeInstance;
+  @override
+  final QueryInfo? queryInfo;
 
-  QueryNode(this.firestore, this.nativeInstance);
+  QueryNode(this.firestore, this.nativeInstance, [this.queryInfo]);
 }
 
 const orderByDirectionAsc = 'asc';
 const orderByDirectionDesc = 'desc';
 
-abstract mixin class QueryNodeMixin implements Query {
+abstract mixin class QueryNodeMixin implements Query, HasQueryInfo {
   FirestoreNode get firestoreNode => firestore as FirestoreNode;
 
   node.DocumentQuery get nativeInstance;
+
+  @override
+  QueryInfo? get queryInfo => null;
 
   @override
   Future<QuerySnapshot> get() async =>
       _wrapQuerySnapshot(firestoreNode, await nativeInstance.get().toDart);
 
   @override
-  Query select(List<String> fieldPaths) =>
-      _wrapQuery(firestoreNode, nativeInstance.selectAll(fieldPaths));
+  Query select(List<String> fieldPaths) => _wrapQuery(
+    firestoreNode,
+    nativeInstance.selectAll(fieldPaths),
+    queryInfo: (queryInfo?.clone() ?? QueryInfo())..selectKeyPaths = fieldPaths,
+  );
 
   @override
-  Query limit(int limit) =>
-      _wrapQuery(firestoreNode, nativeInstance.limit(limit));
+  Query limit(int limit) => _wrapQuery(
+    firestoreNode,
+    nativeInstance.limit(limit),
+    queryInfo: (queryInfo?.clone() ?? QueryInfo())..limit = limit,
+  );
 
   @override
   Query orderBy(String key, {bool? descending}) {
-    // if (key == firestoreNameFieldPath) {
+    var desc = descending ?? false;
+    var newQueryInfo = (queryInfo?.clone() ?? QueryInfo())
+      ..orderBys.add(OrderByInfo(fieldPath: key, ascending: !desc));
     return _wrapQuery(
       firestoreNode,
       nativeInstance.orderBy(
         key,
-        (descending ?? false) ? orderByDescending : orderByDirectionAsc,
+        desc ? orderByDescending : orderByDirectionAsc,
       ),
+      queryInfo: newQueryInfo,
     );
   }
 
@@ -291,7 +305,12 @@ abstract mixin class QueryNodeMixin implements Query {
         _unwrapDocumentSnapshot(snapshot!),
       );
     }
-    return _wrapQuery(firestoreNode, result);
+    return _wrapQuery(
+      firestoreNode,
+      result,
+      queryInfo: (queryInfo?.clone() ?? QueryInfo())
+        ..startAt(snapshot: snapshot, values: values),
+    );
   }
 
   @override
@@ -305,7 +324,12 @@ abstract mixin class QueryNodeMixin implements Query {
         _unwrapDocumentSnapshot(snapshot!),
       );
     }
-    return _wrapQuery(firestoreNode, result);
+    return _wrapQuery(
+      firestoreNode,
+      result,
+      queryInfo: (queryInfo?.clone() ?? QueryInfo())
+        ..startAfter(snapshot: snapshot, values: values),
+    );
   }
 
   @override
@@ -319,7 +343,12 @@ abstract mixin class QueryNodeMixin implements Query {
         _unwrapDocumentSnapshot(snapshot!),
       );
     }
-    return _wrapQuery(firestoreNode, result);
+    return _wrapQuery(
+      firestoreNode,
+      result,
+      queryInfo: (queryInfo?.clone() ?? QueryInfo())
+        ..endAt(snapshot: snapshot, values: values),
+    );
   }
 
   @override
@@ -333,7 +362,12 @@ abstract mixin class QueryNodeMixin implements Query {
         _unwrapDocumentSnapshot(snapshot!),
       );
     }
-    return _wrapQuery(firestoreNode, result);
+    return _wrapQuery(
+      firestoreNode,
+      result,
+      queryInfo: (queryInfo?.clone() ?? QueryInfo())
+        ..endBefore(snapshot: snapshot, values: values),
+    );
   }
 
   @override
@@ -351,31 +385,53 @@ abstract mixin class QueryNodeMixin implements Query {
     bool? isNull,
   }) {
     var query = nativeInstance;
+    var newQueryInfo = (queryInfo?.clone() ?? QueryInfo());
 
     void addCondition(String field, String opStr, Object value) {
       query = query.where(field, opStr, toNativeValue(value));
     }
 
-    if (isEqualTo != null) addCondition(field, '==', isEqualTo);
-    if (isLessThan != null) addCondition(field, '<', isLessThan);
+    if (isEqualTo != null) {
+      addCondition(field, '==', isEqualTo);
+      newQueryInfo.addWhere(WhereInfo(field, isEqualTo: isEqualTo));
+    }
+    if (isLessThan != null) {
+      addCondition(field, '<', isLessThan);
+      newQueryInfo.addWhere(WhereInfo(field, isLessThan: isLessThan));
+    }
     if (isLessThanOrEqualTo != null) {
       addCondition(field, '<=', isLessThanOrEqualTo);
+      newQueryInfo.addWhere(
+        WhereInfo(field, isLessThanOrEqualTo: isLessThanOrEqualTo),
+      );
     }
-    if (isGreaterThan != null) addCondition(field, '>', isGreaterThan);
+    if (isGreaterThan != null) {
+      addCondition(field, '>', isGreaterThan);
+      newQueryInfo.addWhere(WhereInfo(field, isGreaterThan: isGreaterThan));
+    }
     if (isGreaterThanOrEqualTo != null) {
       addCondition(field, '>=', isGreaterThanOrEqualTo);
+      newQueryInfo.addWhere(
+        WhereInfo(field, isGreaterThanOrEqualTo: isGreaterThanOrEqualTo),
+      );
     }
     if (arrayContains != null) {
       addCondition(field, 'array-contains', arrayContains);
+      newQueryInfo.addWhere(WhereInfo(field, arrayContains: arrayContains));
     }
     if (whereIn != null) {
       addCondition(field, 'in', whereIn);
+      newQueryInfo.addWhere(WhereInfo(field, whereIn: whereIn));
     }
     if (notIn != null) {
       addCondition(field, 'not-in', notIn);
+      newQueryInfo.addWhere(WhereInfo(field, notIn: notIn));
     }
     if (arrayContainsAny != null) {
       addCondition(field, 'array-contains-any', arrayContainsAny);
+      newQueryInfo.addWhere(
+        WhereInfo(field, arrayContainsAny: arrayContainsAny),
+      );
     }
 
     if (isNull != null) {
@@ -385,8 +441,9 @@ abstract mixin class QueryNodeMixin implements Query {
         'Use isEqualTo to filter on non-null values.',
       );
       query = query.where(field, '==', null);
+      newQueryInfo.addWhere(WhereInfo(field, isNull: isNull));
     }
-    return _wrapQuery(firestoreNode, query);
+    return _wrapQuery(firestoreNode, query, queryInfo: newQueryInfo);
   }
 
   @override
@@ -1042,8 +1099,9 @@ class TransactionNode implements Transaction {
 
 QueryNode _wrapQuery(
   FirestoreNode firestore,
-  node.DocumentQuery nativeInstance,
-) => QueryNode(firestore, nativeInstance);
+  node.DocumentQuery nativeInstance, {
+  QueryInfo? queryInfo,
+}) => QueryNode(firestore, nativeInstance, queryInfo);
 
 DocumentSnapshotNode _wrapDocumentSnapshot(
   FirestoreNode firestore,
