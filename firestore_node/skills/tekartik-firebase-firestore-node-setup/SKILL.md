@@ -62,11 +62,11 @@ only the service getter differs, so firestore code stays platform neutral.
   `supportsDocumentSnapshotTime`, `supportsTimestamps`,
   `supportsTimestampsInSnapshots`, `supportsQuerySnapshotCursor`,
   `supportsFieldValueArray`, `supportsTrackChanges` (`onSnapshot` streams),
-  `supportsListCollections`, `supportsAggregateQueries`,
-  `supportsVectorValue`, `supportsBlobs`. Code written for the abstraction
-  (`collection`, `doc`, `add`, `set` with `SetOptions(merge: true)`, `update`,
-  `get`, `where`/`orderBy`/`limit`, `runTransaction`, `batch`, `getAll`)
-  works unchanged.
+  `supportsListCollections`, `supportsListMissingDocuments`,
+  `supportsAggregateQueries`, `supportsVectorValue`, `supportsBlobs`. Code
+  written for the abstraction (`collection`, `doc`, `add`, `set` with
+  `SetOptions(merge: true)`, `update`, `get`, `where`/`orderBy`/`limit`,
+  `runTransaction`, `batch`, `getAll`) works unchanged.
 * Values round-trip both ways: `Timestamp`, `GeoPoint`, `Blob`, `VectorValue`,
   `DocumentReference`, nested lists and maps, `FieldValue.serverTimestamp`,
   `FieldValue.delete` and the array field values.

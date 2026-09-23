@@ -67,6 +67,9 @@ class FirestoreServiceNode
   bool get supportsListCollections => true;
 
   @override
+  bool get supportsListMissingDocuments => true;
+
+  @override
   bool get supportsAggregateQueries => true;
 
   @override
@@ -489,7 +492,9 @@ abstract mixin class QueryNodeMixin implements Query, HasQueryInfo {
   }
 }
 
-class CollectionReferenceNode extends QueryNode implements CollectionReference {
+class CollectionReferenceNode extends QueryNode
+    with CollectionReferenceDefaultMixin
+    implements CollectionReference {
   @override
   node.CollectionReference get nativeInstance =>
       super.nativeInstance as node.CollectionReference;
@@ -511,6 +516,21 @@ class CollectionReferenceNode extends QueryNode implements CollectionReference {
             .add(documentDataToNativeDocumentData(DocumentData(data)))
             .toDart),
       );
+
+  /// The native implementation lists all the documents at once (paging is
+  /// applied locally), always including the missing ones.
+  @override
+  Future<FirestoreListDocumentsResult> listDocuments({
+    FirestoreListDocumentsOptions? options,
+  }) async {
+    if (!(options?.showMissing ?? true)) {
+      return super.listDocuments(options: options);
+    }
+    var refs = (await nativeInstance.listDocuments().toDart).toDart
+        .map((nativeRef) => _wrapDocumentReference(firestore, nativeRef))
+        .toList();
+    return firestoreListDocumentsResultFromAllRefs(refs, options);
+  }
 
   @override
   // ignore: invalid_use_of_protected_member

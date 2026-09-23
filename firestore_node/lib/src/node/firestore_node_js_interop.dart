@@ -856,6 +856,10 @@ extension CollectionReferenceExt on CollectionReference {
   /// it a document ID automatically.
   /// newly created document after it has been written to the backend.
   external js.JSPromise<DocumentReference> add(DocumentData? data);
+
+  /// Retrieves the list of documents in this collection, including missing
+  /// documents (without data but with sub-collections).
+  external js.JSPromise<js.JSArray<DocumentReference>> listDocuments();
 }
 
 /// Sentinel values that can be used when writing document fields with set()
