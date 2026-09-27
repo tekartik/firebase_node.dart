@@ -81,7 +81,15 @@ class GetFilesResponse {
 
 /// File save options
 extension type FileSaveOptions._(JSObject _) implements JSObject {
-  external factory FileSaveOptions({String? contentType});
+  external factory FileSaveOptions({
+    String? contentType,
+    FileSaveMetadata? metadata,
+  });
+}
+
+/// File save metadata
+extension type FileSaveMetadata._(JSObject _) implements JSObject {
+  external factory FileSaveMetadata({String? cacheControl});
 }
 extension type File._(js.JSObject _) implements js.JSObject {}
 
@@ -157,6 +165,8 @@ extension FileMetadataExt on FileMetadata {
   external String get updated;
 
   external String? get contentType;
+
+  external String? get cacheControl;
 }
 
 extension type GetFilesOptions._(js.JSObject _) implements js.JSObject {

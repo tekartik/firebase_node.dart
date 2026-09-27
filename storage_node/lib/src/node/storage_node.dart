@@ -98,9 +98,15 @@ class FileNode with FileMixin implements File {
     Uint8List bytes, {
     StorageUploadFileOptions? options,
   }) async {
+    var cacheControl = options?.cacheControl;
     var saveOptions = options == null
         ? null
-        : node.FileSaveOptions(contentType: options.contentType);
+        : cacheControl == null
+        ? node.FileSaveOptions(contentType: options.contentType)
+        : node.FileSaveOptions(
+            contentType: options.contentType,
+            metadata: node.FileSaveMetadata(cacheControl: cacheControl),
+          );
     if (saveOptions == null) {
       await nativeInstance.save(bytes.toJS).toDart;
       return;
@@ -213,11 +219,15 @@ class FileMetadataNode with FileMetadataMixin implements FileMetadata {
   String? get contentType => nativeInstance.contentType;
 
   @override
+  String? get cacheControl => nativeInstance.cacheControl;
+
+  @override
   String toString() => {
     'size': size,
     'dateUpdated': dateUpdated.toUtc().toIso8601String(),
     'md5Hash': md5Hash,
     if (contentType != null) 'contentType': contentType,
+    if (cacheControl != null) 'cacheControl': cacheControl,
   }.toString();
 }
 
