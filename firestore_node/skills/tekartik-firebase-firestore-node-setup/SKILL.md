@@ -61,7 +61,8 @@ only the service getter differs, so firestore code stays platform neutral.
 * Every capability flag of the service is `true`: `supportsQuerySelect`,
   `supportsDocumentSnapshotTime`, `supportsTimestamps`,
   `supportsTimestampsInSnapshots`, `supportsQuerySnapshotCursor`,
-  `supportsFieldValueArray`, `supportsTrackChanges` (`onSnapshot` streams),
+  `supportsFieldValueArray`, `supportsFieldValueIncrement`,
+  `supportsTrackChanges` (`onSnapshot` streams),
   `supportsListCollections`, `supportsListMissingDocuments`,
   `supportsAggregateQueries`, `supportsVectorValue`, `supportsBlobs`. Code
   written for the abstraction (`collection`, `doc`, `add`, `set` with

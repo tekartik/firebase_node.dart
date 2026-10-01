@@ -61,6 +61,9 @@ class FirestoreServiceNode
   bool get supportsFieldValueArray => true;
 
   @override
+  bool get supportsFieldValueIncrement => true;
+
+  @override
   bool get supportsTrackChanges => true;
 
   @override
@@ -685,6 +688,8 @@ js.JSAny documentValueToNativeValue(Object value) {
             value.data.map((element) => toNativeValueOrNull(element)).toList(),
           );
         }
+      } else if (value is FieldValueIncrement) {
+        return node.firestoreModule.fieldValue.increment(value.data);
       }
       throw ArgumentError('Unsupported FieldValue $value');
     }
