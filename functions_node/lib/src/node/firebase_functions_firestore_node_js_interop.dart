@@ -52,6 +52,9 @@ extension type JSFirestoreEvent<T extends js.JSAny?>._(js.JSObject _)
 extension JSFirestoreEventExt<T extends js.JSAny?> on JSFirestoreEvent<T> {
   /// The document path
   external String get document;
+
+  /// The values of the wildcards in the document path.
+  external js.JSObject? get params;
 }
 
 /// A CloudEventBase is the base of a cross-platform format for encoding a serverless event. For more information, see https://github.com/cloudevents/spec.
@@ -61,6 +64,12 @@ extension type JSCloudEvent<T extends js.JSAny?>._(js.JSObject _)
 extension JSCloudEventExt<T extends js.JSAny?> on JSCloudEvent<T> {
   /// Information about this specific event.
   external T get data;
+
+  /// The type of the event (e.g. google.cloud.firestore.document.v1.written).
+  external String? get type;
+
+  /// When the event happened, as an ISO 8601 string.
+  external String? get time;
 }
 
 /// EventHandlerOptions interface

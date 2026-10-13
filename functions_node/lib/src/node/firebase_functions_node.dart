@@ -11,6 +11,7 @@ import 'package:tekartik_firebase_node/firebase_node.dart' as node;
 import 'firebase_functions_firestore_node.dart';
 import 'firebase_functions_https_node.dart';
 import 'firebase_functions_scheduler_node.dart';
+import 'global_options_node.dart';
 
 final FirebaseFunctionsNode firebaseFunctionsNode = FirebaseFunctionsNodeImpl();
 
@@ -84,11 +85,14 @@ class _ParamsNode implements Params {
 
 extension on GlobalOptions {
   node.JSGlobalOptions toJS() {
-    return node.JSGlobalOptions(
-      memory: memory,
-      timeoutSeconds: timeoutSeconds,
-      region: region,
-      concurrency: concurrency,
+    return globalOptionsApplyToNode(
+      node.JSGlobalOptions(
+        memory: memory,
+        timeoutSeconds: timeoutSeconds,
+        region: region,
+        concurrency: concurrency,
+      ),
+      this,
     );
   }
 }

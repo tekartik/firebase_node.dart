@@ -1,4 +1,5 @@
 import 'dart:js_interop' as js;
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:tekartik_firebase/firebase_mixin.dart';
@@ -144,10 +145,15 @@ class FileNode with FileMixin implements File {
   @override
   Bucket get bucket => bucketNode;
 
+  /// null until read (a file from bucket.file() has an empty metadata object).
   @override
-  FileMetadata? get metadata => nativeInstance.metadata == null
-      ? null
-      : FileMetadataNode(nativeInstance.metadata!);
+  FileMetadata? get metadata {
+    var nativeMetadata = nativeInstance.metadata;
+    if (nativeMetadata == null || !nativeMetadata.has('updated')) {
+      return null;
+    }
+    return FileMetadataNode(nativeMetadata);
+  }
 
   @override
   Future<FileMetadata> getMetadata() async {
@@ -206,11 +212,16 @@ class FileMetadataNode with FileMetadataMixin implements FileMetadata {
 
   FileMetadataNode(this.nativeInstance);
 
+  /// The GCS md5Hash, already base64 (like the rest, admin sdk and flutter
+  /// implementations).
   @override
-  String get md5Hash => base64.encode(nativeInstance.md5Hash.codeUnits);
+  String get md5Hash => nativeInstance.md5Hash;
+
+  /// null when not set.
+  DateTime? get _dateUpdatedOrNull => anyToDateTime(nativeInstance.updated);
 
   @override
-  DateTime get dateUpdated => anyToDateTime(nativeInstance.updated)!;
+  DateTime get dateUpdated => _dateUpdatedOrNull!;
 
   @override
   int get size => int.tryParse(nativeInstance.size) ?? 0;
@@ -224,7 +235,7 @@ class FileMetadataNode with FileMetadataMixin implements FileMetadata {
   @override
   String toString() => {
     'size': size,
-    'dateUpdated': dateUpdated.toUtc().toIso8601String(),
+    'dateUpdated': _dateUpdatedOrNull?.toUtc().toIso8601String(),
     'md5Hash': md5Hash,
     if (contentType != null) 'contentType': contentType,
     if (cacheControl != null) 'cacheControl': cacheControl,

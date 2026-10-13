@@ -4,6 +4,7 @@
 library;
 
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:tekartik_firebase_firestore/firestore.dart' as firestore;
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node.dart';
@@ -41,7 +42,10 @@ void main() {
       // [_values]
     });
     test('Bytes', () {
-      //var jsUint8Array = Uint8List.fromList([1, 2, 3]).toJS;
+      var blob = firestore.Blob(Uint8List.fromList([1, 2, 3]));
+      var native = toNativeValue(blob);
+      expect(native.isA<JSUint8Array>(), isTrue);
+      expect(fromNativeValue(native), blob);
     });
     test('Aggregate fields', () {
       print(jsObjectKeys(firebaseAdminFirestoreModule.aggregateFields));
@@ -83,20 +87,18 @@ void main() {
       // print(geoPoint.instanceof(firestoreModule.geoPointProto as JSFunction));
     });
     test('Vector', () {
-      //print(jsObjectKeys(firestoreModule.vectorProto));
-      var geoPoint = firestoreModule.geoPointProto.fromLatitudeAndLongitude(
-        1,
-        2,
-      );
-      expect(geoPoint.isJSTimestamp(), isFalse);
-      expect(geoPoint.isJSGeoPoint(), isTrue);
-      expect(geoPoint.latitude, 1);
-      expect(geoPoint.longitude, 2);
-      print(jsObjectKeys(geoPoint));
-      // [_latitude, _longitude]
-      //print(jsObjectKeys(geoPoint.getProperty('__proto__'.toJS)));
-      //print(geoPoint.instanceOfString('GeoPoint')); // false
-      // print(geoPoint.instanceof(firestoreModule.geoPointProto as JSFunction));
+      var vector = firestoreModule.fieldValue.vector([.5.toJS].toJS);
+      expect(vector.isVector(), isTrue);
+      expect(vector.isJSGeoPoint(), isFalse);
+      expect((vector as VectorValue).toDoubleList(), [.5]);
+      // A map read from a document is a plain object, even with '_values'.
+      var map = {
+        '_values': [1],
+      }.jsify()!;
+      expect((map as JSObject).isVector(), isFalse);
+      expect(fromNativeValue(map), {
+        '_values': [1],
+      });
     });
     test('fromToNative', () {
       void testRoundTrip(Object? value) {
@@ -118,6 +120,23 @@ void main() {
       testRoundTrip({'test': firestore.Timestamp(1, 2000)});
       testRoundTrip(firestore.VectorValue([1]));
     });
-    test('documentValueToNativeValue', () {});
+    test('documentValueToNativeValue', () {
+      expect(
+        documentValueToNativeValue(firestore.FieldValue.delete),
+        firestoreModule.fieldValue.delete(),
+      );
+      expect(
+        documentValueToNativeValue(firestore.FieldValue.serverTimestamp),
+        firestoreModule.fieldValue.serverTimestamp(),
+      );
+      var native = documentValueToNativeValue([
+        firestore.Timestamp(1, 2000),
+        {'a': firestore.GeoPoint(1.5, 2.5)},
+      ]);
+      expect(fromNativeValue(native), [
+        firestore.Timestamp(1, 2000),
+        {'a': firestore.GeoPoint(1.5, 2.5)},
+      ]);
+    });
   });
 }

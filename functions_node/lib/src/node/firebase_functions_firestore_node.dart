@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:tekartik_firebase_firestore/firestore.dart' as fbfirestore;
 // ignore: implementation_imports
 import 'package:tekartik_firebase_firestore_node/src/node/firestore_node.dart'
@@ -59,6 +61,25 @@ class EventContextCompat implements EventContext {
   });
 }
 
+/// The event type, path params and time of a native firestore event.
+EventContextCompat _eventContextFromNode(node.JSFirestoreEvent event) {
+  var params = <String, String>{};
+  var nativeParams = event.params?.dartify();
+  if (nativeParams is Map) {
+    nativeParams.forEach((key, value) {
+      params[key.toString()] = value.toString();
+    });
+  }
+  var time = event.time;
+  return EventContextCompat(
+    eventType: event.type ?? 'onWrite',
+    params: params,
+    timestamp:
+        (time == null ? null : fbfirestore.Timestamp.tryParse(time)) ??
+        fbfirestore.Timestamp.now(),
+  );
+}
+
 class DocumentBuilderNode
     with DocumentBuilderDefaultMixin
     implements DocumentBuilder {
@@ -83,11 +104,7 @@ class DocumentBuilderNode
           /// Important to return the handler content here so that the function does not end
           return handler(
             DocumentSnapshotChangeNode(firestore, data as node.JSChange),
-            EventContextCompat(
-              eventType: 'onWrite',
-              params: {},
-              timestamp: fbfirestore.Timestamp.now(),
-            ),
+            _eventContextFromNode(event),
           );
         },
       ),
@@ -156,7 +173,7 @@ class DocumentSnapshotChangeNode
   @override
   fbfirestore.DocumentSnapshot get before => fbfirestore.DocumentSnapshotNode(
     firestore,
-    implChange.after as firestore_node.DocumentSnapshot,
+    implChange.before as firestore_node.DocumentSnapshot,
   );
 }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
@@ -65,7 +66,7 @@ class UserMetadataNode implements UserMetadata {
   String get creationTime => nativeInstance.creationTime;
 
   @override
-  String get lastSignInTime => nativeInstance.creationTime;
+  String get lastSignInTime => nativeInstance.lastSignInTime;
 }
 
 class UserInfoNode implements UserInfo {
@@ -184,6 +185,20 @@ UserRecord? wrapUserRecord(node.UserRecord? nativeUserRecord) =>
 UserMetadata? wrapUserMetadata(node.UserMetadata? nativeUserMetadata) =>
     nativeUserMetadata != null ? UserMetadataNode(nativeUserMetadata) : null;
 
+/// The error code firebase-admin uses for a missing user.
+const _userNotFoundErrorCode = 'auth/user-not-found';
+
+/// True for a firebase-admin error with the code auth/user-not-found.
+bool _isUserNotFoundError(Object error) {
+  try {
+    var code = (error as JSObject).getProperty<JSAny?>('code'.toJS);
+    return code.isA<JSString>() &&
+        (code as JSString).toDart == _userNotFoundErrorCode;
+  } catch (_) {
+    return false;
+  }
+}
+
 class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
   final AuthServiceNode serviceNode;
   final node.Auth nativeInstance;
@@ -207,13 +222,30 @@ class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
     )!;
   }
 
+  /// null when no user has that primary email.
   @override
-  Future<UserRecord> getUserByEmail(String email) async =>
-      wrapUserRecord(await nativeInstance.getUserByEmail(email))!;
+  Future<UserRecord?> getUserByEmail(String email) =>
+      _getUserOrNull(() => nativeInstance.getUserByEmail(email));
 
+  /// null when no such user exists.
   @override
-  Future<UserRecord> getUser(String uid) async =>
-      wrapUserRecord(await nativeInstance.getUser(uid))!;
+  Future<UserRecord?> getUser(String uid) =>
+      _getUserOrNull(() => nativeInstance.getUser(uid));
+
+  /// null for a missing user (firebase-admin error auth/user-not-found), any
+  /// other error is rethrown.
+  Future<UserRecord?> _getUserOrNull(
+    Future<node.UserRecord> Function() getNativeUser,
+  ) async {
+    try {
+      return wrapUserRecord(await getNativeUser());
+    } catch (e) {
+      if (_isUserNotFoundError(e)) {
+        return null;
+      }
+      rethrow;
+    }
+  }
 
   @override
   User get currentUser =>

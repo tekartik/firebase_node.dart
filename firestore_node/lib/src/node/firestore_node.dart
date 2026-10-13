@@ -142,32 +142,15 @@ class FirestoreNode
 
   @override
   Future<List<DocumentSnapshot>> getAll(List<DocumentReference> refs) async {
-    var jsRefs = _unwrapDocumentReferences(refs);
-    late js.JSPromise<js.JSArray<node.DocumentSnapshot>> result;
-    if (jsRefs.length == 1) {
-      result = nativeInstance.getAll(jsRefs[0]);
-    } else if (jsRefs.length == 2) {
-      result = nativeInstance.getAll(jsRefs[0], jsRefs[1]);
-    } else if (jsRefs.length == 3) {
-      result = nativeInstance.getAll(jsRefs[0], jsRefs[1], jsRefs[2]);
-    } else if (jsRefs.length == 4) {
-      result = nativeInstance.getAll(
-        jsRefs[0],
-        jsRefs[1],
-        jsRefs[2],
-        jsRefs[3],
-      );
-    } else if (jsRefs.length == 5) {
-      result = nativeInstance.getAll(
-        jsRefs[0],
-        jsRefs[1],
-        jsRefs[2],
-        jsRefs[3],
-        jsRefs[4],
-      );
-    } else {
-      throw ArgumentError('Unsupported getAll with ${jsRefs.length} refs');
+    if (refs.isEmpty) {
+      return <DocumentSnapshot>[];
     }
+    var jsRefs = _unwrapDocumentReferences(refs);
+    var result = nativeInstance
+        .callMethodVarArgs<js.JSPromise<js.JSArray<node.DocumentSnapshot>>>(
+          'getAll'.toJS,
+          jsRefs,
+        );
     return _wrapDocumentSnapshots(this, (await result.toDart).toDart);
   }
 
@@ -300,81 +283,64 @@ abstract mixin class QueryNodeMixin implements Query, HasQueryInfo {
     );
   }
 
-  @override
-  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) {
+  /// Common cursor code, native call with values or with a snapshot.
+  QueryNode _cursor(
+    DocumentSnapshot? snapshot,
+    List? values,
+    node.DocumentQuery Function(List<js.JSAny?> nativeValues) withValues,
+    node.DocumentQuery Function(node.DocumentSnapshot nativeSnapshot)
+    withSnapshot,
+    void Function(QueryInfo queryInfo) updateQueryInfo,
+  ) {
     node.DocumentQuery result;
     if (values != null) {
       assert(snapshot == null);
-      result = nativeInstance.startAt(toNativeValues(values));
+      result = withValues(toNativeValues(values));
     } else {
-      result = nativeInstance.startAtDocumentSnapshot(
-        _unwrapDocumentSnapshot(snapshot!),
-      );
+      result = withSnapshot(_unwrapDocumentSnapshot(snapshot!));
     }
-    return _wrapQuery(
-      firestoreNode,
-      result,
-      queryInfo: (queryInfo?.clone() ?? QueryInfo())
-        ..startAt(snapshot: snapshot, values: values),
-    );
+    var newQueryInfo = queryInfo?.clone() ?? QueryInfo();
+    updateQueryInfo(newQueryInfo);
+    return _wrapQuery(firestoreNode, result, queryInfo: newQueryInfo);
   }
 
   @override
-  Query startAfter({DocumentSnapshot? snapshot, List? values}) {
-    node.DocumentQuery result;
-    if (values != null) {
-      assert(snapshot == null);
-      result = nativeInstance.startAfter(toNativeValues(values));
-    } else {
-      result = nativeInstance.startAfterDocumentSnapshot(
-        _unwrapDocumentSnapshot(snapshot!),
-      );
-    }
-    return _wrapQuery(
-      firestoreNode,
-      result,
-      queryInfo: (queryInfo?.clone() ?? QueryInfo())
-        ..startAfter(snapshot: snapshot, values: values),
-    );
-  }
+  QueryNode startAt({DocumentSnapshot? snapshot, List? values}) => _cursor(
+    snapshot,
+    values,
+    (nativeValues) => nativeInstance.startAt(nativeValues),
+    (nativeSnapshot) => nativeInstance.startAtDocumentSnapshot(nativeSnapshot),
+    (queryInfo) => queryInfo.startAt(snapshot: snapshot, values: values),
+  );
 
   @override
-  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) {
-    node.DocumentQuery result;
-    if (values != null) {
-      assert(snapshot == null);
-      result = nativeInstance.endAt(toNativeValues(values));
-    } else {
-      result = nativeInstance.endAtDocumentSnapshot(
-        _unwrapDocumentSnapshot(snapshot!),
-      );
-    }
-    return _wrapQuery(
-      firestoreNode,
-      result,
-      queryInfo: (queryInfo?.clone() ?? QueryInfo())
-        ..endAt(snapshot: snapshot, values: values),
-    );
-  }
+  Query startAfter({DocumentSnapshot? snapshot, List? values}) => _cursor(
+    snapshot,
+    values,
+    (nativeValues) => nativeInstance.startAfter(nativeValues),
+    (nativeSnapshot) =>
+        nativeInstance.startAfterDocumentSnapshot(nativeSnapshot),
+    (queryInfo) => queryInfo.startAfter(snapshot: snapshot, values: values),
+  );
 
   @override
-  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) {
-    node.DocumentQuery result;
-    if (values != null) {
-      assert(snapshot == null);
-      result = nativeInstance.endBefore(toNativeValues(values));
-    } else {
-      result = nativeInstance.endBeforeDocumentSnapshot(
-        _unwrapDocumentSnapshot(snapshot!),
-      );
-    }
-    return _wrapQuery(
-      firestoreNode,
-      result,
-      queryInfo: (queryInfo?.clone() ?? QueryInfo())
-        ..endBefore(snapshot: snapshot, values: values),
-    );
-  }
+  QueryNode endAt({DocumentSnapshot? snapshot, List? values}) => _cursor(
+    snapshot,
+    values,
+    (nativeValues) => nativeInstance.endAt(nativeValues),
+    (nativeSnapshot) => nativeInstance.endAtDocumentSnapshot(nativeSnapshot),
+    (queryInfo) => queryInfo.endAt(snapshot: snapshot, values: values),
+  );
+
+  @override
+  QueryNode endBefore({DocumentSnapshot? snapshot, List? values}) => _cursor(
+    snapshot,
+    values,
+    (nativeValues) => nativeInstance.endBefore(nativeValues),
+    (nativeSnapshot) =>
+        nativeInstance.endBeforeDocumentSnapshot(nativeSnapshot),
+    (queryInfo) => queryInfo.endBefore(snapshot: snapshot, values: values),
+  );
 
   @override
   QueryNode where(
@@ -441,12 +407,8 @@ abstract mixin class QueryNodeMixin implements Query, HasQueryInfo {
     }
 
     if (isNull != null) {
-      assert(
-        isNull,
-        'isNull can only be set to true. '
-        'Use isEqualTo to filter on non-null values.',
-      );
-      query = query.where(field, '==', null);
+      // isNull: false is "!= null", like the other implementations.
+      query = query.where(field, isNull ? '==' : '!=', null);
       newQueryInfo.addWhere(WhereInfo(field, isNull: isNull));
     }
     return _wrapQuery(firestoreNode, query, queryInfo: newQueryInfo);
@@ -713,15 +675,10 @@ Object fromNativeValue(
   js.JSAny value, [
   Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
 ]) {
-  var dartValue = _commonSimpleTypesFromNativeValue(value);
+  var dartValue = commonFromNativeValue(value, nestedFromNativeValueOrNull);
   if (dartValue != null) {
     return dartValue;
   }
-  try {
-    value = value as js.JSObject;
-    return fromNativeMap(value, nestedFromNativeValueOrNull);
-  } catch (_) {}
-
   throw ArgumentError.value(
     value,
     '${value.runtimeType}',
@@ -798,7 +755,10 @@ Object? commonFromNativeValue(
   js.JSAny value, [
   Object? Function(js.JSAny? value)? nestedFromNativeValueOrNull,
 ]) {
-  var dartValue = _commonSimpleTypesFromNativeValue(value);
+  var dartValue = _commonSimpleTypesFromNativeValue(
+    value,
+    nestedFromNativeValueOrNull,
+  );
   if (dartValue != null) {
     return dartValue;
   }
@@ -817,7 +777,11 @@ Object? fromNativeValueOrNull(js.JSAny? value) {
 }
 
 Object documentValueFromNativeValue(FirestoreNode firestore, js.JSAny value) {
-  var dartValue = _commonSimpleTypesFromNativeValue(value);
+  // Lists use the document converter too (references inside a list).
+  var dartValue = _commonSimpleTypesFromNativeValue(
+    value,
+    (value) => documentValueFromNativeValueOrNull(firestore, value),
+  );
   if (dartValue != null) {
     return dartValue;
   }

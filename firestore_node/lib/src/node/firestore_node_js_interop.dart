@@ -1001,8 +1001,9 @@ extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
   // instanceof(firestoreModule.geoPointProto as js.JSFunction);
   bool isJSDocumentReference() => has('_firestore') && has('_path');
 
-  /// {'_values': [1]}
-  bool isVector() => has('_values');
+  /// {'_values': [1]}, toArray() on its prototype (a map read from a document
+  /// is a plain object, even with a '_values' key).
+  bool isVector() => has('_values') && has('toArray');
   // [_firestore, _path, _converter]
   // has('_latitude') && has('_longitude');
 }

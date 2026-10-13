@@ -4,6 +4,7 @@ import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_sch
     as node;
 
 import 'firebase_functions_node.dart';
+import 'global_options_node.dart';
 
 class SchedulerFunctionsNode
     with SchedulerFunctionsDefaultMixin
@@ -42,12 +43,15 @@ class SchedulerFunctionNode extends FirebaseFunctionNode
 }
 
 node.JSScheduleOptions toNodeScheduleOptions(ScheduleOptions options) {
-  return node.JSScheduleOptions(
-    region: options.region,
-    schedule: options.schedule,
-    timeZone: options.timeZone,
-    memory: options.memory,
-    timeoutSeconds: options.timeoutSeconds,
+  return globalOptionsApplyToNode(
+    node.JSScheduleOptions(
+      region: options.region,
+      schedule: options.schedule,
+      timeZone: options.timeZone,
+      memory: options.memory,
+      timeoutSeconds: options.timeoutSeconds,
+    ),
+    options,
   );
 }
 

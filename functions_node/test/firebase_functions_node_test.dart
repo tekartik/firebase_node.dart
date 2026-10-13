@@ -49,6 +49,7 @@ Future main() async {
           );
           // ignore: avoid_print
           print(result);
+          expect(result, contains('Hello'));
         }
       }, skip: false);
 
@@ -61,6 +62,7 @@ Future main() async {
           );
           // ignore: avoid_print
           print(result);
+          expect(result, contains('Hello'));
         }
       }, skip: false);
 

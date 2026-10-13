@@ -24,8 +24,11 @@ class CallContextNode with CallContextMixin implements CallContext {
 
   CallContextNode(this.nativeInstance);
 
+  /// null when the caller is not signed in.
   @override
-  late final CallContextAuth? auth = CallContextAuthNode(nativeInstance);
+  late final CallContextAuth? auth = nativeInstance.auth == null
+      ? null
+      : CallContextAuthNode(nativeInstance);
 }
 
 class CallContextAuthNode with CallContextAuthMixin implements CallContextAuth {

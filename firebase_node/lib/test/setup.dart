@@ -63,14 +63,6 @@ Future<FirebaseNodeTestContext> setup({
     return (jsonDecode(jsonString) as Map).cast<String, Object?>();
   }
 
-  var serviceAccountJsonOrPath = _envGetServiceAccountJsonOrPath();
-  if (serviceAccountJsonOrPath == null) {
-    log('env $_envServiceAccount not set');
-    throw UnsupportedError(
-      'Missing env TEKARTIK_FIREBASE_NODE_TEST_SERVICE_ACCOUNT',
-    );
-  }
-
   Future<Map<String, Object?>> serviceAccountFromPath(String path) async {
     log('reading service account file $path');
     try {
@@ -91,7 +83,7 @@ Future<FirebaseNodeTestContext> setup({
     var serviceAccountJsonOrPath = _envGetServiceAccountJsonOrPath();
     if (serviceAccountJsonOrPath == null) {
       log('env $_envServiceAccount not set');
-      throw (StateError('$_envServiceAccount not set'));
+      throw UnsupportedError('Missing env $_envServiceAccount');
     }
     if (serviceAccountJsonOrPath.startsWith('{')) {
       log('env $_envServiceAccount holds the service account json');

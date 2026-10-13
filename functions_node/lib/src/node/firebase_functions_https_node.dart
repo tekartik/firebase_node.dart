@@ -9,6 +9,7 @@ import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_nod
 import 'call_request_node.dart';
 import 'express_http_request_node.dart';
 import 'firebase_functions_node.dart';
+import 'global_options_node.dart';
 
 class HttpsFunctionsNode
     with HttpsFunctionsDefaultMixin
@@ -23,12 +24,13 @@ class HttpsFunctionsNode
     RequestHandler handler, {
     HttpsOptions? httpsOptions,
   }) {
-    void handleRequest(
+    /// Returns the handler future so that the function waits for it.
+    FutureOr<void> handleRequest(
       node.JSHttpsRequest request,
       node.JSHttpsResponse response,
     ) {
       var expressRequest = ExpressHttpRequestNode(request, response);
-      handler(expressRequest);
+      return handler(expressRequest);
     }
 
     return HttpsFunctionNode(
@@ -87,9 +89,12 @@ node.JSHttpsOptions? toNodeHttpsOptionsOrNull(HttpsOptions? httpsOptions) {
 }
 
 node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
-  return node.JSHttpsOptions(
-    region: httpsOptions.region,
-    cors: httpsOptions.cors?.toJS,
+  return globalOptionsApplyToNode(
+    node.JSHttpsOptions(
+      region: httpsOptions.region,
+      cors: httpsOptions.cors?.toJS,
+    ),
+    httpsOptions,
   );
 }
 
@@ -105,11 +110,14 @@ node.JSCallableOptions? toNodeCallableOptionsOrNull(
 node.JSCallableOptions toNodeCallableOptions(
   HttpsCallableOptions callableOptions,
 ) {
-  return node.JSCallableOptions(
-    consumeAppCheckToken: callableOptions.consumeAppCheckToken,
-    enforceAppCheck: callableOptions.enforceAppCheck,
-    region: callableOptions.region,
-    cors: callableOptions.cors?.toJS,
+  return globalOptionsApplyToNode(
+    node.JSCallableOptions(
+      consumeAppCheckToken: callableOptions.consumeAppCheckToken,
+      enforceAppCheck: callableOptions.enforceAppCheck,
+      region: callableOptions.region,
+      cors: callableOptions.cors?.toJS,
+    ),
+    callableOptions,
   );
 }
 

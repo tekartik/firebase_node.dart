@@ -315,6 +315,9 @@ extension UserInfoExt on UserInfo {
   external js.JSObject toJSON();
 }
 
+/// firebase-admin default page size of listUsers (MAX_DOWNLOAD_ACCOUNT_PAGE_SIZE).
+const _listUsersDefaultMaxResults = 1000;
+
 /// Interface representing a resulting object returned from a [AuthModule.listUsers]
 /// operation containing the list of users for the current batch and the next
 /// page token if available.
@@ -450,8 +453,13 @@ extension AuthExt2 on Auth {
   ///
   /// This is used to retrieve all the users of a specified project in batches.
   Future<ListUsersResult> listUsers([int? maxResults, String? pageToken]) {
-    if (pageToken != null && maxResults != null) {
-      return jsListUsers(maxResults, pageToken).toDart;
+    if (pageToken != null) {
+      // firebase-admin only defaults maxResults when undefined (not null), so
+      // a page token alone is sent with its default page size.
+      return jsListUsers(
+        maxResults ?? _listUsersDefaultMaxResults,
+        pageToken,
+      ).toDart;
     } else if (maxResults != null) {
       return jsListUsers(maxResults).toDart;
     } else {
