@@ -4,6 +4,7 @@ import 'dart:js_interop_unsafe';
 
 import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
+import 'package:tekartik_firebase_auth/auth_admin.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
 import 'package:tekartik_firebase_auth/utils/json_utils.dart';
 import 'package:tekartik_firebase_node/impl/firebase_node.dart';
@@ -65,8 +66,12 @@ class UserMetadataNode implements UserMetadata {
   @override
   String get creationTime => nativeInstance.creationTime;
 
+  /// Empty when the user never signed in.
   @override
-  String get lastSignInTime => nativeInstance.lastSignInTime;
+  String get lastSignInTime => nativeInstance.lastSignInTime ?? '';
+
+  @override
+  String? get lastRefreshTime => nativeInstance.lastRefreshTime;
 }
 
 class UserInfoNode implements UserInfo {
@@ -168,6 +173,10 @@ class DecodedIdTokenNode implements DecodedIdToken {
 
   @override
   String get uid => nativeInstance.uid;
+
+  /// The `firebase.sign_in_provider` claim.
+  @override
+  String? get signInProvider => nativeInstance.firebase?.sign_in_provider;
 }
 
 ListUsersResult? wrapListUsersResult(
@@ -199,7 +208,14 @@ bool _isUserNotFoundError(Object error) {
   }
 }
 
-class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
+/// Node auth (firebase-admin), also an admin auth ([createUser],
+/// [deleteUser]).
+class AuthNode
+    with
+        FirebaseAppProductMixin<FirebaseAuth>,
+        FirebaseAuthMixin,
+        FirebaseAuthAdminDefaultMixin
+    implements FirebaseAuthAdmin {
   final AuthServiceNode serviceNode;
   final node.Auth nativeInstance;
   final AppNode appNode;
@@ -231,6 +247,32 @@ class AuthNode with FirebaseAppProductMixin<FirebaseAuth>, FirebaseAuthMixin {
   @override
   Future<UserRecord?> getUser(String uid) =>
       _getUserOrNull(() => nativeInstance.getUser(uid));
+
+  /// Creates a user with firebase-admin, only the fields set in [request]
+  /// are sent (firebase-admin rejects a null field). Throws if the uid or the
+  /// email already exists (auth/uid-already-exists,
+  /// auth/email-already-exists).
+  @override
+  Future<UserRecord> createUser(FirebaseAuthCreateUserRequest request) async {
+    var properties =
+        <String, Object?>{
+              'uid': ?request.uid,
+              'disabled': ?request.disabled,
+              'displayName': ?request.displayName,
+              'email': ?request.email,
+              'emailVerified': ?request.emailVerified,
+              'password': ?request.password,
+              'phoneNumber': ?request.phoneNumber,
+              'photoURL': ?request.photoURL,
+            }.jsify()
+            as node.CreateUserRequest;
+    return wrapUserRecord(await nativeInstance.createUser(properties))!;
+  }
+
+  /// Deletes the user [uid] with firebase-admin, throws if it does not exist
+  /// (auth/user-not-found).
+  @override
+  Future<void> deleteUser(String uid) => nativeInstance.deleteUser(uid);
 
   /// null for a missing user (firebase-admin error auth/user-not-found), any
   /// other error is rethrown.

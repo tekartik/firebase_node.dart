@@ -137,7 +137,7 @@ extension AuthExt on Auth {
   /// If the token is valid, the returned js.JSPromise is fulfilled with an instance of
   /// [JSDecodedIdToken]; otherwise, the js.JSPromise is rejected. An optional flag can
   /// be passed to additionally check whether the ID token was revoked.
-  @js.JS('jsVerifyIdToken')
+  @js.JS('verifyIdToken')
   external js.JSPromise<JSDecodedIdToken> jsVerifyIdToken(
     String idToken, [
     bool? checkRevoked,
@@ -285,8 +285,13 @@ extension UserMetadataExt on UserMetadata {
   /// The date the user was created, formatted as a UTC string.
   external String get creationTime;
 
-  /// The date the user last signed in, formatted as a UTC string.
-  external String get lastSignInTime;
+  /// The date the user last signed in, formatted as a UTC string, null if
+  /// the user never signed in.
+  external String? get lastSignInTime;
+
+  /// The date the user's ID token was last refreshed, formatted as a UTC
+  /// string, null if never refreshed.
+  external String? get lastRefreshTime;
 }
 
 /// Interface representing a user's info from a third-party identity provider
@@ -369,7 +374,7 @@ extension JSDecodedIdTokenExt on JSDecodedIdToken {
   ///
   /// This data is provided by the Firebase Authentication service and is a
   /// reserved claim in the ID token.
-  external JSFirebaseSignInInfo get firebase;
+  external JSFirebaseSignInInfo? get firebase;
 
   /// The ID token's issued-at time, in seconds since the Unix epoch.
   ///
@@ -412,7 +417,7 @@ extension FirebaseSignInInfoExt on JSFirebaseSignInInfo {
   /// "password", "facebook.com", "github.com", "google.com", "twitter.com",
   /// or "custom".
   // ignore: non_constant_identifier_names
-  external String get sign_in_provider;
+  external String? get sign_in_provider;
 }
 
 extension AuthExt2 on Auth {

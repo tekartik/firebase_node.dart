@@ -60,14 +60,18 @@ comes from `tekartik_firebase_node`.
   `ListUsersResult` (`users`, a `List<UserRecord?>`, and `pageToken` to pass to
   the next call, loop while it is a non-empty string);
   `getUser(uid)`, `getUserByEmail(email)` returning a `UserRecord`;
-  `verifyIdToken(idToken, checkRevoked:)` returning a `DecodedIdToken` (only
-  `uid` is exposed). `supportsListUsers` is `true`. A missing user makes
+  `verifyIdToken(idToken, checkRevoked:)` returning a `DecodedIdToken` (`uid`
+  and `signInProvider`, the `firebase.sign_in_provider` claim such as
+  `'anonymous'`). The auth is a `FirebaseAuthAdmin` (cast it, from
+  `package:tekartik_firebase_auth/auth_admin.dart`): `createUser` (only the
+  request fields set are sent) and `deleteUser`. `supportsListUsers` is
+  `true`. A missing user makes
   firebase-admin reject (`auth/user-not-found`): the call throws instead of
   returning `null`, catch it.
 * `UserRecord` fields: `uid`, `email`, `emailVerified`, `displayName`,
   `photoURL`, `phoneNumber`, `disabled`, `customClaims` (raw js object),
-  `metadata` (`creationTime`; `lastSignInTime` currently mirrors
-  `creationTime`), `providerData` (`UserInfo` list: `providerId`, `uid`,
+  `metadata` (`creationTime`, `lastSignInTime`, empty when never signed in,
+  `lastRefreshTime`, null when never refreshed), `providerData` (`UserInfo` list: `providerId`, `uid`,
   `email`...), `passwordHash`, `passwordSalt`, `tokensValidAfterTime` (only
   filled for records coming from `listUsers`). `toString()` dumps the record
   for debugging.
@@ -77,7 +81,7 @@ comes from `tekartik_firebase_node`.
   `signOut`, `createUserWithEmailAndPassword`, `getUsers`,
   `sendEmailVerification` and `sendPasswordResetEmail` throw the mixin
   `UnsupportedError` / `UnimplementedError`. The js bindings for
-  `createUser`, `updateUser`, `deleteUser`, `setCustomUserClaims` exist in
+  `updateUser` and `setCustomUserClaims` exist in
   `lib/src/node/auth_node_js_interop.dart` but are not wrapped by the public
   api.
 * Verifying a client in an https function: read the `Authorization: Bearer
