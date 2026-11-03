@@ -84,15 +84,5 @@ class _ParamsNode implements Params {
 }
 
 extension on GlobalOptions {
-  node.JSGlobalOptions toJS() {
-    return globalOptionsApplyToNode(
-      node.JSGlobalOptions(
-        memory: memory,
-        timeoutSeconds: timeoutSeconds,
-        region: region,
-        concurrency: concurrency,
-      ),
-      this,
-    );
-  }
+  node.JSGlobalOptions toJS() => globalOptionsToNode(this);
 }

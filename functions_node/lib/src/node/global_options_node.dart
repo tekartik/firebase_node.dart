@@ -3,6 +3,8 @@ import 'dart:js_interop_unsafe';
 
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 
+import 'firebase_functions_node_js_interop.dart' show JSGlobalOptions;
+
 /// Sets on a native options object the [GlobalOptions] values its factory
 /// does not take: [GlobalOptions.regions] (as the native region array),
 /// memory, timeoutSeconds, concurrency and maxInstances.
@@ -28,4 +30,20 @@ T globalOptionsApplyToNode<T extends js.JSObject>(
   set('concurrency', options.concurrency?.toJS);
   set('maxInstances', options.maxInstances?.toJS);
   return nativeOptions;
+}
+
+/// The native options of `setGlobalOptions` for [options], only its non null
+/// values set (see [globalOptionsApplyToNode]).
+///
+/// The factory of [JSGlobalOptions] sets every argument passed, null ones
+/// included: a null `timeoutSeconds` fails firebase-functions 7.3+ when a
+/// function is defined ("timeoutSeconds must be a number, Expression, or
+/// RESET_VALUE. Got object.").
+JSGlobalOptions globalOptionsToNode(GlobalOptions options) {
+  var nativeOptions = JSGlobalOptions();
+  var region = options.region;
+  if (region != null) {
+    nativeOptions.setProperty('region'.toJS, region.toJS);
+  }
+  return globalOptionsApplyToNode(nativeOptions, options);
 }
