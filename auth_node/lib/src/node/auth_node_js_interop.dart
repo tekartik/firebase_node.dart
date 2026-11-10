@@ -329,7 +329,8 @@ const _listUsersDefaultMaxResults = 1000;
 extension type ListUsersResult._(js.JSObject _) implements js.JSObject {}
 
 extension ListUsersResultExt on ListUsersResult {
-  external String get pageToken;
+  /// The token of the next batch, absent on the last batch.
+  external String? get pageToken;
 
   @js.JS('users')
   external js.JSArray<UserRecord> get _users;

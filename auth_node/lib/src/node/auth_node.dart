@@ -48,8 +48,9 @@ class ListUsersResultNode implements ListUsersResult {
 
   ListUsersResultNode(this.nativeInstance);
 
+  /// null on the last batch (firebase-admin returns no token there).
   @override
-  String get pageToken => nativeInstance.pageToken;
+  String? get pageToken => nativeInstance.pageToken;
 
   @override
   List<UserRecord?> get users => nativeInstance.users
