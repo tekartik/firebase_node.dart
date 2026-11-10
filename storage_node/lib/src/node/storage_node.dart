@@ -79,7 +79,7 @@ class BucketNode with BucketMixin implements Bucket {
   @override
   Future<GetFilesResponse> getFiles([GetFilesOptions? options]) async {
     var nativeResponse = await nativeInstance.getFiles(
-      _unwrapGetFilesOptions(options),
+      storageNodeGetFilesOptions(options),
     );
     return GetFilesResponseNode(this, nativeResponse);
   }
@@ -99,15 +99,7 @@ class FileNode with FileMixin implements File {
     Uint8List bytes, {
     StorageUploadFileOptions? options,
   }) async {
-    var cacheControl = options?.cacheControl;
-    var saveOptions = options == null
-        ? null
-        : cacheControl == null
-        ? node.FileSaveOptions(contentType: options.contentType)
-        : node.FileSaveOptions(
-            contentType: options.contentType,
-            metadata: node.FileSaveMetadata(cacheControl: cacheControl),
-          );
+    var saveOptions = storageNodeFileSaveOptions(options);
     if (saveOptions == null) {
       await nativeInstance.save(bytes.toJS).toDart;
       return;
@@ -183,16 +175,51 @@ class GetFilesResponseNode implements GetFilesResponse {
   }.toString();
 }
 
-node.GetFilesOptions? _unwrapGetFilesOptions(GetFilesOptions? options) {
+/// The native get files options, with only the values that are set.
+///
+/// A js_interop object literal sets a named argument even when it is null,
+/// and the storage client sends a null `maxResults` as an empty query
+/// parameter (`maxResults=`), which the API rejects (`Invalid unsigned
+/// integer value: ''`).
+node.GetFilesOptions? storageNodeGetFilesOptions(GetFilesOptions? options) {
   if (options == null) {
     return null;
   }
-  return node.GetFilesOptions(
-    maxResults: options.maxResults,
-    prefix: options.prefix,
-    autoPaginate: options.autoPaginate,
-    pageToken: options.pageToken,
-  );
+  final jsOptions = js.JSObject();
+  final maxResults = options.maxResults;
+  if (maxResults != null) {
+    jsOptions['maxResults'] = maxResults.toJS;
+  }
+  final prefix = options.prefix;
+  if (prefix != null) {
+    jsOptions['prefix'] = prefix.toJS;
+  }
+  jsOptions['autoPaginate'] = options.autoPaginate.toJS;
+  final pageToken = options.pageToken;
+  if (pageToken != null) {
+    jsOptions['pageToken'] = pageToken.toJS;
+  }
+  return jsOptions as node.GetFilesOptions;
+}
+
+/// The native save options, with only the values that are set (see
+/// [storageNodeGetFilesOptions]).
+node.FileSaveOptions? storageNodeFileSaveOptions(
+  StorageUploadFileOptions? options,
+) {
+  if (options == null) {
+    return null;
+  }
+  final jsOptions = js.JSObject();
+  final contentType = options.contentType;
+  if (contentType != null) {
+    jsOptions['contentType'] = contentType.toJS;
+  }
+  final cacheControl = options.cacheControl;
+  if (cacheControl != null) {
+    jsOptions['metadata'] = node.FileSaveMetadata(cacheControl: cacheControl);
+  }
+  return jsOptions as node.FileSaveOptions;
 }
 
 GetFilesOptions? _wrapGetFilesOptions(node.GetFilesOptions? options) {
