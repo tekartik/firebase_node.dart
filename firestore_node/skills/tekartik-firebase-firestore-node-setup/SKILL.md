@@ -73,7 +73,9 @@ only the service getter differs, so firestore code stays platform neutral.
   `FieldValue.delete` and the array field values.
 * `firestore.runTransaction((txn) async { ... })` runs the native transaction
   (the callback may be retried, keep it idempotent and use only `txn`
-  inside). `firestore.batch()` groups writes, `batch.commit()` sends them.
+  inside); an exception thrown by the callback fails `runTransaction` with
+  that same exception (catch your `StateError`, `HttpsError`...).
+  `firestore.batch()` groups writes, `batch.commit()` sends them.
 * `firestore.settings(FirestoreSettings(...))` only forwards the deprecated
   `timestampsInSnapshots` flag; there is no need to call it.
 * Tests: node only (`@TestOn('node')`), `dart test -p node`, with
@@ -236,5 +238,6 @@ void main() {
   sembast service directly.
 * Running the node tests against a project without a dedicated root
   collection path: the suite creates and deletes documents under it.
-* Missing `@google-cloud/firestore` in `package.json` (`firebase-admin` alone
-  is not enough for the firestore module).
+* Missing `@google-cloud/firestore` in `package.json`: it is only an optional
+  dependency of `firebase-admin` (`npm install --omit=optional` leaves it
+  out), declare it.

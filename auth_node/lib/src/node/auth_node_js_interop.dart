@@ -228,9 +228,6 @@ extension UserRecordExt on UserRecord {
   /// Whether or not the user's primary email is verified.
   external bool get emailVerified;
 
-  /// Anonymous user
-  external bool get isAnonymous;
-
   /// Additional metadata about the user.
   external UserMetadata get metadata;
 
@@ -242,7 +239,7 @@ extension UserRecordExt on UserRecord {
   /// string. If no password is set, this will be`null`.
   ///
   /// This is only available when the user is obtained from [AuthModule.listUsers].
-  external String get passwordHash;
+  external String? get passwordHash;
 
   /// The user’s password salt (base64-encoded), only if Firebase Auth hashing
   /// algorithm (SCRYPT) is used.
@@ -252,13 +249,13 @@ extension UserRecordExt on UserRecord {
   /// If no password is set, this will be `null`.
   ///
   /// This is only available when the user is obtained from [AuthModule.listUsers].
-  external String get passwordSalt;
+  external String? get passwordSalt;
 
   /// The user's primary phone number or `null`.
-  external String get phoneNumber;
+  external String? get phoneNumber;
 
   /// The user's photo URL or `null`.
-  external String get photoURL;
+  external String? get photoURL;
 
   /// An array of providers (for example, Google, Facebook) linked to the user.
   List<UserInfo> get providerData => _providerData.toDart;
@@ -270,8 +267,9 @@ extension UserRecordExt on UserRecord {
   ///
   /// This is updated every time the user's refresh token are revoked either from
   /// the [AuthModule.revokeRefreshTokens] API or from the Firebase Auth backend on big
-  /// account changes (password resets, password or email updates, etc).
-  external String get tokensValidAfterTime;
+  /// account changes (password resets, password or email updates, etc), null
+  /// when unknown.
+  external String? get tokensValidAfterTime;
 
   /// The user's uid.
   external String get uid;
@@ -299,17 +297,17 @@ extension UserMetadataExt on UserMetadata {
 extension type UserInfo._(js.JSObject _) implements js.JSObject {}
 
 extension UserInfoExt on UserInfo {
-  /// The display name for the linked provider.
-  external String get displayName;
+  /// The display name for the linked provider, if any.
+  external String? get displayName;
 
-  /// The email for the linked provider.
-  external String get email;
+  /// The email for the linked provider, if any.
+  external String? get email;
 
-  /// The phone number for the linked provider.
-  external String get phoneNumber;
+  /// The phone number for the linked provider, if any.
+  external String? get phoneNumber;
 
-  /// The photo URL for the linked provider.
-  external String get photoURL;
+  /// The photo URL for the linked provider, if any.
+  external String? get photoURL;
 
   /// The linked provider ID (for example, "google.com" for the Google provider).
   external String get providerId;

@@ -993,17 +993,28 @@ extension AggregateQuerySnapshotExt on AggregateQuerySnapshot {
 }
 
 extension TekartikFirestoreNodeJsAnyExt on js.JSObject {
-  bool isJSTimestamp() => has('_seconds') && has('_nanoseconds');
+  /// True if [name] is a function of this object (or of its prototype): a
+  /// map read from a document is a plain object, it never holds a function,
+  /// even with the field names of a native object.
+  bool _hasMethod(String name) =>
+      has(name) && getProperty<js.JSAny?>(name.toJS).isA<js.JSFunction>();
 
-  // this.instanceof(firestoreModule.timestampProto as js.JSFunction);
-  bool isJSGeoPoint() => has('_latitude') && has('_longitude');
+  /// A Firestore `Timestamp` (`toMillis()` on its prototype).
+  bool isJSTimestamp() =>
+      has('_seconds') && has('_nanoseconds') && _hasMethod('toMillis');
 
-  // instanceof(firestoreModule.geoPointProto as js.JSFunction);
-  bool isJSDocumentReference() => has('_firestore') && has('_path');
+  /// A Firestore `GeoPoint` (`isEqual()` on its prototype).
+  bool isJSGeoPoint() =>
+      has('_latitude') && has('_longitude') && _hasMethod('isEqual');
 
-  /// {'_values': [1]}, toArray() on its prototype (a map read from a document
-  /// is a plain object, even with a '_values' key).
-  bool isVector() => has('_values') && has('toArray');
+  /// A Firestore `DocumentReference` (`collection()` on its prototype).
+  bool isJSDocumentReference() =>
+      has('_firestore') && has('_path') && _hasMethod('collection');
+
+  /// A Firestore `VectorValue`: {'_values': [1]}, `toArray()` on its
+  /// prototype (a map read from a document is a plain object, even with a
+  /// '_values' key).
+  bool isVector() => has('_values') && _hasMethod('toArray');
   // [_firestore, _path, _converter]
   // has('_latitude') && has('_longitude');
 }

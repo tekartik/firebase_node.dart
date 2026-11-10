@@ -1,3 +1,6 @@
+/// `authServiceNode` only (Node.js, firebase-admin).
+library;
+
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth_node/src/node/auth_node.dart'
     as auth_node;

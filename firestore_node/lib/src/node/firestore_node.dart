@@ -112,26 +112,47 @@ class FirestoreNode
   @override
   WriteBatch batch() => WriteBatchNode(nativeInstance.batch());
 
+  /// An error thrown by [updateFunction] fails the transaction with that
+  /// same error (firebase-admin only sees the JS wrapper of a Dart error).
   @override
   Future<T> runTransaction<T>(
     FutureOr<T> Function(Transaction transaction) updateFunction,
   ) async {
     late T result;
-    await nativeInstance
-        .runTransaction(
-          (node.Transaction nativeTransaction) {
-            return () async {
-              var transaction = TransactionNode(this, nativeTransaction);
-              var resultOrFuture = updateFunction(transaction);
-              if (resultOrFuture is Future) {
-                result = (await resultOrFuture);
-              } else {
-                result = resultOrFuture;
-              }
-            }().toJS;
-          }.toJS,
-        )
-        .toDart;
+    Object? updateError;
+    StackTrace? updateStackTrace;
+    try {
+      await nativeInstance
+          .runTransaction(
+            (node.Transaction nativeTransaction) {
+              // firebase-admin can run it again (contention).
+              updateError = null;
+              updateStackTrace = null;
+              return () async {
+                try {
+                  var transaction = TransactionNode(this, nativeTransaction);
+                  var resultOrFuture = updateFunction(transaction);
+                  if (resultOrFuture is Future) {
+                    result = (await resultOrFuture);
+                  } else {
+                    result = resultOrFuture;
+                  }
+                } catch (e, st) {
+                  updateError = e;
+                  updateStackTrace = st;
+                  Error.throwWithStackTrace(e, st);
+                }
+              }().toJS;
+            }.toJS,
+          )
+          .toDart;
+    } catch (e, st) {
+      var error = updateError;
+      if (error != null) {
+        Error.throwWithStackTrace(error, updateStackTrace ?? st);
+      }
+      Error.throwWithStackTrace(e, st);
+    }
     return result;
   }
 

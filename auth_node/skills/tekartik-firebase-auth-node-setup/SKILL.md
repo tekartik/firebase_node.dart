@@ -58,23 +58,30 @@ comes from `tekartik_firebase_node`.
   `firebaseNode.app()` after a single `firebaseNode.initializeApp()`.
 * Admin api implemented: `listUsers({maxResults, pageToken})` returning a
   `ListUsersResult` (`users`, a `List<UserRecord?>`, and `pageToken` to pass to
-  the next call, loop while it is a non-empty string);
-  `getUser(uid)`, `getUserByEmail(email)` returning a `UserRecord`;
+  the next call, null on the last page: loop while it is not null);
+  `getUser(uid)`, `getUserByEmail(email)` returning a `UserRecord`, null for
+  an unknown user (firebase-admin `auth/user-not-found`, any other error
+  throws);
   `verifyIdToken(idToken, checkRevoked:)` returning a `DecodedIdToken` (`uid`
   and `signInProvider`, the `firebase.sign_in_provider` claim such as
   `'anonymous'`). The auth is a `FirebaseAuthAdmin` (cast it, from
   `package:tekartik_firebase_auth/auth_admin.dart`): `createUser` (only the
   request fields set are sent) and `deleteUser`. `supportsListUsers` is
-  `true`. A missing user makes
-  firebase-admin reject (`auth/user-not-found`): the call throws instead of
-  returning `null`, catch it.
+  `true`. `createUser` with an email or uid in use and `deleteUser` of an
+  unknown uid throw the firebase-admin error as is
+  (`auth/email-already-exists`, `auth/uid-already-exists`,
+  `auth/user-not-found` in its text), not a `StateError`.
 * `UserRecord` fields: `uid`, `email`, `emailVerified`, `displayName`,
-  `photoURL`, `phoneNumber`, `disabled`, `customClaims` (raw js object),
-  `metadata` (`creationTime`, `lastSignInTime`, empty when never signed in,
-  `lastRefreshTime`, null when never refreshed), `providerData` (`UserInfo` list: `providerId`, `uid`,
-  `email`...), `passwordHash`, `passwordSalt`, `tokensValidAfterTime` (only
-  filled for records coming from `listUsers`). `toString()` dumps the record
-  for debugging.
+  `photoURL`, `phoneNumber`, `disabled`, `customClaims` (a Dart map, the
+  decoded json, null when none), `metadata` (`creationTime`,
+  `lastSignInTime`, empty when never signed in, `lastRefreshTime`, null when
+  never refreshed), `providerData` (`UserInfo` list: `providerId`, `uid`,
+  `email`...), `tokensValidAfterTime`, `passwordHash` and `passwordSalt` (only
+  on the records of `listUsers`, for a password account). A value
+  firebase-admin leaves out is null (no phone, no photo, no display name of
+  a provider...). `isAnonymous` is not a firebase-admin field: true for an
+  account with no provider, no email and no phone number (as auth_rest).
+  `toString()` shows the uid and the email only (`UserRecordNode(uid, email)`).
 * Not available server side: `supportsCurrentUser` is `false`;
   `currentUser`, `onCurrentUser` and `reloadCurrentUser` throw
   `UnsupportedError`; `signInWithEmailAndPassword`, `signInAnonymously`,
@@ -119,7 +126,7 @@ Future<void> listAllUsers(Map<String, Object?> serviceAccountMap) async {
       print('${user!.uid} ${user.email} disabled: ${user.disabled}');
     }
     pageToken = result.pageToken;
-  } while (pageToken != null && pageToken.isNotEmpty);
+  } while (pageToken != null);
   await app.delete();
 }
 ```
@@ -134,15 +141,9 @@ import 'package:tekartik_firebase_node/firebase_node.dart';
 /// `firebaseNode.initializeApp()` (application default credentials).
 Auth get adminAuth => authServiceNode.auth(firebaseNode.app());
 
-Future<UserRecord?> findByEmail(String email) async {
-  try {
-    return await adminAuth.getUserByEmail(email);
-  } catch (e) {
-    // firebase-admin rejects with auth/user-not-found
-    print('no user for $email: $e');
-    return null;
-  }
-}
+/// null when no user has that email.
+Future<UserRecord?> findByEmail(String email) =>
+    adminAuth.getUserByEmail(email);
 
 /// The uid of a `Bearer <idToken>` authorization header, null when invalid.
 Future<String?> uidFromAuthorizationHeader(String? header) async {
@@ -211,10 +212,12 @@ Future<void> main() async {
 
 ## Common mistakes
 
-* Calling `getUser` / `getUserByEmail` without a `try`: on node an unknown
-  user throws, it does not return `null`.
+* Looping on `listUsers` while `pageToken` is not empty: it is null on the
+  last page.
 * Expecting a signed-in user (`currentUser`, `signInWithEmailAndPassword`):
   this is the admin sdk, clients sign in on their side and send an id token.
 * Passing a `FirebaseLocal` app to `authServiceNode.auth`.
-* Reading `passwordHash` / `passwordSalt` on a record from `getUser`: they are
-  only filled by `listUsers`.
+* Expecting `passwordHash` / `passwordSalt` on a record from `getUser`: they
+  are null, only `listUsers` fills them.
+* Printing the `passwordHash` / `passwordSalt` of a `listUsers` record in a CI
+  or server log.

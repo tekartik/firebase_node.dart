@@ -6,11 +6,9 @@ import 'package:tekartik_firebase/firebase_mixin.dart';
 import 'package:tekartik_firebase_auth/auth.dart';
 import 'package:tekartik_firebase_auth/auth_admin.dart';
 import 'package:tekartik_firebase_auth/src/auth_mixin.dart';
-import 'package:tekartik_firebase_auth/utils/json_utils.dart';
 import 'package:tekartik_firebase_node/impl/firebase_node.dart';
 
 import 'auth_node_js_interop.dart' as node;
-import 'js_import.dart' as js;
 
 // ignore_for_file: implementation_imports
 
@@ -80,17 +78,21 @@ class UserInfoNode implements UserInfo {
 
   UserInfoNode(this.nativeInstance);
 
+  /// null when the provider gives none.
   @override
-  String get displayName => nativeInstance.displayName;
+  String? get displayName => nativeInstance.displayName;
 
+  /// null when the provider gives none.
   @override
-  String get email => nativeInstance.email;
+  String? get email => nativeInstance.email;
 
+  /// null when the provider gives none.
   @override
-  String get phoneNumber => nativeInstance.phoneNumber;
+  String? get phoneNumber => nativeInstance.phoneNumber;
 
+  /// null when the provider gives none.
   @override
-  String get photoURL => nativeInstance.photoURL;
+  String? get photoURL => nativeInstance.photoURL;
 
   @override
   String get providerId => nativeInstance.providerId;
@@ -99,13 +101,17 @@ class UserInfoNode implements UserInfo {
   String get uid => nativeInstance.uid;
 }
 
+/// A user record of firebase-admin: the fields firebase-admin leaves
+/// undefined (no phone, no photo, no password...) are null.
 class UserRecordNode with FirebaseUserRecordDefaultMixin implements UserRecord {
   final node.UserRecord nativeInstance;
 
   UserRecordNode(this.nativeInstance);
 
+  /// The custom claims as a Dart map (decoded json), null when none were
+  /// set.
   @override
-  dynamic get customClaims => nativeInstance.customClaims;
+  Object? get customClaims => nativeInstance.customClaims?.dartify();
 
   @override
   bool get disabled => nativeInstance.disabled;
@@ -120,23 +126,30 @@ class UserRecordNode with FirebaseUserRecordDefaultMixin implements UserRecord {
   @override
   bool get emailVerified => nativeInstance.emailVerified;
 
+  /// firebase-admin has no such field: an account with no provider, no email
+  /// and no phone number (as the REST implementation).
   @override
-  bool get isAnonymous => nativeInstance.isAnonymous;
+  bool get isAnonymous =>
+      nativeInstance.providerData.isEmpty &&
+      nativeInstance.email == null &&
+      nativeInstance.phoneNumber == null;
 
   @override
   UserMetadata get metadata => wrapUserMetadata(nativeInstance.metadata)!;
 
+  /// Only set on the records of [AuthNode.listUsers], for a password.
   @override
-  String get passwordHash => nativeInstance.passwordHash;
+  String? get passwordHash => nativeInstance.passwordHash;
+
+  /// Only set on the records of [AuthNode.listUsers], for a password.
+  @override
+  String? get passwordSalt => nativeInstance.passwordSalt;
 
   @override
-  String get passwordSalt => nativeInstance.passwordSalt;
+  String? get phoneNumber => nativeInstance.phoneNumber;
 
   @override
-  String get phoneNumber => nativeInstance.phoneNumber;
-
-  @override
-  String get photoURL => nativeInstance.photoURL;
+  String? get photoURL => nativeInstance.photoURL;
 
   @override
   List<UserInfo> get providerData => nativeInstance.providerData
@@ -145,25 +158,15 @@ class UserRecordNode with FirebaseUserRecordDefaultMixin implements UserRecord {
       .toList(growable: false);
 
   @override
-  String get tokensValidAfterTime => nativeInstance.tokensValidAfterTime;
+  String? get tokensValidAfterTime => nativeInstance.tokensValidAfterTime;
 
   @override
   String get uid => nativeInstance.uid;
 
-  // user: UserRecordNode({uid: xxx, email: test@test.com})
-  // - [object Object]
-  // {uid: xxx, email: xxx@xxx.com, emailVerified: false,
-  // displayName: null, photoURL: null, phoneNumber: null, disabled: false,
-  // metadata: {creationTime: Thu, 13 Jun 2024 10:06:33 GMT,
-  // lastSignInTime: null, lastRefreshTime: null},
-  // providerData: [{uid: test@test.com, displayName: null, email: test@test.com,
-  // photoURL: null, providerId: password, phoneNumber: null}],
-  // passwordHash: xxx
-  // passwordSalt: xxx==, tokensValidAfterTime: Thu, 13 Jun 2024 10:06:33 GMT,
-  // tenantId: null}}
+  /// The uid and the email only: a record of [AuthNode.listUsers] holds the
+  /// password hash and salt, and records end up in logs (CI logs included).
   @override
-  String toString() =>
-      'UserRecordNode(${userRecordToJson(this)}) - ${nativeInstance.dartify()} ${js.jsAnyToDebugString(nativeInstance)}}';
+  String toString() => 'UserRecordNode($uid, $email)';
 }
 
 /// Node implementation
