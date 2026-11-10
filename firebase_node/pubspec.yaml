@@ -1,5 +1,5 @@
 name: tekartik_firebase_node
-description: Firebase server node
+description: tekartik_firebase on Node.js over the firebase-admin npm module
 version: 0.8.0
 publish_to: none
 #homepage: https://www.example.com

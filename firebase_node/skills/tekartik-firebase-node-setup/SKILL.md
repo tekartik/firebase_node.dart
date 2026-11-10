@@ -86,8 +86,11 @@ falls back to `FirebaseLocal`.
     `map` is the decoded service account json (`project_id`, `client_email`
     and `private_key` are read from it, `storageBucket` defaults to
     `<project_id>.appspot.com`, pass `FirebaseAppOptions(storageBucket: ...)`
-    to override). `FirebaseNodeTestContext.appOptions` builds it from the
-    test environment.
+    to override: projects created since October 2024 use
+    `<project_id>.firebasestorage.app`). `FirebaseNodeTestContext.appOptions`
+    builds it from the test environment. These options hold the private key
+    and only implement `projectId` / `storageBucket` (`toDebugMap()`,
+    `apiKey`, `databaseURL` throw): log `app.options` instead.
   - initializing the same name twice throws; get an existing app with
     `firebaseNode.app(name:)` (`[DEFAULT]` when omitted, throws when it was
     never initialized).
@@ -262,3 +265,5 @@ Future<void> main() async {
 * Passing a `FirebaseLocal` app to `authServiceNode` / `firestoreServiceNode`.
 * Forgetting `npm install` (or `package.json`) before `dart test -p node`.
 * Printing tokens or the service account private key in test output.
+* Logging the options built by `withServiceAccountMap` (`toDebugMap()`
+  throws, they hold the private key): log `app.options`.

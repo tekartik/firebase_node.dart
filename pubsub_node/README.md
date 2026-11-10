@@ -1,22 +1,13 @@
-A library for Dart developers.
+# tekartik_pubsub_node
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+Scaffold for a Google Cloud Pub/Sub client on Node.js (Dart compiled with
+dart2js): it pins the `@google-cloud/pubsub` npm module (`package.json`) and
+loads it in its tests. The public library declares nothing yet: bindings are
+to be added in `lib/src/pubsub_interop.dart` (see the package skill).
 
-## Usage
+## Running the tests
 
-A simple usage example:
-
-```dart
-import 'package:pubsub_node/pubsub_node.dart';
-
-main() {
-  var awesome = new Awesome();
-}
+```bash
+npm install
+dart test -p node
 ```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
