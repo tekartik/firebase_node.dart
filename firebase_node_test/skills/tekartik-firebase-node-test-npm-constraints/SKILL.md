@@ -215,3 +215,7 @@ void main() {
   `package.json`.
 * Listing a dependency in `requiredDependencies` under a dart name
   (`tekartik_firebase_node`): these are npm module names.
+* `updatePackageJson: true` on a `package.json` holding a local or git
+  dependency (`"firebase-admin": "file:../admin"`) listed in the minimum
+  constraints: its range cannot be checked and it is replaced by
+  `npm install --save <name>@<min>` (the registry version).

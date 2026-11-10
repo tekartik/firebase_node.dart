@@ -40,7 +40,9 @@ dart, VM only (`dart:io`, the `firebase` cli).
   repository) holding `firebase.json` (an `emulators` section with the ports
   and `"ui": {"enabled": true}`) and `.firebaserc`
   (`{"projects": {"default": "<project-id>"}}`, written by `firebase use
-  --add`; a `demo-` project id needs no credentials). When
+  --add`; a `demo-` project id needs no credentials and never reaches a real
+  project: use one for tests and samples, a real id lets the functions the
+  emulator runs reach the services that are not emulated, in production). When
   `functions/package.json` exists in that folder it must declare node 20+,
   `firebase-admin` 13.8+ and `firebase-functions` 7.2.5+.
 * `FirebaseEmulatorService(path: 'deploy')`: one per firebase folder, as a
@@ -61,19 +63,25 @@ dart, VM only (`dart:io`, the `firebase` cli).
   --export-on-exit p] [--debug]` in the folder, echoes its output and returns
   a `FirebaseEmulator` once `All emulators ready` is printed (180 s default
   timeout, raise it for slow function builds; on timeout the process is
-  killed and the error rethrown). If a hub already runs with every requested
-  service, nothing is started and a `FirebaseRunningEmulator` comes back,
-  whose `stop()` does nothing (test `emulator is FirebaseRunningEmulator`
-  when a script must say so). `emulator.projectId`, `path` and `options`
-  describe the run.
+  killed and the error rethrown). `start` first takes a machine wide lock
+  (`firebaseEmulatorLockName`, waiting for another process or isolate at most
+  `lockTimeout`, 10 minutes by default), held until `stop()`. If a hub already
+  runs with every requested `only*` service (with none requested nothing is
+  checked), nothing is started and a `FirebaseRunningEmulator` comes back,
+  whose `stop()` only releases the lock (test `emulator is
+  FirebaseRunningEmulator` when a script must say so). `emulator.projectId`
+  describes the run, and `path` and `options` too except on a
+  `FirebaseRunningEmulator` (they throw `UnimplementedError`).
 * `FirebaseEmulatorOptions`: `projectId` (else `.firebaserc`), `onlyAuth`,
   `onlyFirestore`, `onlyStorage`, `onlyFunctions`, `onlyPubsub` (combine them
   for `--only auth,firestore`; none means every emulator of `firebase.json`),
   `debug`, `persistPath` (`.data` here: imported at start, exported on exit,
-  keep it out of source control), `processStartMode`
-  (`ProcessStartMode.inheritStdio` for the cli's interactive output, not from
-  an IDE run configuration). `copyWith(...)` derives a variant.
-* Always `await emulator.stop()` (sigint, then waits for the process): in a
+  keep it out of source control), `processStartMode` (leave it null: `start`
+  reads the `All emulators ready` line from the piped cli output, with
+  `ProcessStartMode.inheritStdio` it never sees it, times out and kills the
+  cli). `copyWith(...)` derives a variant.
+* Always `await emulator.stop()` (sigint, waits for the process, killed after
+  30 s, then releases the lock): in a
   `tearDownAll`, or after a prompt in a tool script (`prompt` and
   `promptTerminate` from `package:dev_build/shell.dart`). From a terminal
   Ctrl+C also reaches the `firebase` child.
@@ -106,6 +114,7 @@ Future<void> main() async {
   }
   var emulator = await service.start(
     options: FirebaseEmulatorOptions(
+      projectId: 'demo-my-app',
       onlyAuth: true,
       onlyFirestore: true,
       persistPath: '.data',
@@ -157,7 +166,11 @@ import 'package:test/test.dart';
 var service = FirebaseEmulatorService(path: 'deploy');
 
 Future<void> main() async {
-  var options = FirebaseEmulatorOptions(onlyAuth: true, debug: false);
+  var options = FirebaseEmulatorOptions(
+    projectId: 'demo-my-app',
+    onlyAuth: true,
+    debug: false,
+  );
   if (!await service.isSupported(options: options)) {
     test('not supported', () {}, skip: 'firebase emulator is not supported');
     return;
@@ -209,5 +222,9 @@ Future<void> main() async {
   throws even with `projectId` given.
 * Forgetting `emulator.stop()`: the `firebase` process outlives the test run
   and the next `start` finds a hub with the wrong services.
-* Two test files starting emulators concurrently: set `concurrency: 1`.
+* Two test files starting emulators concurrently: set `concurrency: 1` (the
+  lock makes the second one wait, its test timeout may fire first).
+* A test on the real project of the `.firebaserc`: pass a `demo-` `projectId`.
+* `processStartMode: ProcessStartMode.inheritStdio`: `start` never sees the
+  ready line, fails after `timeout` and kills the cli.
 * Committing `.data` (the `persistPath` export).
