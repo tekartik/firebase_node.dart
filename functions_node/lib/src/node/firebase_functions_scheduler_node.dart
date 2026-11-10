@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:tekartik_firebase_functions/firebase_functions.dart';
 import 'package:tekartik_firebase_functions_node/src/import_common.dart';
 import 'package:tekartik_firebase_functions_node/src/node/firebase_functions_scheduler_node_js_interop.dart'
@@ -42,17 +44,16 @@ class SchedulerFunctionNode extends FirebaseFunctionNode
   SchedulerFunctionNode(super.firebaseFunctionsNode, this.nativeInstance);
 }
 
+/// The native options of [options], only its non null values set (see
+/// [nodeOptionsSetIfNotNull]): a null `timeoutSeconds` fails
+/// firebase-functions 7.3+, a null `region` or `memory` overrides the global
+/// options.
 node.JSScheduleOptions toNodeScheduleOptions(ScheduleOptions options) {
-  return globalOptionsApplyToNode(
-    node.JSScheduleOptions(
-      region: options.region,
-      schedule: options.schedule,
-      timeZone: options.timeZone,
-      memory: options.memory,
-      timeoutSeconds: options.timeoutSeconds,
-    ),
-    options,
-  );
+  var nativeOptions = node.JSScheduleOptions(schedule: options.schedule);
+  nodeOptionsSetIfNotNull(nativeOptions, 'region', options.region?.toJS);
+  nodeOptionsSetIfNotNull(nativeOptions, 'timeZone', options.timeZone?.toJS);
+  // memory and timeoutSeconds: set by globalOptionsApplyToNode.
+  return globalOptionsApplyToNode(nativeOptions, options);
 }
 
 class ScheduleEventNode

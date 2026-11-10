@@ -6,5 +6,8 @@ import 'package:tekartik_firebase_storage_node/src/node/storage_node.dart'
 @Deprecated('Use storageServiceNode')
 StorageService get storageService => storageServiceNode;
 
-/// Get node storage service
+/// The node storage service (a single instance): `storage(app)` gives the
+/// `Storage` of a `firebaseNode` app, cached per app.
+///
+/// Node.js only: reading it loads `firebase-admin/storage`.
 StorageService get storageServiceNode => storage_node.storageServiceNode;

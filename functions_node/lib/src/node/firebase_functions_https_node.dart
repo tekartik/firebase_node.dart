@@ -88,14 +88,13 @@ node.JSHttpsOptions? toNodeHttpsOptionsOrNull(HttpsOptions? httpsOptions) {
   return toNodeHttpsOptions(httpsOptions);
 }
 
+/// The native options of [httpsOptions], only its non null values set (see
+/// [nodeOptionsSetIfNotNull]).
 node.JSHttpsOptions toNodeHttpsOptions(HttpsOptions httpsOptions) {
-  return globalOptionsApplyToNode(
-    node.JSHttpsOptions(
-      region: httpsOptions.region,
-      cors: httpsOptions.cors?.toJS,
-    ),
-    httpsOptions,
-  );
+  var nativeOptions = node.JSHttpsOptions();
+  nodeOptionsSetIfNotNull(nativeOptions, 'region', httpsOptions.region?.toJS);
+  nodeOptionsSetIfNotNull(nativeOptions, 'cors', httpsOptions.cors?.toJS);
+  return globalOptionsApplyToNode(nativeOptions, httpsOptions);
 }
 
 node.JSCallableOptions? toNodeCallableOptionsOrNull(
@@ -107,18 +106,30 @@ node.JSCallableOptions? toNodeCallableOptionsOrNull(
   return toNodeCallableOptions(callableOptions);
 }
 
+/// The native options of [callableOptions], only its non null values set
+/// (see [nodeOptionsSetIfNotNull]): a callable without `cors` keeps the
+/// CORS firebase-functions enables by default.
 node.JSCallableOptions toNodeCallableOptions(
   HttpsCallableOptions callableOptions,
 ) {
-  return globalOptionsApplyToNode(
-    node.JSCallableOptions(
-      consumeAppCheckToken: callableOptions.consumeAppCheckToken,
-      enforceAppCheck: callableOptions.enforceAppCheck,
-      region: callableOptions.region,
-      cors: callableOptions.cors?.toJS,
-    ),
-    callableOptions,
+  var nativeOptions = node.JSCallableOptions();
+  nodeOptionsSetIfNotNull(
+    nativeOptions,
+    'consumeAppCheckToken',
+    callableOptions.consumeAppCheckToken?.toJS,
   );
+  nodeOptionsSetIfNotNull(
+    nativeOptions,
+    'enforceAppCheck',
+    callableOptions.enforceAppCheck?.toJS,
+  );
+  nodeOptionsSetIfNotNull(
+    nativeOptions,
+    'region',
+    callableOptions.region?.toJS,
+  );
+  nodeOptionsSetIfNotNull(nativeOptions, 'cors', callableOptions.cors?.toJS);
+  return globalOptionsApplyToNode(nativeOptions, callableOptions);
 }
 
 /// To throw as a JS object

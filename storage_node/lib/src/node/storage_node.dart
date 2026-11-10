@@ -240,9 +240,9 @@ class FileMetadataNode with FileMetadataMixin implements FileMetadata {
   FileMetadataNode(this.nativeInstance);
 
   /// The GCS md5Hash, already base64 (like the rest, admin sdk and flutter
-  /// implementations).
+  /// implementations), empty for a composite object (GCS gives none).
   @override
-  String get md5Hash => nativeInstance.md5Hash;
+  String get md5Hash => nativeInstance.md5Hash ?? '';
 
   /// null when not set.
   DateTime? get _dateUpdatedOrNull => anyToDateTime(nativeInstance.updated);

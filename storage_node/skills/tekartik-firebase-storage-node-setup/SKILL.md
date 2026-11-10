@@ -8,8 +8,9 @@ description: >-
   / storage_node_interop.dart / storage_universal.dart imports (storageService:
   node in JS, the in-memory storage_fs service on the VM), bucket.file /
   getFiles paging, file.writeAsString / readAsBytes / upload / getMetadata on
-  node, package.json @google-cloud/storage and firebase-admin, and running the
-  shared runStorageAppTests suite on node with
+  node, StorageUploadFileOptions contentType / cacheControl, package.json
+  @google-cloud/storage and firebase-admin, and running the shared
+  runStorageAppTests suite on node with
   TEKARTIK_FIREBASE_STORAGE_NODE_TEST_ROOT_PATH.
 ---
 
@@ -69,8 +70,10 @@ getter differs.
   `gs://` prefix. `bucket.exists()` and `bucket.getFiles()` hit the backend;
   `bucket.file(path)` is purely local (bucket relative path, no leading `/`).
 * Supported on node: `file.upload(bytes, options:
-  StorageUploadFileOptions(contentType: ...))` (mapped to the native
-  `save(..., {contentType})`), `writeAsBytes` / `writeAsString` (UTF-8),
+  StorageUploadFileOptions(contentType: ..., cacheControl: ...))` (mapped to
+  the native `save(..., {contentType, metadata: {cacheControl}})`, an option
+  left null is not sent; without a content type the native client guesses it
+  from the file name), `writeAsBytes` / `writeAsString` (UTF-8),
   `readAsBytes` / `readAsString` (whole object in memory), `exists()`,
   `delete()`, `getMetadata()`, `name`, `bucket`, and `bucket.getFiles()`.
   Not implemented here (they throw `UnimplementedError` from the base mixins):
@@ -78,14 +81,18 @@ getter differs.
   buckets in the console or with the gcloud tooling.
 * `getMetadata()` returns a `FileMetadata` whose `size` is parsed from the
   native string (`0` when unparsable), `dateUpdated` from the native `updated`
-  field and `md5Hash` base64 re-encoded. The `file.metadata` *getter* is only
+  field, `md5Hash` the GCS value (already base64, empty for a composite
+  object: GCS gives none), `contentType` and `cacheControl` (null when not
+  set). The `file.metadata` *getter* is only
   the native cache: it is filled on files returned by `getFiles()` and null on
   a `bucket.file(path)` reference, so always `await getMetadata()` there.
 * Listing pages: `bucket.getFiles(GetFilesOptions(prefix: 'dir/', maxResults:
-  50, autoPaginate: false))` returns a `GetFilesResponse` with `files` and a
-  `nextQuery` (the native next query wrapped back, `pageToken` included). Loop
-  while `nextQuery != null`, passing it straight back; do not stop on an empty
-  page.
+  50, autoPaginate: false))` returns a `GetFilesResponse` with at most 50
+  `files` and a `nextQuery` (the native next query wrapped back, `pageToken`
+  included, null on the last page). Loop while `nextQuery != null`, passing it
+  straight back; do not stop on an empty page. Only the options that are set
+  are sent (a null `maxResults` sent as `maxResults=` was refused by GCS:
+  `Invalid unsigned integer value: ''`).
 * Platform split: type shared code on `Storage` / `Bucket` / `File` and pick
   `storageServiceNode` in the node entry point (dart2js `main`,
   `@TestOn('node')` test), or use `storage_universal.dart` for a `main` that

@@ -12,9 +12,11 @@ class FirebaseFunctionsServiceHttpUniversalIo
         FirebaseProductServiceMixin<FirebaseFunctions>,
         FirebaseFunctionsServiceDefaultMixin
     implements FirebaseFunctionsServiceUniversal, FirebaseFunctionsServiceHttp {
+  /// One instance per app (as functions_io): the functions registered on it
+  /// are the ones it serves.
   @override
   FirebaseFunctionsHttpUniversalIo functions(FirebaseApp app) =>
-      FirebaseFunctionsHttpUniversalIo._(this, app);
+      getInstance(app, () => FirebaseFunctionsHttpUniversalIo._(this, app));
 
   /// Default implementation if not accessing firebase services.
   @override

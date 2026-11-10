@@ -5,6 +5,23 @@ import 'package:tekartik_firebase_functions/firebase_functions.dart';
 
 import 'firebase_functions_node_js_interop.dart' show JSGlobalOptions;
 
+/// Sets [name] on the native options object [nativeOptions] when [value] is
+/// not null.
+///
+/// An object literal factory sets every argument passed, null ones included,
+/// and firebase-functions uses a property that is present as is: a null
+/// `region` overrides the global region, a null `cors` disables the CORS a
+/// callable has by default, a null `timeoutSeconds` fails 7.3+.
+void nodeOptionsSetIfNotNull(
+  js.JSObject nativeOptions,
+  String name,
+  js.JSAny? value,
+) {
+  if (value != null) {
+    nativeOptions.setProperty(name.toJS, value);
+  }
+}
+
 /// Sets on a native options object the [GlobalOptions] values its factory
 /// does not take: [GlobalOptions.regions] (as the native region array),
 /// memory, timeoutSeconds, concurrency and maxInstances.

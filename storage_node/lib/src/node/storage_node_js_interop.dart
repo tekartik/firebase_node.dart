@@ -158,7 +158,8 @@ extension FileExt on File {
 extension type FileMetadata._(js.JSObject _) implements js.JSObject {}
 
 extension FileMetadataExt on FileMetadata {
-  external String get md5Hash;
+  /// Base64, absent for a composite object.
+  external String? get md5Hash;
 
   external String get size;
 

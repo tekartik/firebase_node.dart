@@ -115,16 +115,21 @@ is how functions are developed and unit tested without node.
   minutes', timeZone: 'Europe/Paris', region:, memory:, timeoutSeconds:),
   (event) async { ... })`; `event.jobName`, `event.scheduleTime`.
 * Firestore triggers: `firestore.document('col/{id}').onWrite((change,
-  context) async { ... })` maps to `onDocumentWritten`; `change.after` is the
-  `DocumentSnapshot` (`change.before` currently returns the same after
-  snapshot, `context.params` is empty, `context.timestamp` is the handler
-  time). `onCreate`, `onUpdate`, `onDelete` throw `UnimplementedError`. The
+  context) async { ... })` maps to `onDocumentWritten`; `change.before` and
+  `change.after` are the `DocumentSnapshot`s before and after the write
+  (`exists` false on a create / a delete), `context.params` the path
+  wildcards (`{id}`), `context.eventType` and `context.timestamp` come from
+  the event. `onCreate`, `onUpdate`, `onDelete` throw `UnimplementedError`. The
   trigger reads through `firestoreServiceNode.firestore(firebaseNode.app())`,
   so the default app must be initialized first.
 * `functions.globalOptions = GlobalOptions(region: regionBelgium, memory:
   '256MiB', timeoutSeconds: 60, concurrency: 80)` sets the defaults of the
-  functions registered afterwards (`regions` and `maxInstances` are not
-  forwarded on node). `regionBelgium` (`europe-west1`), `regionFrankfurt` and
+  functions registered afterwards (`regions` and `maxInstances` included).
+  The options of a function only send their non null values: an
+  `HttpsOptions` / `HttpsCallableOptions` / `ScheduleOptions` without
+  `region` keeps the global region, a callable without `cors` keeps the
+  CORS a callable has by default (any origin), a schedule without
+  `timeoutSeconds` is valid. `regionBelgium` (`europe-west1`), `regionFrankfurt` and
   `regionUsCentral1` (the emulator default) are constants of the api.
   `functions.params.projectId` reads the deployed project id. `pubsub`,
   `region()` and `runWith()` throw on node.
@@ -147,7 +152,9 @@ is how functions are developed and unit tested without node.
   FirebaseEmulatorOptions(onlyFunctions: true))`, `emulator.projectId` for the
   url, `stop()` in `tearDownAll`, a 5 minutes group timeout.
 * VM tests without node: `firebaseFunctionsUniversal.serve(port: 0)` and any
-  http client on `server.uri`. Shared helpers of
+  http client on `server.uri` (`firebaseFunctionsServiceUniversal
+  .functions(app)` is one instance per app: the one functions are
+  registered on is the one served). Shared helpers of
   `package:tekartik_firebase_functions_test/firebase_functions_test_runner.dart`:
   `initFunctionsBasic(functions, prefix:)` registers a `<prefix>basic`
   callable, `basicTestGroup(() => testContext)` calls it through a
